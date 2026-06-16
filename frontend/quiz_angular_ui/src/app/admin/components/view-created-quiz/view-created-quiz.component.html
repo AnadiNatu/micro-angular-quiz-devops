@@ -1,0 +1,39 @@
+<div class="glass-container">
+  <div class="glass-content-wrapper">
+
+    <div *ngIf="errorMessage" class="glass-card">
+      <p class="text-danger text-center">{{ errorMessage }}</p>
+    </div>
+
+    <ng-container *ngIf="quiz">
+      <div class="glass-card quiz-card">
+
+        <div class="quiz-header">
+          <h2>{{ quiz.title }}</h2>
+          <p><strong>Category:</strong>   {{ quiz.category }}</p>
+          <p><strong>Difficulty:</strong> {{ quiz.difficultyLevel }}</p>
+          <p><strong>Created By:</strong> {{ quiz.creatorUsername }}</p>
+          <p><strong>Total Questions:</strong> {{ quiz.questionIds?.length ?? 0 }}</p>
+          <p><strong>Participants:</strong>    {{ quiz.participantIds?.length ?? 0 }}</p>
+        </div>
+
+        <div class="questions-section quiz-scroll-container mt-3">
+          <h4>Question Titles</h4>
+          <div *ngIf="questionTitles.length === 0" class="text-muted">
+            Loading questions...
+          </div>
+          <div *ngFor="let title of questionTitles; let i = index"
+               class="question-card">
+            <p><strong>Q{{ i + 1 }}:</strong> {{ title }}</p>
+          </div>
+        </div>
+
+        <div class="d-flex gap-3 mt-4 flex-wrap">
+          <button class="glass-button" (click)="goBack()">← Dashboard</button>
+        </div>
+
+      </div>
+    </ng-container>
+
+  </div>
+</div>

@@ -1,0 +1,207 @@
+/* ── Reset & Base ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.glass-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.glass-login-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1.25rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.25rem, 4vw, 2rem);
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  animation: slideUp 0.45s ease forwards;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* ── Header ───────────────────────────────────────────── */
+.card-header-section {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+.logo-icon {
+  font-size: clamp(2rem, 6vw, 3rem);
+  display: block;
+  margin-bottom: 0.4rem;
+  line-height: 1;
+}
+
+h2 {
+  color: #f1c40f;
+  font-size: clamp(1.4rem, 4vw, 1.8rem);
+  font-weight: 700;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+  margin-top: 0.3rem;
+}
+
+/* ── Form ─────────────────────────────────────────────── */
+.form-group { margin-bottom: 1rem; }
+
+.form-label {
+  display: block;
+  color: #00bcd4;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.4rem;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 0.75rem;
+  font-size: 1rem;
+  line-height: 1;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.65rem 0.75rem 0.65rem 2.4rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(0, 188, 212, 0.45);
+  color: #fff;
+  border-radius: 0.75rem;
+  font-size: clamp(0.88rem, 2.5vw, 0.95rem);
+  transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+  -webkit-appearance: none;
+}
+
+.form-control::placeholder { color: rgba(255, 255, 255, 0.3); }
+
+.form-control:focus {
+  outline: none;
+  border-color: #00bcd4;
+  box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* ── Alert ────────────────────────────────────────────── */
+.alert-glass {
+  border-radius: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.85rem;
+  margin-top: 0.75rem;
+}
+
+.alert-danger-glass {
+  background: rgba(220, 53, 69, 0.18);
+  border: 1px solid rgba(220, 53, 69, 0.4);
+  color: #ff6b6b;
+}
+
+/* ── Button ───────────────────────────────────────────── */
+.glass-button {
+  display: block;
+  width: 100%;
+  margin-top: 1.25rem;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #00bcd4, #2196f3);
+  border: none;
+  border-radius: 0.85rem;
+  color: #fff;
+  font-weight: 700;
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.02em;
+}
+
+.glass-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2196f3, #00bcd4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 188, 212, 0.4);
+}
+
+.glass-button:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* ── Divider ──────────────────────────────────────────── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 1.25rem 0 1rem;
+}
+
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.divider span {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.78rem;
+}
+
+/* ── Links ────────────────────────────────────────────── */
+.links-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.glass-link-btn {
+  color: #00bcd4;
+  text-decoration: none;
+  font-size: clamp(0.82rem, 2.5vw, 0.9rem);
+  font-weight: 600;
+  transition: color 0.25s;
+}
+
+.glass-link-btn:hover { color: #f1c40f; text-decoration: underline; }
+
+.text-muted-light {
+  color: rgba(255, 255, 255, 0.42);
+  font-size: clamp(0.8rem, 2.3vw, 0.88rem);
+}
+
+/* ── Spinner (Bootstrap inline) ──────────────────────── */
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.15em;
+  vertical-align: middle;
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 480px) {
+  .glass-login-card { border-radius: 1rem; }
+}
+
+@media (max-height: 600px) and (orientation: landscape) {
+  .glass-container { align-items: flex-start; padding-top: 1.5rem; }
+  .card-header-section { margin-bottom: 1rem; }
+  .logo-icon { font-size: 1.75rem; }
+}

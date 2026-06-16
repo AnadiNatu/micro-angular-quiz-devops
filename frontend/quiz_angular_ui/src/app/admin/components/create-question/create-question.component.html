@@ -1,0 +1,118 @@
+<div class="page-wrapper">
+  <div class="form-card">
+
+    <a routerLink="/admin" class="back-link">← Dashboard</a>
+
+    <!-- ── Form State ─────────────────────────────── -->
+    <div *ngIf="!submittedQuestion">
+      <h2 class="page-title">Add a <span>New Question</span></h2>
+
+      <form [formGroup]="questionForm" (ngSubmit)="submitQuestion()">
+
+        <label class="field-label">Question</label>
+        <input type="text" class="form-control"
+               formControlName="questionTitle"
+               placeholder="Type your question here..." />
+
+        <label class="field-label">Category</label>
+        <select #categorySelect formControlName="category" class="form-select"
+                (change)="onCategoryChange(categorySelect.value)">
+          <option value="">Select Category</option>
+          <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          <option value="ADD_NEW">➕ Add New Category</option>
+        </select>
+
+        <div *ngIf="addNewCategory">
+          <label class="field-label">New Category Name</label>
+          <input type="text" class="form-control"
+                 formControlName="newCategory"
+                 placeholder="Enter new category..." />
+        </div>
+
+        <label class="field-label">Difficulty</label>
+        <select class="form-select" formControlName="difficultyLevel">
+          <option value="">Select Difficulty</option>
+          <option value="EASY">🟢 Easy</option>
+          <option value="MEDIUM">🟡 Medium</option>
+          <option value="HARD">🔴 Hard</option>
+        </select>
+
+        <label class="field-label" style="margin-top: 1.1rem;">Answer Options</label>
+        <div class="options-grid">
+          <div class="option-block"
+               *ngFor="let opt of ['option1','option2','option3','option4']; let i = index">
+            <input type="text" class="form-control"
+                   [formControlName]="opt"
+                   placeholder="Option {{ i + 1 }}" />
+            <button type="button" class="set-answer-btn"
+                    [class.selected]="selectedAnswer === opt"
+                    (click)="selectRightAnswer(opt)">
+              {{ selectedAnswer === opt ? '✔ Correct Answer' : 'Set as Answer' }}
+            </button>
+          </div>
+        </div>
+
+        <label class="field-label">Selected Correct Answer</label>
+        <input type="text" class="form-control"
+               formControlName="rightAnswer"
+               placeholder="Auto-filled when you select above"
+               readonly />
+
+        <button type="submit" class="btn-primary"
+                [disabled]="questionForm.invalid">
+          ✅ Submit Question
+        </button>
+
+      </form>
+    </div>
+
+    <!-- ── Success State ──────────────────────────── -->
+    <div *ngIf="submittedQuestion" class="success-card">
+      <h2 class="page-title">Question <span>Submitted!</span></h2>
+
+      <div class="success-icon">🎉</div>
+
+      <div class="detail-row">
+        <span class="detail-label">ID</span>
+        <span>{{ submittedQuestion.id }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Question</span>
+        <span>{{ submittedQuestion.questionTitle }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Category</span>
+        <span>{{ submittedQuestion.category }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Difficulty</span>
+        <span>{{ submittedQuestion.difficultyLevel }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Options</span>
+        <ul class="options-list">
+          <li>A. {{ submittedQuestion.option1 }}</li>
+          <li>B. {{ submittedQuestion.option2 }}</li>
+          <li>C. {{ submittedQuestion.option3 }}</li>
+          <li>D. {{ submittedQuestion.option4 }}</li>
+        </ul>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Answer</span>
+        <span class="answer-highlight">✔ {{ submittedQuestion.rightAnswer }}</span>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" style="flex: 1;"
+                (click)="submittedQuestion = null">
+          ➕ Add Another
+        </button>
+        <button class="btn-secondary"
+                (click)="router.navigate(['/admin'])">
+          🏠 Dashboard
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

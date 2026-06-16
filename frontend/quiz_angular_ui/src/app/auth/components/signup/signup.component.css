@@ -1,0 +1,64 @@
+:host {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+.signup-card-wrapper {
+  max-width: 440px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ──── Advanced Role Picker Visual cards ──── */
+.role-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.68rem;
+  margin-bottom: 1.2rem;
+}
+
+.role-visual-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.85rem;
+  padding: 0.75rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.role-visual-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.role-visual-card.selected {
+  background: rgba(0, 229, 255, 0.1);
+  border-color: #00e5ff;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.2);
+}
+
+.role-visual-card .role-emoji {
+  font-size: 1.5rem;
+  margin-bottom: 0.2rem;
+  display: block;
+}
+
+.role-visual-card .role-title {
+  font-weight: 800;
+  color: #fff;
+  font-size: 0.85rem;
+  display: block;
+}
+
+.role-visual-card .role-subtitle {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.55);
+  display: block;
+  margin-top: 0.1rem;
+}

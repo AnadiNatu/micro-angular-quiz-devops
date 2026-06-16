@@ -1,0 +1,68 @@
+<div class="glass-container">
+  <div class="glass-card">
+    <h2>Quiz Details</h2>
+
+    <!-- Search -->
+    <div class="row mb-3">
+      <div class="col-md-8 mb-2">
+        <input class="form-control"
+               [(ngModel)]="searchText"
+               placeholder="Search quiz by title..." />
+      </div>
+      <div class="col-md-4 mb-2">
+        <button class="glass-button w-100" (click)="onSearch()">Search</button>
+      </div>
+      <div class="col-12 mt-2">
+        <select class="form-select"
+                [(ngModel)]="selectedQuizTitle"
+                (change)="onDropdownSelect(selectedQuizTitle)">
+          <option value="" disabled selected>Select from existing quizzes</option>
+          <option *ngFor="let t of allQuizTitles" [value]="t">{{ t }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger text-center">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Quiz Info -->
+    <ng-container *ngIf="quiz">
+      <h4 class="text-warning text-center mt-4">{{ quiz.title }}</h4>
+
+      <p><strong>Category:</strong> {{ quiz.category }}</p>
+      <p><strong>Difficulty:</strong> {{ quiz.difficultyLevel }}</p>
+      <p><strong>Created By:</strong> {{ quiz.creatorUsername }}</p>
+      <p><strong>Total Questions:</strong> {{ quiz.questionIds?.length ?? 0 }}</p>
+      <p><strong>Total Participants:</strong> {{ quiz.participantIds?.length ?? 0 }}</p>
+
+      <!-- Question Titles -->
+      <div *ngIf="questionTitles.length > 0" class="mt-4">
+        <h5 class="text-info mb-2">Questions in this Quiz:</h5>
+        <ul class="list-group">
+          <li *ngFor="let q of questionTitles"
+              class="list-group-item bg-dark text-warning border-info">
+            {{ q }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- Stats Summary -->
+      <div *ngIf="stats" class="mt-4">
+        <h5 class="text-info">📊 Stats</h5>
+        <p>Total Participants: <strong>{{ stats.totalParticipants }}</strong></p>
+        <p>Average Score: <strong>{{ stats.averagePercentage | number:'1.1-1' }}%</strong></p>
+        <p>Highest: <strong>{{ stats.highestPercentage | number:'1.1-1' }}%</strong>
+           &nbsp;|&nbsp;
+           Lowest: <strong>{{ stats.lowestPercentage | number:'1.1-1' }}%</strong></p>
+        <p>Passed: <strong class="text-success">{{ stats.passCount }}</strong>
+           &nbsp;|&nbsp;
+           Failed: <strong class="text-danger">{{ stats.failCount }}</strong></p>
+      </div>
+
+      <button class="glass-button mt-4 w-100" (click)="goToAllResults()">
+        View All Results
+      </button>
+    </ng-container>
+  </div>
+</div>

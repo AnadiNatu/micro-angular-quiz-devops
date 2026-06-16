@@ -1,0 +1,296 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.quiz-list-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* Search row */
+.search-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.58rem 0.85rem;
+  background: rgba(241, 245, 249, 0.7);
+  border: 1.5px solid rgba(148, 180, 255, 0.38);
+  color: #1e293b;
+  border-radius: 0.7rem;
+  font-size: 0.88rem;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.22s ease;
+}
+
+.search-input::placeholder { color: #94a3b8; }
+
+.search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+  background: #fff;
+}
+
+.search-btn {
+  padding: 0.58rem 1rem;
+  background: #dbeafe;
+  border: 1.5px solid rgba(37, 99, 235, 0.25);
+  color: #1d4ed8;
+  border-radius: 0.7rem;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.22s ease;
+  flex-shrink: 0;
+}
+
+.search-btn:hover {
+  background: #bfdbfe;
+  border-color: rgba(37, 99, 235, 0.4);
+}
+
+/* Quiz card */
+.quiz-card {
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(148, 180, 255, 0.28);
+  padding: clamp(0.85rem, 2.5vw, 1.1rem);
+  border-radius: 0.9rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(99, 140, 255, 0.08);
+}
+
+.quiz-card:hover {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(37, 99, 235, 0.25);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(99, 140, 255, 0.15);
+}
+
+.quiz-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.quiz-card-title {
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(0.88rem, 2.2vw, 0.98rem);
+  font-weight: 700;
+  color: #1e293b;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quiz-chevron {
+  color: #94a3b8;
+  font-size: 0.75rem;
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.quiz-card.expanded .quiz-chevron {
+  transform: rotate(180deg);
+}
+
+/* Expandable detail section */
+.quiz-details {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: max-height 0.4s ease, opacity 0.35s ease, transform 0.35s ease;
+}
+
+.quiz-card.expanded .quiz-details {
+  max-height: 300px;
+  opacity: 1;
+  transform: translateY(0);
+  padding-top: 0.75rem;
+}
+
+.detail-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.55rem;
+  background: rgba(219, 234, 254, 0.6);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #1d4ed8;
+  margin-right: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+
+.detail-text {
+  font-size: 0.82rem;
+  color: #475569;
+  margin-bottom: 0.3rem;
+}
+
+.detail-text strong { color: #2563eb; font-weight: 600; }
+
+/* Card action buttons */
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  border-top: 1px solid rgba(148, 180, 255, 0.15);
+  padding-top: 0.65rem;
+}
+
+.action-btn {
+  padding: 0.38rem 0.75rem;
+  background: transparent;
+  border: 1.5px solid rgba(148, 180, 255, 0.35);
+  border-radius: 0.55rem;
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.22s ease;
+  white-space: nowrap;
+}
+
+.action-btn:hover {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: rgba(37, 99, 235, 0.3);
+}
+
+.action-btn.primary-btn {
+  background: rgba(219, 234, 254, 0.6);
+  color: #1d4ed8;
+  border-color: rgba(37, 99, 235, 0.25);
+}
+
+.action-btn.primary-btn:hover {
+  background: #bfdbfe;
+}
+
+/* Error / Empty state */
+.error-banner {
+  background: rgba(254, 202, 202, 0.45);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  color: #b91c1c;
+  padding: 0.65rem 0.9rem;
+  border-radius: 0.7rem;
+  font-size: 0.85rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 1.25rem 0;
+  color: #94a3b8;
+  font-size: 0.88rem;
+}
+
+
+/* ── Filter row ─────────────────────────────────────────────────────────────── */
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: stretch;
+  margin-bottom: 0.1rem;
+}
+ 
+.search-row {
+  display: flex;
+  gap: 0.4rem;
+  flex: 1;
+  min-width: 160px;
+}
+ 
+.category-select {
+  padding: 0.56rem 0.85rem;
+  background: rgba(241, 245, 249, 0.7);
+  border: 1.5px solid rgba(148, 180, 255, 0.38);
+  color: #1e293b;
+  border-radius: 0.7rem;
+  font-size: 0.85rem;
+  font-family: 'DM Sans', sans-serif;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  min-width: 130px;
+  flex-shrink: 0;
+}
+ 
+.category-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+  background: #fff;
+}
+ 
+.category-select option { background: #f8fafc; color: #1e293b; }
+ 
+.clear-btn {
+  padding: 0.56rem 0.85rem;
+  background: rgba(254, 202, 202, 0.35);
+  border: 1.5px solid rgba(220, 38, 38, 0.2);
+  color: #b91c1c;
+  border-radius: 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.22s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.clear-btn:hover { background: rgba(254,202,202,0.6); border-color: rgba(220,38,38,0.4); }
+ 
+/* ── Active filter pills ────────────────────────────────────────────────────── */
+.filter-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+ 
+.filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.22rem 0.6rem;
+  background: rgba(219, 234, 254, 0.75);
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  border-radius: 99px;
+  font-size: 0.73rem;
+  font-weight: 600;
+  color: #1d4ed8;
+}
+ 
+.pill-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  font-size: 0.7rem;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.18s;
+}
+.pill-remove:hover { color: #b91c1c; }
+ 
+@media (max-width: 400px) {
+  .filter-row { flex-direction: column; }
+  .category-select { width: 100%; }
+}

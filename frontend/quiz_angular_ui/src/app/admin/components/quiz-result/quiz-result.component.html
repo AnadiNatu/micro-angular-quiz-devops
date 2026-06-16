@@ -1,0 +1,88 @@
+<div class="result-wrapper">
+
+  <h1 class="page-heading">📊 My Quiz Results</h1>
+
+  <!-- Loading -->
+  <div *ngIf="!isLoaded && !hasError" class="spinner-wrap">
+    <div class="spin-ring"></div>
+    <span>Loading your results...</span>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="hasError" class="error-card">
+    <p>⚠️ Failed to load results. Please try again.</p>
+    <button class="btn-action btn-outline mt-2"
+            style="margin: 0.75rem auto 0; display: inline-block; max-width: 160px;"
+            (click)="goBack()">← Dashboard</button>
+  </div>
+
+  <!-- No results -->
+  <div *ngIf="isLoaded && !hasError && results.length === 0" class="empty-card">
+    <p style="font-size: 2rem; margin-bottom: 0.5rem;">🎯</p>
+    <p>You haven't taken any quizzes yet.</p>
+    <button class="btn-action btn-outline mt-2"
+            style="margin: 0.75rem auto 0; display: inline-block; max-width: 160px;"
+            (click)="goBack()">← Dashboard</button>
+  </div>
+
+  <!-- Result Cards -->
+  <ng-container *ngIf="isLoaded && !hasError && results.length > 0">
+
+    <div *ngFor="let r of results" class="result-card">
+      <h2 class="quiz-title">{{ r.quizTitle }}</h2>
+
+      <div class="detail-rows">
+        <div class="detail-row">
+          <span class="detail-label">Category</span>
+          <span>{{ r.category }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Difficulty</span>
+          <span>{{ r.difficultyLevel }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Curator</span>
+          <span>{{ r.curatorUsername }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Total Qs</span>
+          <span>{{ r.totalQuestions }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Correct</span>
+          <span class="val-correct">{{ r.correctAnswers }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Incorrect</span>
+          <span class="val-wrong">{{ r.incorrectAnswers }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Score</span>
+          <span class="val-bold">{{ r.percentage | number:'1.1-1' }}%</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Status</span>
+          <span class="status-chip"
+                [class.chip-pass]="r.percentage >= 60"
+                [class.chip-fail]="r.percentage < 60">
+            {{ r.percentage >= 60 ? '✅ Passed' : '❌ Failed' }}
+          </span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Taken At</span>
+          <span>{{ r.takenAt | date:'dd MMM yyyy, hh:mm a' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn-action btn-primary" (click)="openReportCard()">
+        🖨️ Print Report Card
+      </button>
+      <button class="btn-action btn-outline" (click)="goBack()">
+        ← Dashboard
+      </button>
+    </div>
+
+  </ng-container>
+</div>

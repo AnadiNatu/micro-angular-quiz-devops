@@ -1,0 +1,185 @@
+<!-- src/app/admin/components/admin-dasboard/admin-dasboard.component.html -->
+<!-- ONLY CHANGES: added "✨ AI Questions" nav-link + "✨ AI Questions" quick-link button -->
+
+<!-- ── Sticky Navbar ──────────────────────────────── -->
+<nav class="glass-navbar">
+  <div class="nav-brand" (click)="toggleAdminCard()">
+    <div class="nav-brand-icon">🎓</div>
+    <span class="nav-brand-text">Quiz<span>Hub</span></span>
+  </div>
+
+  <button class="nav-toggle" (click)="toggleMenu = !toggleMenu" aria-label="Toggle menu">
+    {{ toggleMenu ? '✕' : '☰' }}
+  </button>
+
+  <div class="nav-right" [class.open]="toggleMenu">
+    <a routerLink="/admin"
+       routerLinkActive="active-link"
+       [routerLinkActiveOptions]="{ exact: true }"
+       class="nav-link"
+       (click)="toggleMenu = false">🏠 Dashboard</a>
+
+    <a routerLink="/admin/create-quiz"
+       routerLinkActive="active-link"
+       class="nav-link"
+       (click)="toggleMenu = false">➕ Create Quiz</a>
+
+    <a routerLink="/admin/create-question"
+       routerLinkActive="active-link"
+       class="nav-link"
+       (click)="toggleMenu = false">📝 Add Question</a>
+
+    <!-- ✨ NEW -->
+    <a routerLink="/admin/ai-generate-question"
+       routerLinkActive="active-link"
+       class="nav-link ai-nav-link"
+       (click)="toggleMenu = false">✨ AI Questions</a>
+
+    <a routerLink="/admin/all/quizzes"
+       routerLinkActive="active-link"
+       class="nav-link"
+       (click)="toggleMenu = false">📋 All Quizzes</a>
+
+    <a routerLink="/admin/creator/quizzes"
+       routerLinkActive="active-link"
+       class="nav-link"
+       (click)="toggleMenu = false">📂 My Quizzes</a>
+
+    <a routerLink="/admin/participant/quiz"
+       routerLinkActive="active-link"
+       class="nav-link"
+       (click)="toggleMenu = false">🎯 Take Quiz</a>
+
+    <a routerLink="/admin/participant/result"
+       routerLinkActive="active-link"
+       class="nav-link"
+       (click)="toggleMenu = false">📊 My Results</a>
+
+    <button class="nav-logout" (click)="logout()">← Log Out</button>
+  </div>
+</nav>
+
+<!-- ── User Info Dropdown ─────────────────────────── -->
+<div *ngIf="showAdminCard" class="glass-card user-info-dropdown">
+  <div class="card-title">
+    <div class="title-icon">👤</div>
+    Account Info
+  </div>
+  <ng-container *ngIf="userDetails; else loadingUser">
+    <div class="user-detail-row">
+      <span class="user-detail-label">Username</span>
+      <span>{{ userDetails.username }}</span>
+    </div>
+    <div class="user-detail-row">
+      <span class="user-detail-label">Email</span>
+      <span>{{ userDetails.email }}</span>
+    </div>
+    <div class="user-detail-row">
+      <span class="user-detail-label">Role</span>
+      <span>{{ userDetails.role }}</span>
+    </div>
+    <div class="user-detail-row">
+      <span class="user-detail-label">Status</span>
+      <span>{{ userDetails.enabled ? '✅ Active' : '❌ Disabled' }}</span>
+    </div>
+  </ng-container>
+  <ng-template #loadingUser>
+    <div class="empty-msg">Loading...</div>
+  </ng-template>
+  <button class="btn-close-sm" (click)="toggleAdminCard()">✕ Close</button>
+</div>
+
+<!-- ── Greeting Banner ────────────────────────────── -->
+<div class="dashboard-header">
+  <div class="header-greeting">
+    <h1>Welcome back, {{ username }} <span class="wave">👋</span></h1>
+    <p>Manage your quizzes, track results, and explore your platform.</p>
+  </div>
+  <div class="header-badge">
+    🛡️ {{ userRole }}
+  </div>
+</div>
+
+<!-- ── Stats Strip ────────────────────────────────── -->
+<div class="stats-strip" style="margin-bottom: 1rem;">
+  <div class="stat-block">
+    <div class="stat-val">{{ mockStats.totalQuizzes }}</div>
+    <div class="stat-lbl">Total Quizzes</div>
+  </div>
+  <div class="stat-block">
+    <div class="stat-val">{{ mockStats.totalQuestions }}</div>
+    <div class="stat-lbl">Questions</div>
+  </div>
+  <div class="stat-block">
+    <div class="stat-val">{{ mockStats.participants }}</div>
+    <div class="stat-lbl">Participants</div>
+  </div>
+</div>
+
+<!-- ── Dashboard Grid ─────────────────────────────── -->
+<div class="dashboard-grid">
+
+  <!-- Profile Card -->
+  <div class="glass-card profile-card">
+    <div class="profile-avatar-wrapper">
+      <img [src]="profileImageUrl" alt="Profile Photo" class="profile-avatar" />
+      <div class="avatar-ring"></div>
+    </div>
+    <div class="profile-name">{{ username }}</div>
+    <div class="profile-role">{{ userRole }}</div>
+    <label class="upload-btn">
+      📷 Change Photo
+      <input type="file" accept="image/*" (change)="uploadProfilePhoto($event)" hidden />
+    </label>
+  </div>
+
+  <!-- Created Quizzes -->
+  <div class="glass-card">
+    <div class="card-title">
+      <div class="title-icon">📋</div>
+      Your Created Quizzes
+    </div>
+    <div class="quiz-scroll-container">
+      <app-creator-quiz-list
+        (viewQuiz)="viewCreatedQuiz($event)"
+        (viewAllResults)="viewAllResultsForQuiz($event)">
+      </app-creator-quiz-list>
+    </div>
+  </div>
+
+  <!-- Taken Quizzes (PARTICIPANT only) -->
+  <div class="glass-card" *ngIf="userRole === 'PARTICIPANT'">
+    <div class="card-title">
+      <div class="title-icon">🎯</div>
+      Quizzes You've Taken
+    </div>
+    <ul class="taken-quiz-list">
+      <li *ngFor="let title of takenQuizTitles" class="taken-quiz-item">
+        <span>{{ title }}</span>
+        <button class="btn-sm" (click)="viewParticipantResult()">Results</button>
+      </li>
+      <li *ngIf="takenQuizTitles.length === 0" class="empty-msg">
+        No quizzes taken yet.
+      </li>
+    </ul>
+  </div>
+
+  <!-- Quick Actions (non-PARTICIPANT) -->
+  <div class="glass-card" *ngIf="userRole !== 'PARTICIPANT'">
+    <div class="card-title">
+      <div class="title-icon">⚡</div>
+      Quick Actions
+    </div>
+    <div class="quick-links">
+      <a routerLink="/admin/create-quiz"          class="quick-link-btn">➕ New Quiz</a>
+      <a routerLink="/admin/create-question"       class="quick-link-btn">📝 New Question</a>
+      <!-- ✨ NEW -->
+      <a routerLink="/admin/ai-generate-question"  class="quick-link-btn ai-quick-btn">✨ AI Questions</a>
+      <a routerLink="/admin/all/quizzes"           class="quick-link-btn">📋 All Quizzes</a>
+      <a routerLink="/admin/creator/quizzes"       class="quick-link-btn">📂 My Quizzes</a>
+    </div>
+  </div>
+
+</div>
+
+<router-outlet></router-outlet>

@@ -1,0 +1,190 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:host {
+  display: block;
+  padding: clamp(1rem, 2.5vw, 1.75rem);
+  min-height: 100vh;
+  min-height: 100dvh;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #2563eb;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 0.38rem 0.8rem;
+  border-radius: 0.55rem;
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  background: rgba(219, 234, 254, 0.4);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.22s ease;
+}
+
+.back-btn:hover { background: #dbeafe; }
+
+.page-title {
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(1.05rem, 3vw, 1.35rem);
+  font-weight: 800;
+  color: #1e293b;
+  flex: 1;
+  text-align: center;
+}
+
+.print-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.42rem 0.9rem;
+  background: #dbeafe;
+  border: 1.5px solid rgba(37, 99, 235, 0.25);
+  color: #1d4ed8;
+  border-radius: 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.22s ease;
+}
+
+.print-btn:hover { background: #bfdbfe; }
+
+/* Loading spinner */
+.spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.spin-ring {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #dbeafe;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Alert */
+.alert {
+  border-radius: 0.75rem;
+  padding: 0.65rem 1rem;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.alert-danger {
+  background: rgba(254, 202, 202, 0.45);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  color: #b91c1c;
+}
+
+.alert-warning {
+  background: rgba(254, 249, 195, 0.55);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  color: #92400e;
+}
+
+/* Table */
+.table-wrap {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(148, 180, 255, 0.28);
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(99, 140, 255, 0.1);
+}
+
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.data-table {
+  width: 100%;
+  min-width: 660px;
+  border-collapse: collapse;
+  font-size: clamp(0.78rem, 1.8vw, 0.88rem);
+}
+
+.data-table thead th {
+  background: rgba(219, 234, 254, 0.7);
+  color: #1d4ed8;
+  padding: clamp(0.55rem, 1.5vw, 0.75rem) clamp(0.65rem, 1.8vw, 1rem);
+  font-weight: 700;
+  white-space: nowrap;
+  text-align: left;
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(0.72rem, 1.6vw, 0.8rem);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(37, 99, 235, 0.15);
+}
+
+.data-table tbody td {
+  padding: clamp(0.5rem, 1.5vw, 0.7rem) clamp(0.65rem, 1.8vw, 1rem);
+  vertical-align: middle;
+  border-bottom: 1px solid rgba(148, 180, 255, 0.12);
+  word-break: break-word;
+  color: #334155;
+}
+
+.data-table tbody tr:nth-child(even) {
+  background: rgba(241, 245, 249, 0.4);
+}
+
+.data-table tbody tr:hover {
+  background: rgba(219, 234, 254, 0.3);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.28em 0.65em;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.badge-pass {
+  background: rgba(187, 247, 208, 0.6);
+  color: #15803d;
+  border: 1px solid rgba(22, 163, 74, 0.25);
+}
+
+.badge-fail {
+  background: rgba(254, 202, 202, 0.6);
+  color: #b91c1c;
+  border: 1px solid rgba(220, 38, 38, 0.25);
+}
+
+.text-correct { color: #16a34a; font-weight: 700; }
+.text-wrong   { color: #dc2626; font-weight: 700; }
+.fw-bold { font-weight: 700; }
+
+.text-center { text-align: center; }
+.mt-3 { margin-top: 0.75rem; }

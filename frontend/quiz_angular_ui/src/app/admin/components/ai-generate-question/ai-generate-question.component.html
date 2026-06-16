@@ -1,0 +1,448 @@
+<!-- FILE 13: src/app/admin/components/ai-generate-question/ai-generate-question.component.html -->
+
+<div class="page-wrapper">
+  <div class="form-card" [class.wide]="state === 'preview' || state === 'saving' || state === 'done'">
+
+    <a routerLink="/admin" class="back-link">← Dashboard</a>
+
+    <!-- ======================================================
+         STATE: FORM
+    ======================================================= -->
+    <div *ngIf="state === 'form'">
+
+      <div class="ai-badge">✨ AI-Powered</div>
+
+      <h2 class="page-title">
+        Generate <span>Questions with AI</span>
+      </h2>
+
+      <p class="page-subtitle">
+        Describe a topic and let the AI create a full set of
+        multiple-choice questions for your review.
+      </p>
+
+      <form [formGroup]="generateForm" (ngSubmit)="generate()">
+
+        <label class="field-label">Topic</label>
+
+        <input
+          type="text"
+          class="form-control"
+          formControlName="topic"
+          placeholder="e.g. Binary Trees, World War II, Organic Chemistry..." />
+
+        <span class="field-hint">
+          Be specific — better topics produce better questions.
+        </span>
+
+        <label class="field-label">Category</label>
+
+        <select
+          class="form-select"
+          formControlName="category">
+
+          <option value="">
+            Select a category
+          </option>
+
+          <option
+            *ngFor="let cat of categories"
+            [value]="cat">
+
+            {{ cat }}
+
+          </option>
+
+        </select>
+
+        <label class="field-label">
+          Difficulty Level
+        </label>
+
+        <div class="difficulty-row">
+
+          <label
+            class="diff-btn"
+            [class.selected]="generateForm.get('difficulty')?.value === 'EASY'">
+
+            <input
+              type="radio"
+              formControlName="difficulty"
+              value="EASY"
+              hidden />
+
+            🟢 Easy
+
+          </label>
+
+          <label
+            class="diff-btn"
+            [class.selected]="generateForm.get('difficulty')?.value === 'MEDIUM'">
+
+            <input
+              type="radio"
+              formControlName="difficulty"
+              value="MEDIUM"
+              hidden />
+
+            🟡 Medium
+
+          </label>
+
+          <label
+            class="diff-btn"
+            [class.selected]="generateForm.get('difficulty')?.value === 'HARD'">
+
+            <input
+              type="radio"
+              formControlName="difficulty"
+              value="HARD"
+              hidden />
+
+            🔴 Hard
+
+          </label>
+
+        </div>
+
+        <label class="field-label">
+          Number of Questions
+        </label>
+
+        <div class="count-row">
+
+          <button
+            type="button"
+            class="count-btn"
+            (click)="decreaseCount()">
+
+            −
+
+          </button>
+
+          <input
+            type="number"
+            class="form-control count-input"
+            formControlName="count"
+            min="1"
+            max="20" />
+
+          <button
+            type="button"
+            class="count-btn"
+            (click)="increaseCount()">
+
+            +
+
+          </button>
+
+          <span class="count-hint">
+            max 20
+          </span>
+
+        </div>
+
+        <div
+          *ngIf="generateError"
+          class="alert alert-danger">
+
+          {{ generateError }}
+
+        </div>
+
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="generateForm.invalid || isGenerating">
+
+          <span *ngIf="!isGenerating">
+            🤖 Generate Questions
+          </span>
+
+          <span
+            *ngIf="isGenerating"
+            class="spinner-row">
+
+            <span class="spinner"></span>
+            Generating...
+
+          </span>
+
+        </button>
+
+      </form>
+
+    </div>
+
+    <!-- ======================================================
+         STATE: PREVIEW / SAVING
+    ======================================================= -->
+    <div *ngIf="state === 'preview' || state === 'saving'">
+
+      <div class="preview-header">
+
+        <div>
+
+          <h2
+            class="page-title"
+            style="text-align:left; margin-bottom:0.25rem;">
+
+            Review <span>Generated Questions</span>
+
+          </h2>
+
+          <p
+            class="page-subtitle"
+            style="margin-bottom:0;">
+
+            {{ previewQuestions.length }}
+            questions generated ·
+            {{ selectedCount }}
+            selected for saving
+
+          </p>
+
+        </div>
+
+        <div class="select-actions">
+
+          <button
+            class="btn-tiny"
+            (click)="selectAll()">
+
+            All
+
+          </button>
+
+          <button
+            class="btn-tiny outline"
+            (click)="deselectAll()">
+
+            None
+
+          </button>
+
+        </div>
+
+      </div>
+
+      <div class="questions-list">
+
+        <div
+          class="q-card"
+          *ngFor="let q of previewQuestions; let i = index"
+          [class.selected]="selectedIndices.has(i)"
+          [class.saving]="saveStatus[i] === 'saving'"
+          [class.saved]="saveStatus[i] === 'saved'"
+          [class.error]="saveStatus[i] === 'error'">
+
+          <div class="q-card-header">
+
+            <label class="checkbox-wrap">
+
+              <input
+                type="checkbox"
+                [checked]="selectedIndices.has(i)"
+                (change)="toggleSelect(i)"
+                [disabled]="state === 'saving'" />
+
+              <span class="checkmark"></span>
+
+            </label>
+
+            <span class="q-number">
+              Q{{ i + 1 }}
+            </span>
+
+            <span
+              class="status-badge saving-badge"
+              *ngIf="saveStatus[i] === 'saving'">
+
+              ⏳ Saving…
+
+            </span>
+
+            <span
+              class="status-badge saved-badge"
+              *ngIf="saveStatus[i] === 'saved'">
+
+              ✔ Saved
+
+            </span>
+
+            <span
+              class="status-badge error-badge"
+              *ngIf="saveStatus[i] === 'error'">
+
+              ✖ Failed
+
+            </span>
+
+          </div>
+
+          <p class="q-text">
+            {{ q.question }}
+          </p>
+
+          <div class="options-grid">
+
+            <div
+              class="opt"
+              *ngFor="let opt of [
+                {label:'A', val:q.optionA},
+                {label:'B', val:q.optionB},
+                {label:'C', val:q.optionC},
+                {label:'D', val:q.optionD}
+              ]"
+              [class.correct]="q.correctAnswer === opt.val">
+
+              <span class="opt-label">
+                {{ opt.label }}
+              </span>
+
+              <span class="opt-text">
+                {{ opt.val }}
+              </span>
+
+              <span
+                class="correct-tick"
+                *ngIf="q.correctAnswer === opt.val">
+
+                ✔
+
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="action-bar">
+
+        <button
+          class="btn-secondary"
+          (click)="state = 'form'"
+          [disabled]="state === 'saving'">
+
+          ← Regenerate
+
+        </button>
+
+        <button
+          class="btn-primary save-btn"
+          (click)="saveSelected()"
+          [disabled]="selectedCount === 0 || state === 'saving'">
+
+          <span *ngIf="state !== 'saving'">
+
+            💾 Save {{ selectedCount }}
+            Question{{ selectedCount !== 1 ? 's' : '' }}
+
+          </span>
+
+          <span
+            *ngIf="state === 'saving'"
+            class="spinner-row">
+
+            <span class="spinner"></span>
+            Saving…
+
+          </span>
+
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- ======================================================
+         STATE: DONE
+    ======================================================= -->
+    <div *ngIf="state === 'done'" class="done-card">
+
+      <div class="done-icon">🎉</div>
+
+      <h2 class="page-title">
+        Questions <span>Saved!</span>
+      </h2>
+
+      <div class="done-stats">
+
+        <div class="stat-pill green">
+          ✔ {{ savedCount }} saved successfully
+        </div>
+
+        <div
+          class="stat-pill red"
+          *ngIf="failedCount > 0">
+
+          ✖ {{ failedCount }} failed
+
+        </div>
+
+      </div>
+
+      <div class="questions-list" style="margin-top:1.25rem;">
+
+        <ng-container *ngFor="let q of previewQuestions; let i = index">
+
+          <div
+            *ngIf="selectedIndices.has(i)"
+            class="q-card mini"
+            [class.saved]="saveStatus[i] === 'saved'"
+            [class.error]="saveStatus[i] === 'error'">
+
+            <span
+              class="status-badge saved-badge"
+              *ngIf="saveStatus[i] === 'saved'">
+
+              ✔
+
+            </span>
+
+            <span
+              class="status-badge error-badge"
+              *ngIf="saveStatus[i] === 'error'">
+
+              ✖
+
+            </span>
+
+            <span class="q-text mini-text">
+              {{ q.question }}
+            </span>
+
+          </div>
+
+        </ng-container>
+
+      </div>
+
+      <div class="btn-row">
+
+        <button
+          class="btn-primary"
+          style="flex:1;"
+          (click)="generateMore()">
+
+          ✨ Generate More
+
+        </button>
+
+        <button
+          class="btn-secondary"
+          (click)="router.navigate(['/admin'])">
+
+          🏠 Dashboard
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>

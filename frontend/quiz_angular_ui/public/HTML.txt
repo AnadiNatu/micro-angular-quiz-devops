@@ -1,0 +1,4067 @@
+HEY CHAT CAN YOU MAKE PRESENTABLE CSS FOR THE BELOW GIVEN HTML CODE MY ANGULAR FRONTEND PRODUCT. PLEASE MAKE ALL THE COMPONENT WITH BACKGROUNG THEME OF BLACK TO GREYISH-WHITE TOP-DOWN GRADIENT WITH A SHADOW EFFECT . I WANT SEPARATED CSS FOR EACH OF THE COMPONENT
+
+ADMIN COMPONENTS
+
+1.)
+<p>admin-dasboard works!</p>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<div class="container-fluid">
+   <a class="navbar-brand" [routerLink]="['/']">Admin Panel</a>
+     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarNav" aria-controls="navbarNav"
+            aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a [routerLink]="['/create-quiz']" class="nav-link">Create Quiz</a>
+            </li>
+
+            <li class="nav-item">
+                <a [routerLink]="['/create-question']" class="nav-link">Create Question</a>
+            </li>
+
+            <li class="nav-link">
+                <a [routerLink]="['/creator/quizzes']" class="nav-link">My Quizzes</a>
+            </li>
+
+            <li class="nav-item">
+                <a [routerLink]="['results/all' , quizTitle]" class="nav-link">All Result</a>
+            </li>
+        </ul>
+    </div>
+</div>
+</nav>
+
+<!-- Navbar here as before -->
+
+<div class="container mt-4">
+  <div class="row">
+    <!-- Left Half: Quizzes Created -->
+    <div class="col-md-6">
+      <h4 class="text-primary">Your Created Quizzes</h4>
+      <app-creator-quiz-list></app-creator-quiz-list>
+    </div>
+
+    <!-- Right Half: Quizzes Taken -->
+    <div class="col-md-6">
+      <h4 class="text-success">Quizzes You've Taken</h4>
+      <ul class="list-group">
+        <li 
+          class="list-group-item d-flex justify-content-between align-items-center"
+          *ngFor="let title of takenQuizzes">
+          {{ title }}
+          <button class="btn btn-outline-primary btn-sm" (click)="viewParticipantResult(title)">
+            View Result
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<div class="container mt-4">
+  <h2>Welcome to the Admin Dashboard</h2>
+  <p>Use the navigation bar to manage quizzes, questions, and view results.</p>
+</div>
+
+2.)
+<p>all-user-result works!</p>
+<h2>All Result For Quiz : {{quizTitle}}</h2>
+
+<div *ngIf="loading">Loading...</div>
+<div *ngIf="error" class="error">{{error}}</div>
+
+<table *ngIf="!loading && result.length > 0" border="1" cellpadding="8" , cellspacing="0">
+    <thead>
+        <tr>
+            <th>User Id</th>
+            <th>Username</th>
+            <th>Total Question</th>
+            <th>Correct Answer</th>
+            <th>Incorrect Answer</th>
+            <th>Percentage</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let res of result">
+            <td>{{res.userId}}</td>
+            <td>{{res.userName}}</td>
+            <td>{{res.totalQuestion}}</td>
+            <td>{{res.correctAnswer}}</td>
+            <td>{{res.incorrectAnswer}}</td>
+            <td>{{res.percentage}}</td>
+        </tr>
+    </tbody>
+</table>
+
+<p *ngIf="!loading && result.length === 0">No Results Available For This Quiz</p>
+
+3.)
+<p>create-question works!</p>
+<div class="container mt-5">
+  <div class="card shadow">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0 text-center">Create New Question</h4>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="questionForm" (ngSubmit)="submitQuestion()">
+
+        <div class="mb-3">
+          <label class="form-label">Question Title</label>
+          <input type="text" class="form-control" formControlName="questionTitle" placeholder="Enter question">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Category</label>
+          <select class="form-select" formControlName="category">
+            <option value="">Select category</option>
+            <option value="Math">Math</option>
+            <option value="Science">Science</option>
+            <option value="History">History</option>
+            <option value="Programming">Programming</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Difficulty Level</label>
+          <select class="form-select" formControlName="difficultyLevel">
+            <option value="">Select difficulty</option>
+            <option value="EASY">Easy</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="HARD">Hard</option>
+          </select>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Option 1</label>
+            <input type="text" class="form-control" formControlName="option1">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Option 2</label>
+            <input type="text" class="form-control" formControlName="option2">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Option 3</label>
+            <input type="text" class="form-control" formControlName="option3">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Option 4</label>
+            <input type="text" class="form-control" formControlName="option4">
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Correct Answer</label>
+          <input type="text" class="form-control" formControlName="rightAnswer">
+        </div>
+
+        <button type="submit" class="btn btn-success w-100" [disabled]="questionForm.invalid">
+          Submit Question
+        </button>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+4.)
+<p>create-quiz works!</p>
+<div class="container mt-5">
+  <div class="card shadow">
+    <div class="card-header bg-success text-white text-center">
+      <h4>Create New Quiz</h4>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="quizForm" (ngSubmit)="createQuiz()">
+
+        <div class="mb-3">
+          <label class="form-label">Title</label>
+          <input type="text" class="form-control" formControlName="title" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" formControlName="description"></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Total Marks</label>
+          <input type="number" class="form-control" formControlName="totalMarks" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Number of Questions</label>
+          <input type="number" class="form-control" formControlName="numberOfQuestion" />
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100" [disabled]="quizForm.invalid">Create Quiz</button>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+5.)
+<p>creator-quiz-details works!</p>
+
+<div class="container mt-4">
+  <div class="alert alert-danger">{{errorMessage}}</div>
+
+  <div *ngIf="quizDetail">
+    <h3>Quiz : {{quizTitle}}</h3>
+    <p><strong>Creator : </strong>{{quizDetail.creatorName}}</p>
+    <p><strong>Roles : </strong>{{quizDetail.userRoles}}</p>
+
+    <h5 class="mt-3">Questions</h5>
+    <ul class="list-group">
+      <li *ngFor="let question of quizDetail.questionTitleList" class="list-group-item">
+        {{question}}
+      </li>
+    </ul>
+  </div>
+</div>
+
+6.)
+<p>creator-quiz-list works!</p>
+
+<div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+<ul class="list-group">
+  <li *ngFor="let quiz of quizzes" class="list-group-item d-flex justify-content-between align-items-center">
+    <div>
+      <h6 class="mb-0">{{ quiz.title }}</h6>
+      <small>{{ quiz.category }} | {{ quiz.difficultyLevel }}</small>
+    </div>
+    <button class="btn btn-sm btn-outline-primary" (click)="viewQuizDetails(quiz.title)">View Questions</button>
+  </li>
+</ul>
+
+<div *ngIf="quizzes.length === 0 && !errorMessage">
+  <p class="text-muted">No quizzes found.</p>
+</div>
+
+7.)
+<p>participant-quiz works!</p>
+<h2>Quiz: {{ quizTitle }}</h2>
+
+<form *ngIf="questions.length > 0 && !submitted" [formGroup]="responseForm" (ngSubmit)="submitQuiz()">
+  <div *ngFor="let q of questions" class="question-block">
+    <p><strong>{{ q.questionTitle }}</strong></p>
+    <div *ngFor="let opt of [q.option1, q.option2, q.option3, q.option4]">
+      <label>
+        <input type="radio" [value]="opt" [formControlName]="q.questionTitle" />
+        {{ opt }}
+      </label>
+    </div>
+    <hr />
+  </div>
+
+  <button type="submit">Submit Quiz</button>
+</form>
+
+<!-- Evaluation Result -->
+<div *ngIf="submitted && evaluations.length > 0">
+  <h3>Evaluation:</h3>
+  <ul>
+    <li *ngFor="let eval of evaluations">
+      <p><strong>Question:</strong> {{ eval.questionTitle }}</p>
+      <p><strong>Your Answer:</strong>
+        <span *ngIf="eval.participantAnswer; else noAnswer">{{ eval.participantAnswer }}</span>
+        <ng-template #noAnswer><em>No answer provided</em></ng-template>
+      </p>
+      <p><strong>Correct Answer:</strong> {{ eval.correctAnswer }}</p>
+      <hr />
+    </li>
+  </ul>
+
+  <!-- Button to go to Result -->
+  <button (click)="goToResult()">View Final Result</button>
+</div>
+
+8.)
+<p>quiz-result works!</p>
+
+<div class="container mt-4" *ngIf="isLoaded && result">
+  <div class="card">
+    <div class="card-header bg-info text-white">
+      <h4>Result for "{{ result.quizTitle }}"</h4>
+    </div>
+    <div class="card-body">
+      <p><strong>User:</strong> {{ result.userName }}</p>
+      <p><strong>Total Questions:</strong> {{ result.totalQuestion }}</p>
+      <p><strong>Correct:</strong> {{ result.correctAnswer }}</p>
+      <p><strong>Incorrect:</strong> {{ result.incorrectAnswer }}</p>
+      <p><strong>Score:</strong> {{ result.percentage }}%</p>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="hasError" class="alert alert-danger mt-4">
+  Error loading result. Please try again later.
+</div>
+
+9.)
+<p>view-created-quiz works!</p>
+<div class="container mx-auto p-4 max-w-3xl">
+    <div *ngIf = "errorMessage" class="text-red-600 font-semibold">
+        {{errorMessage}}
+    </div>
+
+    <div *ngIf = "createdQuiz">
+        <h2 class="text-2xl font-bold mb-2">Quiz : {{createdQuiz.title}}</h2>
+       <p><strong>Category:</strong> {{ createdQuiz.category }}</p>
+       <p><strong>Difficulty:</strong> {{ createdQuiz.difficultyLevel }}</p>
+       <p><strong>Created by:</strong> {{ createdQuiz.creatorName }}</p>
+
+       <hr class="my-4">
+
+       <h3 class="text-xl font-semibold mb-2">Questions</h3>
+       <div *ngFor="let question of createdQuiz.questionList , let i = index" class="mb-4 p-4 border rounded shadow-sm">
+        <p><strong>Q{{i + 1}} : </strong>{{question.questionTitle}}</p>
+        <ul class="list-disc pl-6">
+            <li> A . {{question.option1}}</li>
+            <li> B . {{question.option2}}</li>
+            <li> C . {{question.option3}}</li>
+            <li> D . {{question.option4}}</li>
+        </ul>
+        <p class="mt-2 text-green-700"><strong>Correct Answer:</strong> {{ question.rightAnswer }}</p>
+       </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+HEY CHAT CAN YOU MAKE PRESENTABLE CSS FOR THE BELOW GIVEN HTML CODE MY ANGULAR FRONTEND PRODUCT. PLEASE MAKE ALL THE COMPONENT WITH BACKGROUNG THEME OF BLACK TO GREYISH-WHITE TOP-DOWN GRADIENT WITH A SHADOW EFFECT . I WANT SEPARATED CSS FOR EACH OF THE COMPONENT
+
+AUTH COMPONENTS
+
+1.)
+<p>forgot-password works!</p>
+<div class="container mt-4">
+
+    <h2>Forgot Password</h2>
+    <form (ngSubmit) = "onSubmit()">
+        <div class="form-group">
+            <label> Email </label>
+            <input [(ngModel)]="email" name="email" required type="email" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Send Reset Password</button>
+    </form>
+    <p class="text-success mt-3" *ngIf="message">{{ message }}</p>
+    <p class="text-danger mt-3" *ngIf="error">{{ error }}</p>
+</div>
+
+2.)
+<p>home works!</p>
+
+<div class="container text-center mt-5">
+    <h1>Welcome To Quiz Application</h1>
+    <p>Please LOGIN or SIGNUP to continue</p>
+    <button routerLink="/login" class="btn btn-primary m-2">Login</button>
+    <button routerLink="/signup" class="btn btn-primary m-2">Sign Up</button>
+</div>
+
+3.)
+<p>login works!</p>
+<form (ngSubmit)="onSubmit()">
+  <input class="form-control" [(ngModel)]="loginData.username" name="username" placeholder="Email" required>
+  <input class="form-control" [(ngModel)]="loginData.password" name="password" type="password" placeholder="Password" required>
+  <button type="submit" class="btn btn-success mt-2">Login</button>
+</form>
+
+<div class="mt-3">
+  <a routerLink = "/forgot-password" class="btn btn-link p-0">Forgot Password</a>
+  <hr>
+  <a routerLink = "/reset-password" class="btn btn-link p-0">Reset Password</a>
+</div>
+
+4.)
+<p>reset-password works!</p>
+
+<div class="container mt-4">
+  <h2>Reset Password</h2>
+
+  <form (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label>Email</label>
+      <input [(ngModel)]="email" name="email" type="email" required class="form-control" />
+    </div>
+    <div class="form-group">
+      <label>Reset Token</label>
+      <input [(ngModel)]="token" name="token" required class="form-control" />
+    </div>
+    <div class="form-group">
+      <label>New Password</label>
+      <input [(ngModel)]="newPassword" name="newPassword" type="password" required class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success mt-3">Reset Password</button>
+  </form>
+
+  <p class="text-success mt-3" *ngIf="message">{{ message }}</p>
+  <p class="text-danger mt-3" *ngIf="error">{{ error }}</p>
+</div>
+
+5.)
+<p>signup works!</p>
+<form (ngSubmit)="onSubmit()">
+  <input class="form-control" [(ngModel)]="signUpData.name" name="name" placeholder="Full Name" required>
+  <input class="form-control" [(ngModel)]="signUpData.username" name="username" placeholder="Email" required>
+  <input class="form-control" [(ngModel)]="signUpData.password" name="password" placeholder="Password" type="password" required>
+  <input class="form-control" [(ngModel)]="signUpData.age" name="age" placeholder="Age" type="number" required>
+  <input class="form-control" [(ngModel)]="signUpData.roleNumber" name="roleNumber" placeholder="Role Number" type="number" required>
+  <button type="submit" class="btn btn-primary mt-2">Sign Up</button>
+</form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Hey chat there are errors coming in my component and the ROUTING IS NOT CORRECT can you fix these problems for me . And I want you write the html with bootstrap using proper classes to make the html for them . And make proper EDIT IN THE .TS AND HTML FILES of the component  for routing . WHEN CLICK ON ANY OF THE LINKS ON THE DASHBOARD I'M REDIRECTED TO THE LOGIN PAGE . And can you add routing from the "ADMIN-DASHBOARD" TO THIS COMPONET AND BACK TO ADMIN-DASHBOARD
+
+"login.component.ts"
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css'
+})
+export class LoginComponent {
+
+  loginData : LoginAuthRequest = {username: '' , password: ''};
+
+  constructor(private auth :AuthService , private router : Router , private userStorage : UserStorageService){}
+
+  onSubmit() : void{
+    this.auth.login(this.loginData).subscribe({
+      next: () => {
+        const user = this.userStorage.getUser();
+        console.log('User after Login: ' , user)
+        const role = this.userStorage.getUserRole(); 
+        console.log('User Role: ' , role);        
+
+         if (role === UserRoles.ADMIN) {
+          this.router.navigate(['/admin']);
+        } else if (role === UserRoles.PARTICIPANT) {
+          this.router.navigate(['/participant']);
+        }else if(role === UserRoles.CREATOR){
+          this.router.navigate(['/creator']);
+        } 
+        else {
+          alert('Unknown role detected. Redirect failed.');
+        }
+      },
+      error: err => alert('Login Failed: ' + err.error)
+    });
+  }
+}
+
+"login.component.html"
+<p>login works!</p>
+<form (ngSubmit)="onSubmit()">
+  <input class="form-control" [(ngModel)]="loginData.username" name="username" placeholder="Email" required>
+  <input class="form-control" [(ngModel)]="loginData.password" name="password" type="password" placeholder="Password" required>
+  <button type="submit" class="btn btn-success mt-2">Login</button>
+</form>
+
+<div class="mt-3">
+  <a routerLink = "/forgot-password" class="btn btn-link p-0">Forgot Password</a>
+  <hr>
+  <a routerLink = "/reset-password" class="btn btn-link p-0">Reset Password</a>
+</div>
+
+Hey chat then can you properly loadComponent properly for standalone . And fix the routing files for me  
+
+app.routes.ts
+export const routes: Routes = [
+    {path : '' , component : HomeComponent},
+    {path : 'home' , redirectTo: '' , pathMatch: 'full'},
+    {path : 'login' , component : LoginComponent},
+    {path : 'signup' , component : SignupComponent},
+    {path : 'forgot-password' , component : ForgotPasswordComponent},
+    {path : 'reset-password' , component : ResetPasswordComponent},
+
+    // Lazy loading admin routes
+    {path : 'admin' , loadChildren : () => import('./admin/admin.routes').then((m) => m.adminRoutes)},
+
+        { path: '**', redirectTo: '' },
+    
+];
+
+admin.routes.ts
+export const adminRoutes : Routes = [
+    {path : '' , loadComponent : () => import('./components/admin-dasboard/admin-dasboard.component').then(m => m.AdminDasboardComponent)},
+    {path : 'create-quiz' , loadComponent : () => import('./components/create-quiz/create-quiz.component').then(m => m.CreateQuizComponent)},
+    {path : 'create-question' , loadComponent : () => import('./components/create-question/create-question.component').then(m => m.CreateQuestionComponent)}, 
+    {path : 'quiz/view/:quizTitle' , loadComponent : ()=> import('./components/view-created-quiz/view-created-quiz.component').then(m => m.ViewCreatedQuizComponent)},
+    {path : 'creator/quizzes' , loadComponent : () => import('./components/creator-quiz-list/creator-quiz-list.component').then(m => m.CreatorQuizListComponent)},
+    {path : 'creator/quiz-detail/:quizTitle' , loadComponent : () => import('./components/creator-quiz-details/creator-quiz-details.component').then(m => m.CreatorQuizDetailsComponent)},
+    {path : 'participant/quiz/:quizTitle' , loadComponent : () => import('./components/participant-quiz/participant-quiz.component').then(m => m.ParticipantQuizComponent)},
+    {path : 'participant/result/:quizTitle' , loadComponent : () => import('./components/quiz-result/quiz-result.component').then(m => m.QuizResultComponent)},
+    {path : 'results/all/:quizTitle' , loadComponent : () => import('./components/all-user-result/all-user-result.component').then(m => m.AllUserResultComponent)}
+]
+
+
+
+
+
+
+
+
+HEY CHAT I WANT TO ADD CSS TO THE COMPONENTS THAT WE HAVE MADE TILL NOW . SO I HAVE SOME POINTERS ON HOW I WOULD LIKE TO HAVE MY CSS THEMED AND HOW MY DATA NEEDS TO BE DISPLAYED . SO WHAT I WANT FROM YOU IS THAT I WILL GIVE POINTERS ON HOW DO I WANT CSS FOR FRONTEND OF THIS PROJECT . I WILL ALSO PROVIDE YOU WITH HTML FILES OF THE COMPONENTS ONE BY ONE SO THAT YOU APPLY THE CSS TO THEM . AND MAIN POINT TO REMEMBER THE ROUTING AND DATA-BINDING OF THE COMPONENTS ARE CORRECT AND WORKING . SO INSTEAD I WOULD YOU TO MAKE COMPONENTS WITH STATIC ROUTING AND DUMMY INPUTS , SO THAT I CAN HOW THE CHANGES ARE LOOKING AND WHAT ELSE NEED TO BE ADDED   
+
+CSS Pointer
+1. Establish a Cohesive Color Palette (BLUE & GREY & GREENISH PALETTE)
+2. Implement Smooth Micro-Animations
+3. Design Engaging Question Transitions
+4. Interactive Button & Form Styling
+5. Card-Based Design System
+6. Question Transition Animations
+7. Quiz-Specific Color Psychology & Branding
+8. Progress Indicator & Timer Styling
+9. Answer Option Interactive Design
+10. Quiz Dashboard & Category Layout
+11. Score Display & Results Animation
+12. Question Type Specific Styling
+13. Quiz Completion & Restart Flow
+14. Adjust the background-images , so that they are responsive , formatted and crisp
+
+
+
+
+
+
+
+HEY CHAT NOW WHAT I WANT FROM YOU IS THESE THINGS
+1.) WANT YOU TO THEME THE TS AND HTML FILES OF THE COMPONENT , ACCORDING TO THE THEME AND POINTERS DECRIBED ABOVE 
+2.) I WILL BE GIVING YOU 5 COMPONENTS AT ONCE AS THEY ARE CONNECTED TO EACH OTHER , ONE BY ONE THEME THEME THEM
+3.) THE 5 COMPONENTS THAT I WILL BE GIVING YOU WILL BE AS FOLLOWS "LOGIN" "SIGNUP" "HOME" "RESET-PASSWORD" "FORGOT-PASSWORD"
+4.) I WILL ALSO PROVIDE YOU WITH THE ROUTING FILE , SERVICE FILES AND RELETED MODELS ALSO SO TAKE CARE ABOUT THE ROUTING AND NAMING CONVENTIONS WHEN DATA DINBING
+5.) HERE ARE THE SERVICES
+"auth.service.ts"
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthService {
+  private BASE_URL = 'http://localhost:8080/api/auth';
+
+  constructor(private http : HttpClient , private storage : UserStorageService) { }
+
+  signup(data : SignUpRequest) : Observable<UsersDTO> {
+    return this.http.post<UsersDTO>(`${this.BASE_URL}/signup` , data);
+  }
+
+  login(data : LoginAuthRequest) : Observable<LoginAuthResponse>{
+    return  this.http.post<LoginAuthResponse>(`${this.BASE_URL}/login` , data).pipe(
+      tap((response : LoginAuthResponse) => {
+        this.storage.saveToken(response.jwt);
+        this.storage.saveUser({
+          id: response.id,
+          name: '',
+          username: data.username,
+          password: '',
+          age: 0,
+          userRoles: response.userRoles
+        });
+      })
+    );
+  }
+
+  forgotPassword(data : ForgotPasswordRequest) : Observable<string>{
+    return this.http.post<string>(`${this.BASE_URL}/forgot-password` , data);
+  }
+
+  resetPassword(data : ResetPasswordRequest) : Observable<any> {
+    return this.http.post(`${this.BASE_URL}/reset-password` , data);   
+  }
+
+  uploadProfilePhoto(username : string , file : File) : Observable<string>{
+    const formData = new FormData();
+    formData.append('file' , file);
+    return this.http.post(`${this.BASE_URL}/username/upload-profile-photo` , formData , {
+      responseType: 'text'
+    });
+  }
+
+  getProfilePhoto(username : string) : Observable<Blob>{
+    return this.http.get(`${this.BASE_URL}/${username}/profile-photo` , {
+      responseType : 'blob'
+    });
+  }
+
+  uploadProfilePicture(userId: number, file: File): Observable<string> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  return this.http.post(`${this.BASE_URL}/upload-profile-picture/${userId}`, formData, {
+    responseType: 'text'
+  });
+}
+}
+
+"user-storage.service.ts"
+const TOKEN_KEY = 'token';
+const USER_KEY = 'user';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class UserStorageService {
+
+  constructor() { }
+
+  private user : {username : string} | null = null;
+
+  saveToken(token : string) : void {
+    localStorage.setItem(TOKEN_KEY , token);
+  }
+
+  getToken() : string | null{
+    return localStorage.getItem(TOKEN_KEY);
+  }
+
+  saveUser(user : UsersDTO) : void {
+    localStorage.setItem(USER_KEY , JSON.stringify(user));
+  }
+
+  getUser() : UsersDTO | null {
+    const user = localStorage.getItem(USER_KEY);
+    return user ? JSON.parse(user) : null;
+  }
+
+  setUser(user : {username : string}){
+    return this.user;
+  }
+
+    getUserRole(): UserRoles | null{
+      const user = this.getUser();
+      console.log("User : " +user);
+      if(user && typeof user.userRoles === 'string'){
+        return UserRoles[user.userRoles as keyof typeof UserRoles] ?? null;
+      }
+      return null;
+    }
+
+  isAdminLoggedIn() : boolean{
+    return this.getToken() !== null && this.getUserRole() === UserRoles.ADMIN;
+  }
+
+  isCreatorLoggedId() : boolean{
+    return this.getToken() !== null && this.getUserRole() === UserRoles.CREATOR;
+  }
+  
+  isParticipantLoggedId() : boolean{
+    return this.getToken() !== null && this.getUserRole() === UserRoles.PARTICIPANT;
+  }
+
+  getUserId() : number | null {
+    const user = this.getUser();
+    return user ? user.id : null;
+  }
+
+  getUserName() : string | null {
+    const user = this.getUser();
+    return user ? user.username : null
+  }
+
+  logout() : void {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+  }
+}
+
+6.) HERE ARE THE MODELS
+export enum UserRoles {
+    ADMIN = 'ADMIN', 
+    PARTICIPANT = 'PARTICIPANT', 
+    CREATOR = 'CREATOR'
+}
+
+export interface SignUpRequest {
+    name : string;
+    username: string;
+    password: string;
+    age: number;
+    roleNumber: number;
+}
+
+export interface UsersDTO {
+    id: number;
+    name: string;
+    username: string;
+    password: string;
+    age: number;
+    userRoles: UserRoles;
+}
+
+export interface LoginAuthRequest {
+  username: string;
+  password: string;
+}
+
+export interface LoginAuthResponse {
+  id: number;
+  jwt: string;
+  userRoles: UserRoles;
+}
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  email: string;
+  token: string;
+  newPassword: string;
+}
+
+7.) I WILL GIVE YOU THE COMPONENTS IN THIS FORMAT "<COPMPONENT-NAME>" (INSTRUCTIONS REGARDING THAT FILE OF THE COMPOENENT) . SO KEEP IN MIND THE INSTRUCTIONS ALSO .
+8.) IF YOU ARE READY THEN WRITE ALL THE INSTRUCTIONS THAT GAVE YOU AND WRITE DOWN THE INSTRUCTIONS AND THE CODE RELATED TO THE COMPONENTS I WANT YOU TO MAKE. 
+
+
+HERE ARE THE COMPONENT FILES
+
+"forgot-password.component.ts" ("TAKE CARE OF THE NAMING CONVINTION OF THE FUNCTIONS AND DATA VARIABLES . THEME IT ACCORDINGLY AS PER THE CSS POINTER . AND ADD SOME DEBUGGER LOGIC SO ITS EASIER TO SEE ERROR AND DATA")
+@Component({
+  selector: 'app-forgot-password',
+  standalone: true,
+  imports: [CommonModule , FormsModule],
+  templateUrl: './forgot-password.component.html',
+  styleUrl: './forgot-password.component.css'
+})
+export class ForgotPasswordComponent {
+
+  email : string = '';
+  message : string = '';
+  error : string = '';
+
+  constructor(private auth : AuthService){}
+
+  onSubmit(){
+    const request : ForgotPasswordRequest = { email : this.email};
+
+    this.auth.forgotPassword(request).subscribe({
+      next: (token) =>{
+        this.message = 'Reset token to your email (or token : ' +token+ ')';
+        this.error = '';
+      },
+      error: (err) => {
+        this.error = err.error || 'Failed to send reset token';
+        this.message = '';
+      } 
+    });
+  }
+
+}
+
+"forgot-password.component.html"
+<p>forgot-password works!</p>
+<div class="container mt-4">
+
+    <h2>Forgot Password</h2>
+    <form (ngSubmit) = "onSubmit()">
+        <div class="form-group">
+            <label> Email </label>
+            <input [(ngModel)]="email" name="email" required type="email" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Send Reset Password</button>
+    </form>
+    <p class="text-success mt-3" *ngIf="message">{{ message }}</p>
+    <p class="text-danger mt-3" *ngIf="error">{{ error }}</p>
+</div>
+
+--> RELATED MODELS AND SERVICE METHOD
+  forgotPassword(data : ForgotPasswordRequest) : Observable<string>{
+    return this.http.post<string>(`${this.BASE_URL}/forgot-password` , data);
+  }
+
+  export interface ForgotPasswordRequest {
+  email: string;
+}
+
+HEY CHAT IM TRYING TO IMPROVE THE THEME MY FRONTEND QUIZ APPLICATION WHAT I WANT FROM YOU IS THESE THINGS
+1.) WANT YOU TO THEME THE TS AND HTML FILES OF THE COMPONENT , ACCORDING TO THE THEME AND POINTERS DECRIBED ABOVE 
+2.) I WILL BE GIVING YOU 5 COMPONENTS AT ONCE AS THEY ARE CONNECTED TO EACH OTHER , ONE BY ONE THEME THEME THEM
+3.) THESE ARE "ADMIN" COMPONENTS THAT I WILL BE GIVING YOU WILL BE AS FOLLOWS "ADMIN-DASHBOARD" "ALL-USER-RESULT" "CREATE-QUESTION" "CREATE-QUIZ" "CREATOR-QUIZ-DETAILS" "CREATOR-QUIZ-LIST" "PARTICIPANT-QUIZ" "QUIZ-RESULT" "VIEW-CREATED-QUIZ"
+4.) I WILL ALSO PROVIDE YOU WITH THE ROUTING FILE , SERVICE FILES AND RELETED MODELS ALSO SO TAKE CARE ABOUT THE ROUTING AND NAMING CONVENTIONS WHEN DATA DINBING
+--> ROUTING
+export const adminRoutes : Routes = [
+    {path : '' , loadComponent : () => import('./components/admin-dasboard/admin-dasboard.component').then(m => m.AdminDasboardComponent)},
+    {path : 'create-quiz' , loadComponent : () => import('./components/create-quiz/create-quiz.component').then(m => m.CreateQuizComponent)},
+    {path : 'create-question' , loadComponent : () => import('./components/create-question/create-question.component').then(m => m.CreateQuestionComponent)}, 
+    {path : 'quiz/view/:quizTitle' , loadComponent : ()=> import('./components/view-created-quiz/view-created-quiz.component').then(m => m.ViewCreatedQuizComponent)},
+    {path : 'creator/quizzes' , loadComponent : () => import('./components/creator-quiz-list/creator-quiz-list.component').then(m => m.CreatorQuizListComponent)},
+    {path : 'creator/quiz-detail/:quizTitle' , loadComponent : () => import('./components/creator-quiz-details/creator-quiz-details.component').then(m => m.CreatorQuizDetailsComponent)},
+    {path : 'participant/quiz/:quizTitle' , loadComponent : () => import('./components/participant-quiz/participant-quiz.component').then(m => m.ParticipantQuizComponent)},
+    {path : 'participant/result/:quizTitle' , loadComponent : () => import('./components/quiz-result/quiz-result.component').then(m => m.QuizResultComponent)},
+    {path : 'results/all/:quizTitle' , loadComponent : () => import('./components/all-user-result/all-user-result.component').then(m => m.AllUserResultComponent)}
+]
+
+5.) HERE ARE THE SERVICES
+"admin.service.ts"
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AdminServiceService {
+
+  private BASE_URL = 'http://localhost:8080/auth/admin/';
+  
+  constructor(private http : HttpClient) { }
+
+  addQuestion(dto : CreateQuestionDTO) : Observable<QuestionDTO>{
+    return this.http.post<QuestionDTO>(`${this.BASE_URL}add` , dto);
+  }
+
+  createQuiz(dto : CreateQuizDTO) : Observable<QuizDTO>{
+    return this.http.post<QuizDTO>(`${this.BASE_URL}created` , dto);
+  }
+
+  getCreatedQuiz(quizTitle : string) : Observable<CreatedQuizDTO> {
+    return this.http.get<CreatedQuizDTO>(`${this.BASE_URL}created/${quizTitle}`);
+  }
+
+  getAllQuestionsOfQuiz(quizTitle : string) : Observable<CreatorUserDTO>{
+    return this.http.get<CreatorUserDTO>(`${this.BASE_URL}/questions/${quizTitle}`);
+  }
+
+  getAllQuizzesByCreator(): Observable<QuizDTO[]>{
+    return this.http.get<QuizDTO[]>(`${this.BASE_URL}creator/all`);
+  }
+
+  getQuizForParticipant(quizTitle : string) : Observable<QuestionWrapper[]>{
+    return this.http.get<QuestionWrapper[]>(`${this.BASE_URL}participant/${quizTitle}`);
+  } 
+
+  submitQuizResponse(response : QuizTakenReponse) : Observable<ResponseEvaluationDTO[]>{
+    return this.http.post<ResponseEvaluationDTO[]>(`${this.BASE_URL}responses/submit` , response);
+  }
+
+  getUserResult(quizTitle : string) : Observable<ResultDTO>{
+    return this.http.get<ResultDTO>(`${this.BASE_URL}results/user/${quizTitle}`);
+  }
+
+  getAllUserResults(quizTitle : string) : Observable<ResultDTO[]>{
+    return this.http.get<ResultDTO[]>(`${this.BASE_URL}results/all/${quizTitle}`);
+  }
+
+  getAllTakenQuizTitles() : Observable<any> {
+    return this.http.get(`${this.BASE_URL}getTakenQuiz`);
+  }
+  
+}
+
+"user-storage.service.ts"
+const TOKEN_KEY = 'token';
+const USER_KEY = 'user';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class UserStorageService {
+
+  constructor() { }
+
+  private user : {username : string} | null = null;
+
+  saveToken(token : string) : void {
+    localStorage.setItem(TOKEN_KEY , token);
+  }
+
+  getToken() : string | null{
+    return localStorage.getItem(TOKEN_KEY);
+  }
+
+  saveUser(user : UsersDTO) : void {
+    localStorage.setItem(USER_KEY , JSON.stringify(user));
+  }
+
+  getUser() : UsersDTO | null {
+    const user = localStorage.getItem(USER_KEY);
+    return user ? JSON.parse(user) : null;
+  }
+
+  setUser(user : {username : string}){
+    return this.user;
+  }
+
+    getUserRole(): UserRoles | null{
+      const user = this.getUser();
+      console.log("User : " +user);
+      if(user && typeof user.userRoles === 'string'){
+        return UserRoles[user.userRoles as keyof typeof UserRoles] ?? null;
+      }
+      return null;
+    }
+
+  isAdminLoggedIn() : boolean{
+    return this.getToken() !== null && this.getUserRole() === UserRoles.ADMIN;
+  }
+
+  isCreatorLoggedId() : boolean{
+    return this.getToken() !== null && this.getUserRole() === UserRoles.CREATOR;
+  }
+  
+  isParticipantLoggedId() : boolean{
+    return this.getToken() !== null && this.getUserRole() === UserRoles.PARTICIPANT;
+  }
+
+  getUserId() : number | null {
+    const user = this.getUser();
+    return user ? user.id : null;
+  }
+
+  getUserName() : string | null {
+    const user = this.getUser();
+    return user ? user.username : null
+  }
+
+  logout() : void {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+  }
+}
+
+6.) HERE ARE THE MODELS
+export enum UserRoles {
+    ADMIN = 'ADMIN', 
+    PARTICIPANT = 'PARTICIPANT', 
+    CREATOR = 'CREATOR'
+}
+
+export interface CreatedQuizDTO{
+    title : string;
+    category : string;
+    difficultyLevel : string;
+    creatorName : string;
+    questionList : QuestionDTO[];
+}
+
+export interface CreateQuestionDTO{
+    category : string;
+    difficultyLevel : string;
+    rightAnswer : string;
+    questionTitle : string;
+    option1 : string;
+    option2 : string;
+    option3 : string;
+    option4 : string;
+}
+
+export interface CreateQuizDTO{
+    quizTitle : string;
+    category : string;
+    difficultyLevel : string;
+    noOfQuestion : number;
+}
+
+export interface CreatorUserDTO{
+    creatorName : string;
+    userRoles : UserRoles;
+    questionTitleList : string[];
+}
+
+export class ParticipantUserDTO{
+    participantName : string;
+    userRoles : UserRoles;
+    quizTitleList : string[];
+}
+
+export interface QuestionDTO{
+    id: number;
+    category: string;
+    difficultyLevel: string;
+    rightAnswer: string;
+    questionTitle: string;
+    option1: string;
+    option2: string;
+    option3: string;
+    option4: string;
+    quizId: number[];
+}
+
+export interface QuestionWrapper{
+    questionTitle : string;
+    option1 : string;
+    option2 : string;
+    option3 : string;
+    option4 : string;
+}
+
+export interface QuizDTO{
+    title : string;
+    category : string;
+    difficultyLevel : string;
+    creatorUserId : number;
+    creatorUserName : number;
+    questionQuizIds : number[];
+    participantUserName : string[];
+}
+
+export interface QuizTakenReponse {
+    quizTitle : string;
+    userName : string;
+    responseList : ResponseDTO[];
+}
+
+export class ResponseDTO{
+    questionTitle : string;
+    selectedAnswer : string | null;
+}
+
+export class ResponseEvaluationDTO{
+    questionTitle : string;
+    correctAnswer : string;
+    participantAnswer : string;
+}
+
+export class ResultDTO{
+    quizId : number;
+    quizTitle : string;
+    userId : number;
+    userName : string;
+    totalQuestion : number;
+    correctAnswer : number;
+    incorrectAnswer : number;
+    percentage : number;
+}
+
+7.) THE FIRST COMPONENT THAT I WILL GIVE YOU WILL BE "ADMIN-DASHBOARD" THAT WILL THE HOME-PAGE FOR THE USER WITH THE ROLE "ADMIN" . AND IT WILL WE THE BASE FOR ALL THE ROUTING RELATED TO THE OTHER COMPONENT NEED TO BE COMING BACK TO , SO EDIT THE ROUTE THE COMPONENTS AS SUCH
+8.) I WILL GIVE YOU THE COMPONENTS IN THIS FORMAT "<COPMPONENT-NAME>" (INSTRUCTIONS REGARDING THAT FILE OF THE COMPOENENT) . SO KEEP IN MIND THE INSTRUCTIONS ALSO .
+9.) IF YOU ARE READY THEN WRITE ALL THE INSTRUCTIONS THAT GAVE YOU AND WRITE DOWN THE INSTRUCTIONS AND THE CODE RELATED TO THE COMPONENTS I WANT YOU TO MAKE. 
+10.) I ALSO HAVE MY GLOBAL CSS FOR THAT I'M USING FOR THE THEME OF MY APPLICATION . WHICH I WILL GIVE YOU IN THE NEXT PROMPT 
+12.) I WANT YOUR HELP IN MAKING , CORRECTING , EDITING & SETTING THE PROPER THEME OF THE COMPONENT THAT I WILL BE GIVING YOU WITH SOME INSTRUCTIONS
+
+--->
+
+
+
+HERE IS THE FIRST COMPONENT "ADMIN-DASHBOARD" , SO CALLED HOME-PAGE COMPONENT . THIS ADMIN-DASBOARD NEEDS TO HAVE A RESPONSIVE DASHBOARD , WITH PROPER ROUTING TO OTHER COMPONENTS . AS YOU WILL SEE IN THE TS AND HTML FILE FOR THE "ADMIN-DASHBOARD" I HAVE SOME OTHER COMPONENTS THAT ARE SHOWN ON THE SAME DASHBOARD . SO NOW WILL GIVE YOU THE RELATED SERVICES AND MODELS ON THE "ADMIN-DASBOARD" AND OTHER COMPONENTS THAT ARE USED IN THE "ADMIN-DASHBOARD" .SO I WANT YOU TO THEME THE ADMIN-DASHBOARD WITH GREAT CARE . I ALSO NEED TO ADD A PROFILE CARD FOR THE USER TO ADD A PHOTO AND SEE PERSOL DETAILS OF THE USER THAT HAS LOGGED IN AND ADD THIS FUNCTIONALITY TO ADD THE USERS PROFILE PHOTO IN THE USER'S PERSONAL INFOMATION CARD . PLEASE ADD ALL THE NECESSARY ROUTING THEME BUTTON IN THE NAVBAR OF THE ADMIN-DASHBOARD
+
+// HERE IS THE FUNCTINALITY  
+// @Injectable({
+//   providedIn: 'root'
+// })
+// export class AuthService {
+//   private BASE_URL = 'http://localhost:8080/api/auth';
+
+//   constructor(private http : HttpClient , private storage : UserStorageService) { }
+
+//     uploadProfilePhoto(username : string , file : File) : Observable<string>{
+//     const formData = new FormData();
+//     formData.append('file' , file);
+//     return this.http.post(`${this.BASE_URL}/username/upload-profile-photo` , formData , {
+//       responseType: 'text'
+//     });
+//   }
+// }
+
+---> admin-dashboard.component.ts
+
+@Component({
+  selector: 'app-admin-dasboard',
+  standalone: true,
+  imports: [RouterLink , CommonModule , CreatorQuizListComponent , RouterOutlet],
+  templateUrl: './admin-dasboard.component.html',
+  styleUrl: './admin-dasboard.component.css'
+})
+export class AdminDasboardComponent implements OnInit {
+
+  takenQuizzes: string[] = [];
+  quizTitle: string = 'sample-quiz'; // temporary default
+
+  constructor(
+    private adminService: AdminServiceService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.adminService.getAllTakenQuizTitles().subscribe({
+      next: res => {
+        this.takenQuizzes = res;
+        console.log('✅ Fetched taken quizzes:', res);
+      },
+      error: err => console.error('❌ Failed to fetch taken quizzes', err)
+    });
+  }
+
+  viewParticipantResult(title: string) {
+    this.router.navigate(['/admin/participant/result', title]);
+  }
+
+    viewCreatedQuiz(title: string) {
+    this.router.navigate(['/admin/quiz/view', title]);
+  }
+
+    viewAllResultsForQuiz(title: string) {
+    this.router.navigate(['/admin/results/all', title]);
+  }  
+}
+
+---> admin-dashboard.component.html
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/">Admin Panel</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#adminNavbar" aria-controls="adminNavbar"
+            aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="adminNavbar">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        <li class="nav-item">
+          <a routerLink="/admin/create-quiz" class="nav-link">Create Quiz</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/create-question" class="nav-link">Create Question</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/creator/quizzes" class="nav-link">My Quizzes</a>
+        </li>
+        <li class="nav-item" *ngIf="quizTitle">
+          <a [routerLink]="['/admin/results/all', quizTitle]" class="nav-link">All Results</a>
+        </li>
+        <li class="nav-item" *ngIf="quizTitle">
+          <a [routerLink]="['/admin/participant/quiz', quizTitle]" class="nav-link">Take Quiz as Participant</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Welcome Section -->
+<div class="container mt-4 text-center">
+  <h2 class="text-primary">Welcome to the Admin Dashboard</h2>
+  <p class="text-muted">Use the navbar to manage quizzes, add questions, and view results.</p>
+</div>
+
+<!-- Dashboard Layout -->
+<div class="container mt-4">
+  <div class="row">
+
+    <!-- Created Quizzes -->
+    <div class="col-md-6 mb-4">
+      <h4 class="text-success">Your Created Quizzes</h4>
+      <app-creator-quiz-list (viewQuiz)="viewCreatedQuiz($event)"></app-creator-quiz-list>
+    </div>
+
+    <!-- Taken Quizzes -->
+    <div class="col-md-6 mb-4">
+      <h4 class="text-info">Quizzes You Have Taken</h4>
+      <ul class="list-group">
+        <li class="list-group-item d-flex justify-content-between align-items-center"
+            *ngFor="let title of takenQuizzes">
+          {{ title }}
+          <button class="btn btn-sm btn-outline-primary"
+                  (click)="viewParticipantResult(title)">
+            View Result
+          </button>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+<router-outlet></router-outlet>
+
+
+HERE IS THE NEXT COMPONENT . GIVING ROUTING FILE AS WELL SO THAT YOU CAN ROUTE IT TO & FROM THE "admin-dashboard" AND ALSO SHOULD BE ACCESSABLE WHEN THE USER CLICK ON THE LIST OF QUIZ SHOWN ON THE ADMIN-DASHBOARD . SO THE SITUATION IS AS SUCH AFTER LOGIN WHEN THE USER IS ON THE DASHBOARD HE CAN SEE THE SECTIONS WITH THE QUIZ THAT THE USER HAS CREATED , SHOWN AS A LIST OF EXAPANDABLE CARDS . WHEN THE CARD WITH THE QUIZ TITLE IS HOVERED OVER IT EXPANDS AND SHOWS ALL THE DETAILS OF QUIZ COURTESY OF THE "CREATOR-QUIZ-DETAILS" COMPONENT(WHICH I WILL GIVE YOU IN NEXT PROMPT).
+AND IN THAT CARD THERE MUST BE A BUTTON THAT TIGGERS THE "ALL-USER-RESULT" COMPONENT AND THAT SHOWS THE RESULT OF ALL THE USERS THAT HAVE TAKEN THE TEST . 
+
+SO TELL ME WHAT ALL EDITS I NEED TO MAKE IN THE "ADMIN-DASHBOARD" "CREATOR-QUIZ-LIST" "ALL-USER-RESULT" COMPONENT . I HAVE ALREADY GIVEN YOU THE CODE(TS & HTML) ALL THREE COMPONENTS AND FULLY MADE FILES OF THE COMPONENTS AND CSS . AND HERE IS THE "CREATOR-QUIZ-DETAILS" COMPONENT FILE AS WELL AND AFTER YOU ARE DONE WITH THE THREE COMPONENTS MAKE NESECCARY EDITS TO THE "CREATOR-QUIZ-DETAILS"
+ 
+ --> "creator-quiz-details.component.ts"
+  @Component({
+  selector: 'app-create-question',
+  standalone: true,
+  imports: [ReactiveFormsModule , FormsModule , CommonModule],
+  templateUrl: './create-question.component.html',
+  styleUrl: './create-question.component.css'
+})
+export class CreateQuestionComponent {
+
+    questionForm: FormGroup;
+
+  constructor(
+    private fb: FormBuilder,
+    private adminService: AdminServiceService,
+    private router: Router
+  ) {
+    this.questionForm = this.fb.group({
+      questionTitle: ['', Validators.required],
+      category: ['', Validators.required],
+      difficultyLevel: ['', Validators.required],
+      option1: ['', Validators.required],
+      option2: ['', Validators.required],
+      option3: ['', Validators.required],
+      option4: ['', Validators.required],
+      rightAnswer: ['', Validators.required]
+    });
+  }
+
+  submitQuestion() {
+    if (this.questionForm.invalid) return;
+
+    const dto: CreateQuestionDTO = this.questionForm.value;
+
+    this.adminService.addQuestion(dto).subscribe({
+      next: () => {
+        alert('✅ Question added successfully!');
+        this.questionForm.reset();
+        this.router.navigate(['/admin']); // go back to dashboard
+      },
+      error: err => alert('❌ Error adding question: ' + err?.error?.message || 'Server Error')
+    });
+  }
+}
+
+ --> "creator-quiz-details.component.html" 
+ <div class="container mt-4">
+  <div class="alert alert-danger">{{errorMessage}}</div>
+
+  <div *ngIf="quizDetail">
+    <h3>Quiz : {{quizTitle}}</h3>
+    <p><strong>Creator : </strong>{{quizDetail.creatorName}}</p>
+    <p><strong>Roles : </strong>{{quizDetail.userRoles}}</p>
+
+    <h5 class="mt-3">Questions</h5>
+    <ul class="list-group">
+      <li *ngFor="let question of quizDetail.questionTitleList" class="list-group-item">
+        {{question}}
+      </li>
+    </ul>
+  </div>
+</div>
+
+--> ROUTING
+export const adminRoutes : Routes = [
+    {path : '' , loadComponent : () => import('./components/admin-dasboard/admin-dasboard.component').then(m => m.AdminDasboardComponent)},
+    {path : 'create-quiz' , loadComponent : () => import('./components/create-quiz/create-quiz.component').then(m => m.CreateQuizComponent)},
+    {path : 'create-question' , loadComponent : () => import('./components/create-question/create-question.component').then(m => m.CreateQuestionComponent)}, 
+    {path : 'quiz/view/:quizTitle' , loadComponent : ()=> import('./components/view-created-quiz/view-created-quiz.component').then(m => m.ViewCreatedQuizComponent)},
+    {path : 'creator/quizzes' , loadComponent : () => import('./components/creator-quiz-list/creator-quiz-list.component').then(m => m.CreatorQuizListComponent)},
+    {path : 'creator/quiz-detail/:quizTitle' , loadComponent : () => import('./components/creator-quiz-details/creator-quiz-details.component').then(m => m.CreatorQuizDetailsComponent)},
+    {path : 'participant/quiz/:quizTitle' , loadComponent : () => import('./components/participant-quiz/participant-quiz.component').then(m => m.ParticipantQuizComponent)},
+    {path : 'participant/result/:quizTitle' , loadComponent : () => import('./components/quiz-result/quiz-result.component').then(m => m.QuizResultComponent)},
+    {path : 'results/all/:quizTitle' , loadComponent : () => import('./components/all-user-result/all-user-result.component').then(m => m.AllUserResultComponent)}
+]
+
+
+"all-user-result.COMPONENT.ts" ()
+@Component({
+  selector: 'app-all-user-result',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './all-user-result.component.html',
+  styleUrl: './all-user-result.component.css'
+})
+export class AllUserResultComponent implements OnInit{
+  quizTitle: string = '';
+  result: ResultDTO[] = [];
+  loading: boolean = true;
+  error: string = '';
+
+  constructor(
+    private route: ActivatedRoute,
+    private adminService: AdminServiceService
+  ) {}
+
+  ngOnInit(): void {
+    this.quizTitle = this.route.snapshot.paramMap.get('quizTitle') || '';
+    if (this.quizTitle) {
+      this.adminService.getAllUserResults(this.quizTitle).subscribe({
+        next: (res) => {
+          this.result = res;
+          this.loading = false;
+        },
+        error: () => {
+          this.error = '❌ Failed to load result';
+          this.loading = false;
+        }
+      });
+    }
+  }
+}
+
+
+"all-user-result.COMPONENT.html"
+<div class="container mt-4">
+  <h2 class="text-center text-primary mb-4">All Results for Quiz: {{ quizTitle }}</h2>
+
+  <div *ngIf="loading" class="text-center">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p>Loading results...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger text-center">{{ error }}</div>
+
+  <table *ngIf="!loading && result.length > 0" class="table table-bordered table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>User ID</th>
+        <th>Username</th>
+        <th>Total Questions</th>
+        <th>Correct Answers</th>
+        <th>Incorrect Answers</th>
+        <th>Percentage</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let res of result">
+        <td>{{ res.userId }}</td>
+        <td>{{ res.userName }}</td>
+        <td>{{ res.totalQuestion }}</td>
+        <td>{{ res.correctAnswer }}</td>
+        <td>{{ res.incorrectAnswer }}</td>
+        <td>{{ res.percentage }}%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!loading && result.length === 0" class="alert alert-warning text-center">
+    No Results Available For This Quiz.
+  </div>
+</div>
+
+
+-->RELATED SERVICES & MODELS
+  getAllUserResults(quizTitle : string) : Observable<ResultDTO[]>{
+    return this.http.get<ResultDTO[]>(`${this.BASE_URL}results/all/${quizTitle}`);
+  }
+
+  RELATED MODELS
+  export enum UserRoles {
+    ADMIN = 'ADMIN', 
+    PARTICIPANT = 'PARTICIPANT', 
+    CREATOR = 'CREATOR'
+}
+
+export interface CreatedQuizDTO{
+    title : string;
+    category : string;
+    difficultyLevel : string;
+    creatorName : string;
+    questionList : QuestionDTO[];
+}
+
+export interface CreateQuestionDTO{
+    category : string;
+    difficultyLevel : string;
+    rightAnswer : string;
+    questionTitle : string;
+    option1 : string;
+    option2 : string;
+    option3 : string;
+    option4 : string;
+}
+
+export interface CreateQuizDTO{
+    quizTitle : string;
+    category : string;
+    difficultyLevel : string;
+    noOfQuestion : number;
+}
+
+export interface CreatorUserDTO{
+    creatorName : string;
+    userRoles : UserRoles;
+    questionTitleList : string[];
+}
+
+export class ParticipantUserDTO{
+    participantName : string;
+    userRoles : UserRoles;
+    quizTitleList : string[];
+}
+
+export interface QuestionDTO{
+    id: number;
+    category: string;
+    difficultyLevel: string;
+    rightAnswer: string;
+    questionTitle: string;
+    option1: string;
+    option2: string;
+    option3: string;
+    option4: string;
+    quizId: number[];
+}
+
+export interface QuestionWrapper{
+    questionTitle : string;
+    option1 : string;
+    option2 : string;
+    option3 : string;
+    option4 : string;
+}
+
+export interface QuizDTO{
+    title : string;
+    category : string;
+    difficultyLevel : string;
+    creatorUserId : number;
+    creatorUserName : number;
+    questionQuizIds : number[];
+    participantUserName : string[];
+}
+
+export interface QuizTakenReponse {
+    quizTitle : string;
+    userName : string;
+    responseList : ResponseDTO[];
+}
+
+export class ResponseDTO{
+    questionTitle : string;
+    selectedAnswer : string | null;
+}
+
+export class ResponseEvaluationDTO{
+    questionTitle : string;
+    correctAnswer : string;
+    participantAnswer : string;
+}
+
+export class ResultDTO{
+    quizId : number;
+    quizTitle : string;
+    userId : number;
+    userName : string;
+    totalQuestion : number;
+    correctAnswer : number;
+    incorrectAnswer : number;
+    percentage : number;
+}
+NOW I WANT TO GIVE THE TS , HTML & CSS FILE FOR ALL THREE COMPOENENTS "ADMIN-DASHBOARD" , "ALL-USER-RESULT" , "CREATOR-QUIZ-LIST" EDITED WITH THE CHANGES I DESIRE AND WITH PROPER THEME AND ROUTING
+
+HEY CHAT I'M GIVING YOU ALL THE THREE COMPONENTS (TS & HTML) FILE FOR THE THREE RELETED COMPONENTS . PLEASE MAKE THE NECESSARY EDITS IN THESE FILES SO THAT NO ERRORS
+
+--> "admin-dashboard.component.ts"
+@Component({
+  selector: 'app-admin-dasboard',
+  standalone: true,
+  imports: [RouterLink , CommonModule , CreatorQuizListComponent , RouterOutlet],
+  templateUrl: './admin-dasboard.component.html',
+  styleUrl: './admin-dasboard.component.css'
+})
+export class AdminDasboardComponent implements OnInit {
+
+  takenQuizzes: string[] = [];
+  quizTitle: string = 'sample-quiz'; // temporary default
+
+  constructor(
+    private adminService: AdminServiceService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.adminService.getAllTakenQuizTitles().subscribe({
+      next: res => {
+        this.takenQuizzes = res;
+        console.log('✅ Fetched taken quizzes:', res);
+      },
+      error: err => console.error('❌ Failed to fetch taken quizzes', err)
+    });
+  }
+
+  viewParticipantResult(title: string) {
+    this.router.navigate(['/admin/participant/result', title]);
+  }
+
+    viewCreatedQuiz(title: string) {
+    this.router.navigate(['/admin/quiz/view', title]);
+  }
+}
+
+--> "admin-dashboard.component.html"
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" [routerLink]="['/']">Admin Panel</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarNav" aria-controls="navbarNav"
+            aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a [routerLink]="['/admin/create-quiz']" class="nav-link">Create Quiz</a>
+        </li>
+        <li class="nav-item">
+          <a [routerLink]="['/admin/create-question']" class="nav-link">Create Question</a>
+        </li>
+        <li class="nav-item">
+          <a [routerLink]="['/admin/creator/quizzes']" class="nav-link">My Quizzes</a>
+        </li>
+        <li class="nav-item">
+          <a [routerLink]="['/admin/results/all', quizTitle]" class="nav-link">All Results</a>
+        </li>
+        <li class="nav-item">
+          <a [routerLink]="['/admin/participant/quiz', quizTitle]" class="nav-link">Take Quiz as Participant</a>
+        </li>
+        <li class="nav-item">
+          <a [routerLink]="['/admin/quiz/view', quizTitle]" class="nav-link">View Created Quiz</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="mt-5 text-center">
+  <h2>Welcome to the Admin Dashboard</h2>
+  <p>Use the navbar to create quizzes, add questions, and view results.</p>
+</div>
+
+<div class="container mt-4">
+  <div class="row">
+    Created Quizzes
+    <div class="col-md-6">
+      <h4 class="text-primary">Your Created Quizzes</h4>
+      <app-creator-quiz-list (viewQuiz)="viewCreatedQuiz($event)"></app-creator-quiz-list>
+    </div>
+
+    Taken Quizzes
+    <div class="col-md-6">
+      <h4 class="text-success">Quizzes You've Taken</h4>
+      <ul class="list-group">
+        <li 
+          class="list-group-item d-flex justify-content-between align-items-center"
+          *ngFor="let title of takenQuizzes">
+          {{ title }}
+          <button class="btn btn-outline-primary btn-sm" (click)="viewParticipantResult(title)">
+            View Result
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+--> "all-user-result.component.ts"
+@Component({
+  selector: 'app-all-user-result',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './all-user-result.component.html',
+  styleUrl: './all-user-result.component.css'
+})
+export class AllUserResultComponent implements OnInit{
+  quizTitle: string = '';
+  result: ResultDTO[] = [];
+  loading: boolean = true;
+  error: string = '';
+
+  constructor(
+    private route: ActivatedRoute,
+    private adminService: AdminServiceService
+  ) {}
+
+  ngOnInit(): void {
+    this.quizTitle = this.route.snapshot.paramMap.get('quizTitle') || '';
+    if (this.quizTitle) {
+      this.adminService.getAllUserResults(this.quizTitle).subscribe({
+        next: (res) => {
+          this.result = res;
+          this.loading = false;
+        },
+        error: () => {
+          this.error = '❌ Failed to load result';
+          this.loading = false;
+        }
+      });
+    }
+  }
+}
+
+--> "all-user-result.component.html"
+<div class="container mt-4">
+  <h2 class="text-center text-primary mb-4">All Results for Quiz: {{ quizTitle }}</h2>
+
+  <div *ngIf="loading" class="text-center">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p>Loading results...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger text-center">{{ error }}</div>
+
+  <table *ngIf="!loading && result.length > 0" class="table table-bordered table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>User ID</th>
+        <th>Username</th>
+        <th>Total Questions</th>
+        <th>Correct Answers</th>
+        <th>Incorrect Answers</th>
+        <th>Percentage</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let res of result">
+        <td>{{ res.userId }}</td>
+        <td>{{ res.userName }}</td>
+        <td>{{ res.totalQuestion }}</td>
+        <td>{{ res.correctAnswer }}</td>
+        <td>{{ res.incorrectAnswer }}</td>
+        <td>{{ res.percentage }}%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!loading && result.length === 0" class="alert alert-warning text-center">
+    No Results Available For This Quiz.
+  </div>
+</div>
+
+--> "creator-quiz-list.component.ts"
+@Component({
+  selector: 'app-creator-quiz-list',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './creator-quiz-list.component.html',
+  styleUrl: './creator-quiz-list.component.css'
+})
+export class CreatorQuizListComponent implements OnInit {
+
+  quizzes: QuizDTO[] = [];
+  errorMessage = '';
+
+  @Output() viewQuiz = new EventEmitter<string>();
+  
+  constructor(private adminService: AdminServiceService, private router: Router) {}
+
+  ngOnInit(): void {
+    this.adminService.getAllQuizzesByCreator().subscribe({
+      next: (res) => this.quizzes = res,
+      error: (err) => this.errorMessage = err.error?.message || 'Could not load quizzes'
+    });
+  }
+
+  viewQuizDetails(title: string) {
+    this.router.navigate(['/admin/creator/quiz-detail', title]);
+  }
+
+    onViewQuiz(title: string) {
+    this.viewQuiz.emit(title);
+  } 
+}
+
+--> "creator-quiz-list.component.html"
+<div class="container mt-4">
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="quizzes.length > 0">
+    <div class="card shadow-sm mb-3" *ngFor="let quiz of quizzes">
+      <div class="card-body d-flex justify-content-between align-items-center">
+        <div>
+          <h5 class="card-title mb-1">{{ quiz.title }}</h5>
+          <p class="card-text mb-0">
+            <small class="text-muted">{{ quiz.category }} | {{ quiz.difficultyLevel }}</small>
+          </p>
+        </div>
+        <button class="btn btn-outline-primary btn-sm" (click)="onViewQuiz(quiz.title)">
+          View Questions
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="quizzes.length === 0 && !errorMessage" class="text-center text-muted mt-5">
+    <p>No quizzes found.</p>
+  </div>
+</div>
+
+
+
+HEY CHAT CAN YOU THEME THESE TWO COMPONENTS "CREATE-QUESTION" AND "CREATE-QUIZ" COMPONENTS ACCORDING TO THE THEME 
+
+---> "create-question.component.ts"
+@Component({
+  selector: 'app-create-question',
+  standalone: true,
+  imports: [ReactiveFormsModule , FormsModule , CommonModule],
+  templateUrl: './create-question.component.html',
+  styleUrl: './create-question.component.css'
+})
+export class CreateQuestionComponent {
+
+    questionForm: FormGroup;
+
+  constructor(
+    private fb: FormBuilder,
+    private adminService: AdminServiceService,
+    private router: Router
+  ) {
+    this.questionForm = this.fb.group({
+      questionTitle: ['', Validators.required],
+      category: ['', Validators.required],
+      difficultyLevel: ['', Validators.required],
+      option1: ['', Validators.required],
+      option2: ['', Validators.required],
+      option3: ['', Validators.required],
+      option4: ['', Validators.required],
+      rightAnswer: ['', Validators.required]
+    });
+  }
+
+  submitQuestion() {
+    if (this.questionForm.invalid) return;
+
+    const dto: CreateQuestionDTO = this.questionForm.value;
+
+    this.adminService.addQuestion(dto).subscribe({
+      next: () => {
+        alert('✅ Question added successfully!');
+        this.questionForm.reset();
+        this.router.navigate(['/admin']); // go back to dashboard
+      },
+      error: err => alert('❌ Error adding question: ' + err?.error?.message || 'Server Error')
+    });
+  }
+}
+
+---> "create-question.component.html" (HEY CHAT IN THIS COMPONENT I WANT TO ADD A FUNCTION SUCH THAT WHEN HAVE TO CHOOSE THE "RIGHT ANSWER" FOR THE QUESTION , YOU GET FOUR BUTTONS FOR THE FOUR OPTIONS AND WHICH EVERY BUTTON OPTION THE USER CHOOSES THE INPUT FOR THAT OPTION INPUT FEILD BECOMES THE "RIGHT ANSWER")
+<div class="container mt-5">
+  <div class="card shadow">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0 text-center">Create New Question</h4>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="questionForm" (ngSubmit)="submitQuestion()">
+        
+        <div class="mb-3">
+          <label class="form-label">Question Title</label>
+          <input type="text" class="form-control" formControlName="questionTitle" placeholder="Enter question">
+          <div class="text-danger" *ngIf="questionForm.get('questionTitle')?.invalid && questionForm.get('questionTitle')?.touched">Question is required</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Category</label>
+          <select class="form-select" formControlName="category">
+            <option value="">Select category</option>
+            <option value="Math">Math</option>
+            <option value="Science">Science</option>
+            <option value="History">History</option>
+            <option value="Programming">Programming</option>
+          </select>
+          <div class="text-danger" *ngIf="questionForm.get('category')?.invalid && questionForm.get('category')?.touched">Category is required</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Difficulty Level</label>
+          <select class="form-select" formControlName="difficultyLevel">
+            <option value="">Select difficulty</option>
+            <option value="EASY">Easy</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="HARD">Hard</option>
+          </select>
+          <div class="text-danger" *ngIf="questionForm.get('difficultyLevel')?.invalid && questionForm.get('difficultyLevel')?.touched">Difficulty is required</div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Option 1</label>
+            <input type="text" class="form-control" formControlName="option1">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Option 2</label>
+            <input type="text" class="form-control" formControlName="option2">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Option 3</label>
+            <input type="text" class="form-control" formControlName="option3">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Option 4</label>
+            <input type="text" class="form-control" formControlName="option4">
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Correct Answer</label>
+          <input type="text" class="form-control" formControlName="rightAnswer">
+        </div>
+
+        <button type="submit" class="btn btn-success w-100" [disabled]="questionForm.invalid">
+          Submit Question
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+---> "create-quiz.component.ts"
+@Component({
+  selector: 'app-create-quiz',
+  standalone: true,
+  imports: [ReactiveFormsModule , FormsModule , CommonModule],
+  templateUrl: './create-quiz.component.html',
+  styleUrl: './create-quiz.component.css'
+})
+export class CreateQuizComponent {
+quizForm: FormGroup;
+
+  constructor(
+    private fb: FormBuilder,
+    private adminService: AdminServiceService,
+    private router: Router
+  ) {
+    this.quizForm = this.fb.group({
+      title: ['', Validators.required],
+      description: ['', Validators.required],
+      totalMarks: ['', [Validators.required, Validators.min(1)]],
+      numberOfQuestion: ['', [Validators.required, Validators.min(1)]]
+    });
+  }
+
+  createQuiz() {
+    if (this.quizForm.invalid) return;
+
+    const dto: CreateQuizDTO = this.quizForm.value;
+
+    this.adminService.createQuiz(dto).subscribe({
+      next: (res) => {
+        alert('✅ Quiz created successfully!');
+        this.quizForm.reset();
+        // Navigate to view the created quiz or dashboard
+        this.router.navigate(['/admin/quiz/view', res.title]); // adjust this if needed
+      },
+      error: (err) =>
+        alert('❌ Error creating quiz: ' + (err?.error?.message || 'Server Error'))
+    });
+  }
+}
+
+---> "create-quiz.component.html"
+<div class="container mt-5">
+  <div class="card shadow">
+    <div class="card-header bg-success text-white text-center">
+      <h4>Create New Quiz</h4>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="quizForm" (ngSubmit)="createQuiz()">
+
+        <div class="mb-3">
+          <label class="form-label">Title</label>
+          <input type="text" class="form-control" formControlName="title" />
+          <div class="text-danger" *ngIf="quizForm.get('title')?.invalid && quizForm.get('title')?.touched">
+            Title is required
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" formControlName="description"></textarea>
+          <div class="text-danger" *ngIf="quizForm.get('description')?.invalid && quizForm.get('description')?.touched">
+            Description is required
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Number of Questions</label>
+          <input type="number" class="form-control" formControlName="numberOfQuestion" />
+          <div class="text-danger" *ngIf="quizForm.get('numberOfQuestion')?.invalid && quizForm.get('numberOfQuestion')?.touched">
+            Enter valid number of questions
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100" [disabled]="quizForm.invalid">
+          Create Quiz
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+---> GLOBAL CSS (implemented in style.css)
+/* ================================================
+   GLOBAL QUIZ APPLICATION THEME
+   Color Palette: Blue, Grey, Greenish
+   ================================================ */
+
+/* CSS Custom Properties for Theme Colors */
+:root {
+  /* Primary Color Palette */
+  --primary-blue: #2563eb;
+  --primary-blue-dark: #1d4ed8;
+  --primary-blue-light: #3b82f6;
+  --primary-blue-lighter: #dbeafe;
+  
+  /* Secondary Greenish Palette */
+  --secondary-green: #059669;
+  --secondary-green-dark: #047857;
+  --secondary-green-light: #10b981;
+  --secondary-green-lighter: #d1fae5;
+  
+  /* Grey Palette */
+  --grey-50: #f9fafb;
+  --grey-100: #f3f4f6;
+  --grey-200: #e5e7eb;
+  --grey-300: #d1d5db;
+  --grey-400: #9ca3af;
+  --grey-500: #6b7280;
+  --grey-600: #4b5563;
+  --grey-700: #374151;
+  --grey-800: #1f2937;
+  --grey-900: #111827;
+  
+  /* Semantic Colors */
+  --success-color: var(--secondary-green);
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+  --info-color: var(--primary-blue);
+  
+  /* Background Colors */
+  --bg-primary: rgba(255, 255, 255, 0.95);
+  --bg-secondary: rgba(248, 250, 252, 0.9);
+  --bg-overlay: rgba(15, 23, 42, 0.4);
+  
+  /* Text Colors */
+  --text-primary: var(--grey-900);
+  --text-secondary: var(--grey-600);
+  --text-muted: var(--grey-500);
+  --text-white: #ffffff;
+  
+  /* Shadow & Effects */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease-in-out;
+  --transition-normal: 0.3s ease-in-out;
+  --transition-slow: 0.5s ease-in-out;
+}
+
+/* ================================================
+   GLOBAL RESET & BASE STYLES
+   ================================================ */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--grey-100);
+  overflow-x: hidden;
+}
+
+/* ================================================
+   ENHANCED BACKGROUND WRAPPER
+   ================================================ */
+
+.background-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  z-index: -1;
+  transition: background-image 1s ease-in-out;
+}
+
+.background-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(37, 99, 235, 0.1) 0%, 
+    rgba(5, 150, 105, 0.1) 50%, 
+    rgba(107, 114, 128, 0.1) 100%);
+  z-index: 1;
+}
+
+.content-overlay {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  width: 100%;
+  backdrop-filter: blur(8px) saturate(180%);
+  -webkit-backdrop-filter: blur(8px) saturate(180%);
+  padding: 1rem;
+}
+
+/* ================================================
+   CARD SYSTEM
+   ================================================ */
+
+.card {
+  background: var(--bg-primary);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-blue), var(--secondary-green));
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+.card-body {
+  padding: 2rem;
+}
+
+.card-header {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--grey-200);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+/* ================================================
+   BUTTON SYSTEM
+   ================================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  border-radius: var(--radius-lg);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  min-width: 120px;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+/* Primary Button */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+  color: var(--text-white);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--primary-blue-dark), var(--primary-blue));
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background: linear-gradient(135deg, var(--secondary-green), var(--secondary-green-dark));
+  color: var(--text-white);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, var(--secondary-green-dark), var(--secondary-green));
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Outline Button */
+.btn-outline-primary {
+  background: transparent;
+  color: var(--primary-blue);
+  border: 2px solid var(--primary-blue);
+  backdrop-filter: blur(10px);
+}
+
+.btn-outline-primary:hover {
+  background: var(--primary-blue);
+  color: var(--text-white);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-outline-secondary {
+  background: transparent;
+  color: var(--secondary-green);
+  border: 2px solid var(--secondary-green);
+  backdrop-filter: blur(10px);
+}
+
+.btn-outline-secondary:hover {
+  background: var(--secondary-green);
+  color: var(--text-white);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Button Sizes */
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  min-width: 80px;
+}
+
+.btn-lg {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  min-width: 160px;
+}
+
+/* ================================================
+   FORM ELEMENTS
+   ================================================ */
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  border: 2px solid var(--grey-300);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  transition: all var(--transition-normal);
+  color: var(--text-primary);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.form-control::placeholder {
+  color: var(--text-muted);
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+/* ================================================
+   PROGRESS INDICATORS
+   ================================================ */
+
+.progress-container {
+  background: var(--grey-200);
+  border-radius: var(--radius-lg);
+  height: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-blue), var(--secondary-green));
+  border-radius: var(--radius-lg);
+  transition: width var(--transition-slow);
+  position: relative;
+}
+
+.progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ================================================
+   QUIZ-SPECIFIC COMPONENTS
+   ================================================ */
+
+/* Question Card */
+.question-card {
+  background: var(--bg-primary);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(20px);
+  animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Answer Options */
+.answer-option {
+  padding: 1rem 1.5rem;
+  margin: 0.5rem 0;
+  border: 2px solid var(--grey-300);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.answer-option::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    rgba(37, 99, 235, 0.1), 
+    rgba(37, 99, 235, 0.2), 
+    rgba(37, 99, 235, 0.1));
+  transition: left 0.5s ease;
+}
+
+.answer-option:hover {
+  border-color: var(--primary-blue);
+  background: rgba(37, 99, 235, 0.05);
+  transform: translateX(8px);
+}
+
+.answer-option:hover::before {
+  left: 100%;
+}
+
+.answer-option.selected {
+  border-color: var(--primary-blue);
+  background: var(--primary-blue-lighter);
+  color: var(--primary-blue-dark);
+}
+
+.answer-option.correct {
+  border-color: var(--secondary-green);
+  background: var(--secondary-green-lighter);
+  color: var(--secondary-green-dark);
+}
+
+.answer-option.incorrect {
+  border-color: var(--error-color);
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--error-color);
+}
+
+/* Score Display */
+.score-display {
+  text-align: center;
+  padding: 2rem;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg, var(--primary-blue-lighter), var(--secondary-green-lighter));
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  animation: bounceIn 0.8s ease-out;
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.score-number {
+  font-size: 3rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ================================================
+   UTILITY CLASSES
+   ================================================ */
+
+/* Loading Animation */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--grey-300);
+  border-top: 4px solid var(--primary-blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Fade In Animation */
+.fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Slide In Animations */
+.slide-in-left {
+  animation: slideInLeft 0.6s ease-out;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in-right {
+  animation: slideInRight 0.6s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ================================================
+   RESPONSIVE DESIGN
+   ================================================ */
+
+/* Mobile First Approach */
+@media (max-width: 576px) {
+  .content-overlay {
+    padding: 0.5rem;
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  .btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.8rem;
+    min-width: 100px;
+  }
+  
+  .score-number {
+    font-size: 2rem;
+  }
+  
+  .question-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 768px) {
+  .content-overlay {
+    padding: 0.75rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+  .content-overlay {
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .content-overlay {
+    padding: 1.5rem;
+  }
+}
+
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .background-wrapper {
+    background-size: cover;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: rgba(31, 41, 55, 0.95);
+    --bg-secondary: rgba(17, 24, 39, 0.9);
+    --text-primary: var(--grey-100);
+    --text-secondary: var(--grey-300);
+    --text-muted: var(--grey-400);
+  }
+  
+  .form-control {
+    background: rgba(31, 41, 55, 0.9);
+    color: var(--text-primary);
+    border-color: var(--grey-600);
+  }
+  
+  .answer-option {
+    background: rgba(31, 41, 55, 0.8);
+    border-color: var(--grey-600);
+    color: var(--text-primary);
+  }
+}
+
+/* Print Styles */
+@media print {
+  .background-wrapper,
+  .btn,
+  .loading-spinner {
+    display: none !important;
+  }
+  
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #000 !important;
+  }
+}
+
+/* ================================================
+   ACCESSIBILITY ENHANCEMENTS
+   ================================================ */
+
+/* Focus Styles */
+*:focus-visible {
+  outline: 2px solid var(--primary-blue);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .background-wrapper {
+    transition: none !important;
+  }
+}
+
+/* Enhanced Hover Effect on Card */
+.card-hover-light:hover {
+  background: rgba(44, 34, 147, 0.85); /* More whitish */
+  color: var(--grey-900); /* Dark text for contrast */
+  transition: all var(--transition-normal);
+}
+
+/* Override inner text color */
+.card-hover-light:hover h2,
+.card-hover-light:hover p {
+  color: var(--grey-800);
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  .card-hover-light:hover {
+    background: rgba(31, 41, 55, 0.85); /* Deep dark transparent */
+    color: var(--grey-100); /* Light text for contrast */
+  }
+
+  .card-hover-light:hover h2,
+  .card-hover-light:hover p {
+    color: var(--grey-100);
+  }
+}
+
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  :root {
+    --primary-blue: #0000ff;
+    --secondary-green: #008000;
+    --grey-600: #000000;
+    --text-primary: #000000;
+  }
+  
+  .btn {
+    border: 2px solid currentColor !important;
+  }
+}
+
+body {
+  background-color: #f8f9fa;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar {
+  font-size: 1rem;
+}
+
+a {
+  text-decoration: none;
+}
+
+
+
+
+
+HEY CHAT NOW THIS A VERY IMPORTANT COMPONENT . THIS IS THE COMPONENT THAT HANDLES THE QUIZ SECTION OF THE APPLICATION . ON CLICKING THE TAKE QUIZ ON THE NAVBAR IN THE ADMIN-DASHBOARD , THE USER IS REDIRECTED TO THE "PARTICIPANT-QUIZ" COMPONENT , WHERE IN ON TOP THERE IS A SEARCH BAR TO SEARCH THE QUIZ BY "TITLE" AND BELOW ARE THE LIST OF QUIZ SHOWN WITH THE HELP OF "CREATOR-QUIZ-LIST" COMPONENT . EITHER ON SEARCH OR HOVERING ABOVE THE QUIZ INFORMATION CARD THE USER CAN SEE THE DETAILS AND CHOOSE WHETHER TO TAKE THE QUIZ OR NOT . IF THE USER CHOOSES TO TAKE THE TEST THEN THE QUESTIONS OF THAT QUIZ SHOULD COME IN FRONT OF THE USER ONE BY ONE IN THE FORM OF "QUESTION WRAPPER" . THEN AS THE USER IS SELECTING THE ANSWERS FOR THE QUIZ THE ANSWERS, RESPONSES AS SUCH WILL BE STORED IN THE FORM OF "QuizTakenReponse" AND GET THE RESPONSE IN THE FORM OF "ResponseEvaluationDTO" . AFTER WHICH THE USER WILL GET THE RESULT OF THE QUIZ IN THE FORM OF "ResultDTO" . I WANT YOU TO PROPERLY MAKE THE EDITS TO THE (TS HTML AND CSS) FILES TO THEME THEM AS THE GLOBAL CSS THAT I GAVE YOU 
+
+---> "PARTICIPANT-QUIZ.COMPONENT.TS"
+@Component({
+  selector: 'app-participant-quiz',
+  standalone: true,
+  imports: [CommonModule , ReactiveFormsModule , RouterModule],
+  templateUrl: './participant-quiz.component.html',
+  styleUrl: './participant-quiz.component.css'
+})
+export class ParticipantQuizComponent implements OnInit {
+  quizTitle = '';
+  username = '';
+  questions: QuestionWrapper[] = [];
+  responseForm!: FormGroup;
+  submitted = false;
+  evaluations: ResponseEvaluationDTO[] = [];
+
+  searchForm!: FormGroup;
+
+  constructor(
+    private route: ActivatedRoute,
+    private adminService: AdminServiceService,
+    private userStorageService: UserStorageService,
+    private fb: FormBuilder,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    const user = this.userStorageService.getUser();
+    if (!user) {
+      console.error('No logged-in user found');
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.username = user.username;
+
+    // Init search form
+    this.searchForm = this.fb.group({
+      searchQuiz: ['']
+    });
+
+    // If route param exists
+    this.quizTitle = this.route.snapshot.paramMap.get('quizTitle') || '';
+    if (this.quizTitle) this.loadQuiz(this.quizTitle);
+  }
+
+  loadQuiz(title: string): void {
+    this.quizTitle = title;
+    this.adminService.getQuizForParticipant(this.quizTitle).subscribe({
+      next: (questions) => {
+        this.questions = questions;
+        this.submitted = false;
+        this.evaluations = [];
+        this.buildForm();
+      },
+      error: (err) => console.error('Failed to load quiz', err)
+    });
+  }
+
+  onSearch(): void {
+    const title = this.searchForm.value.searchQuiz?.trim();
+    if (title) this.loadQuiz(title);
+  }
+
+  buildForm(): void {
+    const group: { [key: string]: any } = {};
+    this.questions.forEach(q => {
+      group[q.questionTitle] = [null];
+    });
+    this.responseForm = this.fb.group(group);
+  }
+
+  submitQuiz(): void {
+    const raw = this.responseForm.getRawValue();
+    const responses: ResponseDTO[] = Object.entries(raw).map(([questionTitle, selectedAnswer]) => ({
+      questionTitle,
+      selectedAnswer: selectedAnswer as string ?? null
+    }));
+
+    const quizResponse: QuizTakenReponse = {
+      quizTitle: this.quizTitle,
+      userName: this.username,
+      responseList: responses
+    };
+
+    this.adminService.submitQuizResponse(quizResponse).subscribe({
+      next: (res) => {
+        this.evaluations = res;
+        this.submitted = true;
+      },
+      error: (err) => console.error('Submission failed', err)
+    });
+  }
+
+  goToResult(): void {
+    this.router.navigate(['/admin/participant/result', this.quizTitle]);
+  }
+}
+
+---> "PARTICIPANT-QUIZ.COMPONENT.HTML"
+<div class="container mt-5">
+  <h2 class="mb-4">Participant Quiz</h2>
+
+  <!-- Search Quiz -->
+  <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="input-group mb-4">
+    <input type="text" class="form-control" formControlName="searchQuiz" placeholder="Enter quiz title..." />
+    <button type="submit" class="btn btn-primary">Search Quiz</button>
+  </form>
+
+  <!-- Quiz Title -->
+  <div *ngIf="quizTitle && questions.length > 0" class="mb-4">
+    <h4 class="text-success">Quiz: {{ quizTitle }}</h4>
+  </div>
+
+  <!-- Quiz Form -->
+  <form *ngIf="questions.length > 0 && !submitted" [formGroup]="responseForm" (ngSubmit)="submitQuiz()">
+    <div *ngFor="let q of questions" class="mb-4 p-3 border rounded shadow-sm bg-light">
+      <p class="fw-bold">{{ q.questionTitle }}</p>
+      <div class="form-check" *ngFor="let opt of [q.option1, q.option2, q.option3, q.option4]">
+        <input class="form-check-input" type="radio" [value]="opt" [formControlName]="q.questionTitle" [id]="q.questionTitle + opt">
+        <label class="form-check-label" [for]="q.questionTitle + opt">
+          {{ opt }}
+        </label>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">Submit Quiz</button>
+  </form>
+
+  <!-- Evaluation Result -->
+  <div *ngIf="submitted && evaluations.length > 0" class="mt-5">
+    <h3>Evaluation</h3>
+    <div *ngFor="let eval of evaluations" class="border-bottom pb-3 mb-3">
+      <p><strong>Question:</strong> {{ eval.questionTitle }}</p>
+      <p><strong>Your Answer:</strong>
+        <span *ngIf="eval.participantAnswer; else noAnswer">{{ eval.participantAnswer }}</span>
+        <ng-template #noAnswer><em>No answer provided</em></ng-template>
+      </p>
+      <p><strong>Correct Answer:</strong> {{ eval.correctAnswer }}</p>
+    </div>
+
+    <button class="btn btn-primary" (click)="goToResult()">View Final Result</button>
+  </div>
+</div>
+
+---> RELATED SERVICE METHOD / MODELS
+-> SERVICES
+  getQuizForParticipant(quizTitle : string) : Observable<QuestionWrapper[]>{
+    return this.http.get<QuestionWrapper[]>(`${this.BASE_URL}participant/${quizTitle}`);
+  } 
+
+  submitQuizResponse(response : QuizTakenReponse) : Observable<ResponseEvaluationDTO[]>{
+    return this.http.post<ResponseEvaluationDTO[]>(`${this.BASE_URL}responses/submit` , response);
+  }
+
+  getUserResult(quizTitle : string) : Observable<ResultDTO>{
+    return this.http.get<ResultDTO>(`${this.BASE_URL}results/user/${quizTitle}`);
+  }
+-> MODELS
+export interface QuestionWrapper{
+    questionTitle : string;
+    option1 : string;
+    option2 : string;
+    option3 : string;
+    option4 : string;
+}
+
+export class ResponseEvaluationDTO{
+    questionTitle : string;
+    correctAnswer : string;
+    participantAnswer : string;
+}
+
+export interface QuizTakenReponse {
+    quizTitle : string;
+    userName : string;
+    responseList : ResponseDTO[];
+}
+
+export class ResponseDTO{
+    questionTitle : string;
+    selectedAnswer : string | null;
+}
+
+export class ResultDTO{
+    quizId : number;
+    quizTitle : string;
+    userId : number;
+    userName : string;
+    totalQuestion : number;
+    correctAnswer : number;
+    incorrectAnswer : number;
+    percentage : number;
+}
+
+
+HEY CHAT CAN YOU ALSO HELP ME EDIT AND THEME THE FOLLOWING COMPONENT AS WELL . JUST MAKE SURE THAT THE DATA BINDING IS DONE CORRECTLY AND THE THEME OF THE COMPONENT IS THE SAME 
+
+--->"view-creaated-quiz.component.ts"
+@Component({
+  selector: 'app-view-created-quiz',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './view-created-quiz.component.html',
+  styleUrl: './view-created-quiz.component.css'
+})
+export class ViewCreatedQuizComponent implements OnInit {
+
+  quizTitle: string = '';
+  createdQuiz: CreatedQuizDTO | null = null;
+  errorMessage: string = '';
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private adminService: AdminServiceService
+  ) {}
+
+  ngOnInit(): void {
+    this.quizTitle = this.route.snapshot.paramMap.get('quizTitle') || '';
+
+    if (this.quizTitle) {
+      this.adminService.getCreatedQuiz(this.quizTitle).subscribe({
+        next: (res) => this.createdQuiz = res,
+        error: (err) => this.errorMessage = err.error?.message || 'Quiz not found'
+      });
+    } else {
+      this.errorMessage = 'No quiz title provided';
+    }
+  }
+
+  goBack() {
+    this.router.navigate(['/admin']);
+  }
+}
+
+--->"view-creaated-quiz.component.html"
+<div class="container mt-5">
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="createdQuiz">
+    <div class="card shadow mb-4">
+      <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">Quiz: {{ createdQuiz.title }}</h4>
+      </div>
+      <div class="card-body">
+        <p><strong>Category:</strong> {{ createdQuiz.category }}</p>
+        <p><strong>Difficulty:</strong> {{ createdQuiz.difficultyLevel }}</p>
+        <p><strong>Created By:</strong> {{ createdQuiz.creatorName }}</p>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <h5 class="text-secondary">Questions:</h5>
+      <div *ngFor="let question of createdQuiz.questionList; let i = index" class="card mb-3">
+        <div class="card-body">
+          <p><strong>Q{{ i + 1 }}:</strong> {{ question.questionTitle }}</p>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">A. {{ question.option1 }}</li>
+            <li class="list-group-item">B. {{ question.option2 }}</li>
+            <li class="list-group-item">C. {{ question.option3 }}</li>
+            <li class="list-group-item">D. {{ question.option4 }}</li>
+          </ul>
+          <p class="mt-2 text-success"><strong>Correct Answer:</strong> {{ question.rightAnswer }}</p>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-secondary" (click)="goBack()">← Back to Dashboard</button>
+  </div>
+</div>
+
+---> RELATED SERVICE METHODS AND MODELS
+-> MODELS
+export interface CreatedQuizDTO{
+    title : string;
+    category : string;
+    difficultyLevel : string;
+    creatorName : string;
+    questionList : QuestionDTO[];
+}
+
+-> SERVICE METHODS
+  getCreatedQuiz(quizTitle : string) : Observable<CreatedQuizDTO> {
+    return this.http.get<CreatedQuizDTO>(`${this.BASE_URL}created/${quizTitle}`);
+  }
+
+
+HEY CHAT CAN YOU   
+
+THEME
+
+/* Background Container */
+.glass-container {
+  background: url('/assets/backgrounds/images/quizBackground.jpeg') no-repeat center center/cover;
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Navbar */
+.glass-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(10, 10, 10, 0.4);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 12px 24px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+.nav-left .brand {
+  font-size: 1.8rem;
+  color: #FDD835; /* Yellow */
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.nav-right a {
+  margin-left: 16px;
+  color: #BBDEFB; /* Light Blue */
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-right a:hover,
+.nav-right .active-link {
+  color: #FDD835; /* Yellow highlight */
+}
+
+/* Glass Card */
+.glass-card {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+  padding: 32px;
+  width: 90%;
+  max-width: 800px;
+  color: #E3F2FD; /* Pale blue text */
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Headings and Buttons */
+.glass-heading {
+  font-size: 2rem;
+  color: #FDD835;
+  margin-bottom: 16px;
+}
+
+.glass-button {
+  margin-top: 24px;
+  padding: 12px 24px;
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.glass-button:hover {
+  background-color: #1565C0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+
+HEY CHAT I WANT YOU TO MAKE SOME CHANGES IN THE CREATE-QUESTION COMPONENT . I WANT YOU ADD THIS SERVICE METHOD AS A FUNCTIONALITY WHERE THE USER CAN SELECT THE CATEGORY OR ADD A NEW ONE . THE GIVEN SERVICE METHOD
+  getAllCategories(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.BASE_URL}/categories`);
+  }
+I WANT TO GET ALL THE CATEGORIES TO BE SEEN AS A DROPDOWN OR IF THE CATEGORY THAT THE USER WANTS IS NOT THERE THE USER CAN ENTER THE NEW CATEGORY
+AND ALSO THERE IS ONE MORE EDIT THAT I WOULD LIKE YOU TO MAKE . THE "SET AS ANSWER" BUTTONS ARE OUT OF THEME THEME ACCORDINGLY AND ADD A FUNCTIONALITY OF RE-SELECTING THE "RIGHT ANSWER" . AND MAKE THE "RIGHT ANSWER" IMPUT FEILD READONLY
+
+"ADMIN-DASHBOARD.COMPOENENT.TS"
+@Component({
+  selector: 'app-create-question',
+  standalone: true,
+  imports: [ReactiveFormsModule , FormsModule , CommonModule],
+  templateUrl: './create-question.component.html',
+  styleUrl: './create-question.component.css'
+})
+export class CreateQuestionComponent {
+
+    questionForm: FormGroup;
+    selectedAnswer : string = '';
+
+  constructor(
+    private fb: FormBuilder,
+    private adminService: AdminServiceService,
+    private router: Router
+  ) {
+    this.questionForm = this.fb.group({
+      questionTitle: ['', Validators.required],
+      category: ['', Validators.required],
+      difficultyLevel: ['', Validators.required],
+      option1: ['', Validators.required],
+      option2: ['', Validators.required],
+      option3: ['', Validators.required],
+      option4: ['', Validators.required],
+      rightAnswer: ['', Validators.required]
+    });
+  }
+
+  selectRightAnswer(optionKey : string){
+    const selectValue = this.questionForm.get(optionKey)?.value;
+    this.questionForm.patchValue({rightAnswer : selectValue});
+    this.selectedAnswer = optionKey;
+  }
+
+  submitQuestion() {
+    if (this.questionForm.invalid) return;
+
+    const dto: CreateQuestionDTO = this.questionForm.value;
+
+    this.adminService.addQuestion(dto).subscribe({
+      next: () => {
+        alert('✅ Question added successfully!');
+        this.questionForm.reset();
+        this.router.navigate(['/admin']); // go back to dashboard
+      },
+      error: err => alert('❌ Error adding question: ' + err?.error?.message || 'Server Error')
+    });
+  }
+
+  setCorrectAnswer(optionKey: 'option1' | 'option2' | 'option3' | 'option4') {
+  const optionValue = this.questionForm.get(optionKey)?.value;
+  this.questionForm.get('rightAnswer')?.setValue(optionValue);
+}
+
+}
+
+"ADMIN-DASHBOARD.COMPONENT.HTML"
+<div class="glass-container">
+  <div class="glass-card">
+    <h2 class="glass-heading">Create New Question</h2>
+    <form [formGroup]="questionForm" (ngSubmit)="submitQuestion()">
+      <div class="mb-3">
+        <label>Question Title</label>
+        <input type="text" class="form-control" formControlName="questionTitle" placeholder="Enter question" />
+      </div>
+
+      <div class="mb-3">
+        <label>Category</label>
+        <select class="form-select" formControlName="category">
+          <option value="">Select Category</option>
+          <option>Math</option>
+          <option>Science</option>
+          <option>History</option>
+          <option>Programming</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label>Difficulty Level</label>
+        <select class="form-select" formControlName="difficultyLevel">
+          <option value="">Select Difficulty</option>
+          <option value="EASY">EASY</option>
+          <option value="MEDIUM">MEDIUM</option>
+          <option value="HARD">HARD</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3" *ngFor="let opt of ['option1', 'option2', 'option3', 'option4']; let i = index">
+          <label>Option {{i + 1}}</label>
+          <input type="text" class="form-control" [formControlName]="opt" placeholder="Enter option {{i + 1}}" />
+          <button
+            type="button"
+            class="btn-outline-success"
+            [ngClass]="{'active': selectedAnswer === opt}"
+            (click)="selectRightAnswer(opt)"
+          >
+            Set as Answer
+          </button>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label>Correct Answer</label>
+        <input type="text" class="form-control" formControlName="rightAnswer" readonly />
+      </div>
+
+      <button type="submit" class="glass-button w-100" [disabled]="questionForm.invalid">
+        Submit Question
+      </button>
+    </form>
+  </div>
+</div>
+
+
+HEY CHAT CAN YOU SIMILARLY THEME THE CREATE QUIZ COMPONENT . THERE ARE SOME FUNCTIONALITIES THAT I WOULD LIKE TO BE ADD TO MY COMPONENT. THE TWO FUNCTIONALITY THAT I WOULD LIKE YOU ADD ARE THESE
+  ----> SERVICE METHODS TO BE ADDED
+  getQuestionCountByCategory(category : string) : Observable<number> {
+    return this.http.get<number>(`${this.BASE_URL}/count/category/${category}`);
+  }
+
+  getQuestionCountByCategoryAndDifficulty(category : string , difficultyLevel : string) : Observable<number>{
+    return this.http.get<number>(`${this.BASE_URL}/count/category/${category}/difficulty/${difficultyLevel}`);
+  }
+
+  THESE FUNCTIONALITIES ARE TRIGGERED WHEN THE USER INPUTS THE CATEGORY OR DIFFICULTY LEVEL BOTH . ADD THE FUNCTIONALITY IN MY CREATE-QUIZ COMPPONENT IN SUCH A WAY THAT , WHEN THE USER INPUTS THE "CATEGORY" THE NUMBER OF QUESTIONS AVAILABLE SHOUW UP NICELY AND WHEN THE USER ENTER THE "DIFFICULTYLEVEL" THE UPDATED NO OF QUESTIONS IS SHOWN . FOR THE "NO OF QUESTION" FEILD ADD THE FUNCTIONALITY TO SELECT THE NO OF QUESTIONS FOR THE QUIZ FROM 0 TO THE MAXIMUM "NO OF QUESTIONS" COMING AFTER APPLYING THE FILTERS . AND I WOULD ALSO LIKE TO EDIT THE TS AND HTML FORM FOR THE COMPONENT ACCORDING TO THE MODEL "CREATEQUIZDTO"
+  ---> SERVICE METHODS AND MODELS
+
+  createQuiz(dto : CreateQuizDTO) : Observable<QuizDTO>{
+  return this.http.post<QuizDTO>(`${this.BASE_URL}created` , dto);
+  }
+
+  export interface CreateQuizDTO{
+    quizTitle : string;
+    category : string;
+    difficultyLevel : string;
+    noOfQuestion : number;
+}
+export interface QuizDTO{
+    title : string;
+    category : string;
+    difficultyLevel : string;
+    creatorUserId : number;
+    creatorUserName : number;
+    questionQuizIds : number[];
+    participantUserName : string[];
+}
+
+---> OLD "CREATE-QUIZ.COMPONENT.TS"
+@Component({
+  selector: 'app-create-quiz',
+  standalone: true,
+  imports: [ReactiveFormsModule , FormsModule , CommonModule],
+  templateUrl: './create-quiz.component.html',
+  styleUrl: './create-quiz.component.css'
+})
+export class CreateQuizComponent {
+quizForm: FormGroup;
+
+  constructor(
+    private fb: FormBuilder,
+    private adminService: AdminServiceService,
+    private router: Router
+  ) {
+    this.quizForm = this.fb.group({
+      title: ['', Validators.required],
+      description: ['', Validators.required],
+      totalMarks: ['', [Validators.required, Validators.min(1)]],
+      numberOfQuestion: ['', [Validators.required, Validators.min(1)]]
+    });
+  }
+  // This need to be made with proper model
+  
+  createQuiz() {
+    if (this.quizForm.invalid) return;
+
+    const dto: CreateQuizDTO = this.quizForm.value;
+
+    this.adminService.createQuiz(dto).subscribe({
+      next: (res) => {
+        alert('✅ Quiz created successfully!');
+        this.quizForm.reset();
+        // Navigate to view the created quiz or dashboard
+        this.router.navigate(['/admin/quiz/view', res.title]); // adjust this if needed
+      },
+      error: (err) =>
+        alert('❌ Error creating quiz: ' + (err?.error?.message || 'Server Error'))
+    });
+  }
+}
+
+---> OLD "CREATE-QUIZ.COMPONENT.HTML"
+
+<div class="glass-container">
+  <div class="glass-card">
+    <h2>Create New Quiz</h2>
+    <form [formGroup]="quizForm" (ngSubmit)="submitQuiz()">
+      <label for="title">Title</label>
+      <input type="text" id="title" class="form-control" placeholder="Enter quiz title" formControlName="title" />
+
+      <label for="description">Description</label>
+      <textarea id="description" class="form-control" placeholder="Enter quiz description" formControlName="description"></textarea>
+
+      <label for="category">Category</label>
+      <select id="category" class="form-control" formControlName="category">
+        <option value="" disabled selected>Select category</option>
+        <option value="math">Math</option>
+        <option value="science">Science</option>
+        <option value="tech">Technology</option>
+      </select>
+
+      <button class="glass-button" type="submit">Create Quiz</button>
+    </form>
+  </div>
+</div>
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AdminServiceService {
+
+  private BASE_URL = 'http://localhost:8080/auth/admin/';
+  
+  constructor(private http : HttpClient , private storage : UserStorageService) { }
+
+  addQuestion(dto : CreateQuestionDTO) : Observable<QuestionDTO>{
+    return this.http.post<QuestionDTO>(`${this.BASE_URL}add` , dto , {
+      headers : this.createAuthorizationHeader()
+    });
+  }
+
+ getQuestionCountByCategory(category : string) : Observable<number> {
+    return this.http.get<number>(`${this.BASE_URL}count/category/${category}` , {
+      headers: this.createAuthorizationHeader()
+    });
+  }
+
+  getQuestionCountByCategoryAndDifficulty(category : string , difficultyLevel : string) : Observable<number>{
+    return this.http.get<number>(`${this.BASE_URL}count/category/${category}/difficulty/${difficultyLevel}` , {
+      headers: this.createAuthorizationHeader()
+    });
+  }
+
+  getAllCategories(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.BASE_URL}categories` , {
+      headers: this.createAuthorizationHeader()
+    });
+  }
+
+  private createAuthorizationHeader() : HttpHeaders{
+    return new HttpHeaders().set(
+      'Authorization' , 'Bearer ' + this.storage.getToken()
+    )
+  }
+}
+
+
+HEY CHAT "CREATE-QUESTION" COMPONENT IS STILL NOT WORKING WHEN I CLICK THE "SUBMIT QUESTION" . I AM GIVING YOU ALL THE RELATED CODE . CAN YOU SOLVE MY PROBLEM
+
+---> SERVICE METHOD (FRONTEND)
+  addQuestion(dto : CreateQuestionDTO) : Observable<QuestionDTO>{
+    return this.http.post<QuestionDTO>(`${this.BASE_URL}add` , dto , {
+      headers : this.createAuthorizationHeader()
+    });
+  }
+
+---> RELATED MODELS(FRONTEND)
+export interface QuestionDTO{
+    id: number;
+    category: string;
+    difficultyLevel: string;
+    rightAnswer: string;
+    questionTitle: string;
+    option1: string;
+    option2: string;
+    option3: string;
+    option4: string;
+    quizId: number[];
+}
+export interface CreateQuestionDTO{
+    category : string;
+    difficultyLevel : string;
+    rightAnswer : string;
+    questionTitle : string;
+    option1 : string;
+    option2 : string;
+    option3 : string;
+    option4 : string;
+}
+
+---> "CREATE-QUESTION.COMPONENT.TS" (FRONTEND)
+xport class CreateQuestionComponent implements OnInit {
+
+    questionForm: FormGroup;
+    selectedAnswer : string = '';
+    categories : string[] = [];
+    addNewCategory : boolean = false;
+    
+  constructor(
+    private fb: FormBuilder,
+    private adminService: AdminServiceService,
+    private router: Router
+  ) {
+    this.questionForm = this.fb.group({
+      questionTitle: ['', Validators.required],
+      category: ['', Validators.required],
+      difficultyLevel: ['', Validators.required],
+      option1: ['', Validators.required],
+      option2: ['', Validators.required],
+      option3: ['', Validators.required],
+      option4: ['', Validators.required],
+      rightAnswer: ['', Validators.required],
+      newCategory : ['']
+    });
+  }
+
+  ngOnInit(): void {
+    this.adminService.getAllCategories().subscribe({
+      next : (data) => this.categories = data,
+      error : () => alert('Failed to load categories')
+    });
+  }
+
+  selectRightAnswer(optionKey : string ) : void{
+    const selectedValue = this.questionForm.get(optionKey)?.value;
+    this.questionForm.patchValue({rightAnswer : selectedValue});
+    this.selectedAnswer = optionKey;
+  }
+
+  onCategoryChange(value : string):void{
+    this.addNewCategory = value == 'ADD_NEW';
+    if(this.addNewCategory){
+      this.questionForm.get('category')?.setValidators(Validators.required);
+    }else{
+      this.questionForm.get('newCategory')?.setValue('');
+      this.questionForm.get('newCategory')?.clearValidators();
+    }
+
+    this.questionForm.get('newCategory')?.updateValueAndValidity();
+  }
+
+  submitQuestion() {
+      console.log('🔔 Submit button clicked');
+
+  if (this.questionForm.invalid) {
+    console.warn('⚠️ Form is invalid');
+    this.questionForm.markAllAsTouched();
+    return;
+  }
+
+  const formValue = this.questionForm.value;
+  const finalCategory = formValue.category === 'ADD_NEW' ? formValue.newCategory : formValue.category;
+
+  const dto: CreateQuestionDTO = {
+    questionTitle: formValue.questionTitle,
+    category: finalCategory,
+    difficultyLevel: formValue.difficultyLevel,
+    option1: formValue.option1,
+    option2: formValue.option2,
+    option3: formValue.option3,
+    option4: formValue.option4,
+    rightAnswer: formValue.rightAnswer,
+  };
+
+  console.log('📦 Payload to submit:', dto);
+
+  this.adminService.addQuestion(dto).subscribe({
+    next: () => {
+      console.log('✅ Question added successfully');
+      alert('✅ Question added successfully!');
+      this.questionForm.reset();
+      this.addNewCategory = false;
+      this.router.navigate(['']);
+    },
+    error: (err) => {
+      console.error('❌ Error adding question:', err);
+      alert('❌ Error adding question: ' + (err?.error?.message || 'Server Error'));
+    },
+  });
+  }
+
+  setCorrectAnswer(optionKey: 'option1' | 'option2' | 'option3' | 'option4') {
+  const optionValue = this.questionForm.get(optionKey)?.value;
+  this.questionForm.get('rightAnswer')?.setValue(optionValue);
+}
+}
+
+---> "CREATE-QUESTION.COMPONENT.HTML" (FRONTEND)
+<div class="glass-container">
+  <div class="glass-card">
+    <h2 class="glass-heading">Create New Question</h2>
+
+    <form [formGroup]="questionForm" (ngSubmit)="submitQuestion()">
+      <div class="mb-3">
+        <label>Question Title</label>
+        <input type="text" class="form-control" formControlName="questionTitle" placeholder="Enter question" />
+      </div>
+
+      <div class="mb-3">
+        <label>Category</label>
+        <select #categorySelect class="form-select" (change)="onCategoryChange(categorySelect.value)">
+          <option value="">Select Category</option>
+          <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          <option value="ADD_NEW">➕ Add New Category</option>
+        </select>
+      </div>
+
+      <div class="mb-3" *ngIf="addNewCategory">
+        <label>New Category</label>
+        <input type="text" class="form-control" formControlName="newCategory" placeholder="Enter new category" />
+      </div>
+
+      <div class="mb-3">
+        <label>Difficulty Level</label>
+        <select class="form-select" formControlName="difficultyLevel">
+          <option value="">Select Difficulty</option>
+          <option value="EASY">EASY</option>
+          <option value="MEDIUM">MEDIUM</option>
+          <option value="HARD">HARD</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3" *ngFor="let opt of ['option1', 'option2', 'option3', 'option4']; let i = index">
+          <label>Option {{i + 1}}</label>
+          <input type="text" class="form-control" [formControlName]="opt" placeholder="Enter option {{i + 1}}" />
+
+          <button
+            type="button"
+            class="glass-button-sm"
+            [class.active-btn]="selectedAnswer === opt"
+            (click)="selectRightAnswer(opt)">
+            {{ selectedAnswer === opt ? '✔ Selected' : 'Set as Answer' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label>Correct Answer</label>
+        <input type="text" class="form-control" formControlName="rightAnswer" readonly />
+      </div>
+
+      <button type="submit" class="glass-button w-100" [disabled]="questionForm.invalid" (click)="submitQuestion()">
+        Submit Question
+      </button>
+    </form>
+  </div>
+</div>
+
+---> SERVICE LAYER METHOD(BACKEND)
+    public QuestionDto addQuestion(CreateQuestionDto dto) {
+        Users users = jwtUtil.getLoggedInUser();
+        if (userRolesCheckForAdminAndCreator(users)){
+            try{
+                Questions saveQuestion = mapper.toCreateQuestionDto(dto);
+                Questions savedQuestion = questionRepository.save(saveQuestion);
+                return mapper.toQuestionDto(savedQuestion);
+            }catch (QuestionCreationException ex){
+                throw new QuestionCreationException("Question Was Not Created Properly");
+            }
+        }else
+            throw  new QuestionNotCreatedException("Question was not created");
+    }
+
+----> CONTROLLER LAYER METHOD(BACKEND)
+    @PostMapping("/add")
+    public ResponseEntity<QuestionDto> addQuestion(@RequestBody CreateQuestionDto dto) {
+        try {
+            QuestionDto createdQuestion = adminService.addQuestion(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdQuestion);
+        } catch (QuestionCreationException ex) {
+            return ResponseEntity.badRequest().build();
+        } catch (QuestionNotCreatedException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+    }
+
+----> MAPPER FUNCTION USED (BACKEND)
+    public Questions toCreateQuestionDto(CreateQuestionDto question){
+
+        Questions createdQuestion = new Questions();
+
+        createdQuestion.setQuestionTitle(question.getQuestionTitle());
+        createdQuestion.setCategory(question.getCategory());
+        createdQuestion.setDifficultyLevel(question.getDifficultyLevel());
+        createdQuestion.setRightAnswer(question.getRightAnswer());
+        createdQuestion.setOption1(question.getOption1());
+        createdQuestion.setOption2(question.getOption2());
+        createdQuestion.setOption3(question.getOption3());
+        createdQuestion.setOption4(question.getOption4());
+        createdQuestion.setQuizzes(new ArrayList<>());
+        return createdQuestion;
+}
+
+
+
+
+
+HEY CHAT , IN MY "CREATE-QUIZ" COMPONENT AFTER I FILL THE "QUIZ FORM" OF HOW TO MAKE MY QUIZ , MY BACKEND IS TRIGGER AND MY NEXT COMPOENT IS ALSO TRIGGERED BUT THE DETAILS ARE NOT BEING RECONGINSED BY THE BACKEND AND THE QUIZ IS NOT BEING FORMED 
+HEY CHAT NOW THIS ERROR IS COMING ON TH INSPECT MODE OF THE CONSOLE OF THE BROWSER AND SOME ERROR IS THROWN IN THE MAPPER FUNCTION THAT THE SERVICE METHOD IS USING
+
+---> ERROR
+create-quiz.component.ts:102   POST http://localhost:8080/api/admin/create 403 (Forbidden)
+
+1.) FIRST ON THE "CREATE-QUIZ" COMPONENT 
+IN THIS I FILL THE INPUT FEILD RELATED TO THIS CREATE QUIZ FEILD . AFTER ENTERING AND SUBMITTING THE QUIZ IS MADE IN THE DATABASE BUT THE QUESTIONS ARE NOT ADDED TO THE QUIZ . AND IN THE NEXT COMPONENT "VIEW-CREATED-QUIZ" IS NOT SHOWING ANYTHING . THIS TABLE THAT SHOULD KEEP THE DETAILS OF THE QUIZ , QUESTIONS IS STILL EMPTY EVEN THOUGH THE QUIZ IN THE QUIZ DB IS BEING MADE 
+
+---> QUIZ & QUESTION ENTITY
+@Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "questions")
+public class Questions {
+
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String questionTitle;
+    private String category;
+    private String difficultyLevel;
+    private String rightAnswer;
+    private String option1;
+    private String option2;
+    private String option3;
+    private String option4;
+
+    @ManyToMany(mappedBy = "questions")
+    private List<Quiz> quizzes;
+
+    @Override
+    public String toString() {
+        return "Questions{" +
+                "id=" + id +
+                ", questionTitle='" + questionTitle + '\'' +
+                ", category='" + category + '\'' +
+                ", difficultyLevel='" + difficultyLevel + '\'' +
+                ", rightAnswer='" + rightAnswer + '\'' +
+                ", option1='" + option1 + '\'' +
+                ", option2='" + option2 + '\'' +
+                ", option3='" + option3 + '\'' +
+                ", option4='" + option4 + '\'' +
+                '}';
+    }
+}
+
+@Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "quiz")
+public class Quiz {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String title;
+    private String category;
+    private String difficultyLevel;
+
+    // QUIZ CREATOR
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "users")
+    private Users createdBy;
+
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(name = "quiz_questions",
+            joinColumns = @JoinColumn(name = "quiz_id"),
+            inverseJoinColumns = @JoinColumn(name = "question_id"))
+    private List<Questions> questions;
+
+    // THE LIST OF PARTICIPANTS
+    @ManyToMany
+    @JoinTable(name = "quiz_users" ,
+    joinColumns = @JoinColumn(name = "quiz_id")
+    ,inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private List<Users> participants;
+
+    @Override
+    public String toString() {
+        return "Quiz{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", category='" + category + '\'' +
+                ", difficultyLevel='" + difficultyLevel + '\'' +
+                '}';
+    }
+}
+
+---> RELATED SERVICE METHODS AND MODELS
+  createQuiz(dto : CreateQuizDTO) : Observable<QuizDTO>{
+    return this.http.post<QuizDTO>(`${this.BASE_URL}create` , dto , {
+      headers: this.createAuthorizationHeader()
+    });
+  }
+
+--> MODEL
+export interface CreateQuizDTO{
+    quizTitle : string;
+    category : string;
+    difficultyLevel : string;
+    noOfQuestion : number;
+}
+export interface QuizDTO{
+    title : string;
+    category : string;
+    difficultyLevel : string;
+    creatorUserId : number;
+    creatorUserName : number;
+    questionQuizIds : number[];
+    participantUserName : string[];
+}
+
+---> TS FILE
+export class CreateQuizComponent implements OnInit {
+
+  quizForm !: FormGroup;
+  availableQuestions : number = 0;
+  maxQuestions : number = 0;
+  questionOptions : number[] = [];
+  categories : string[] = [];
+
+  constructor(
+    private fb : FormBuilder,
+    private adminService : AdminServiceService,
+    private router : Router
+  ){}
+
+  ngOnInit() : void {
+    this.quizForm = this.fb.group({
+      quizTitle : ['' , Validators.required],
+      category : ['' , Validators.required],
+      difficultyLevel : ['' , Validators.required],
+      noOfQuestions : [0 , Validators.required]
+    });
+
+    this.loadCategories();
+  }
+
+  loadCategories() : void{
+    this.adminService.getAllCategories().subscribe({
+      next : (data) => this.categories = data,
+      error : () => {
+        this.categories = [];
+        alert('❌ Failed to load categories.')
+      }
+    })
+  }
+
+  onCategoryChange() : void{
+    const category = this.quizForm.get('category')?.value;
+    if(category){
+      this.adminService.getQuestionCountByCategory(category).subscribe({
+        next : (count) => {
+          this.availableQuestions = count;
+          this.maxQuestions = count;
+          this.populateQuestionOptions();
+        },
+        error : () => {
+          this.availableQuestions = 0;
+          this.maxQuestions = 0;
+          this.questionOptions = [];
+        }
+      });
+    }
+  }
+
+  onDifficultyChange() : void{
+    const category = this.quizForm.get('category')?.value;
+    const difficulty = this.quizForm.get('difficultyLevel')?.value;
+
+    if(category && difficulty){
+
+      this.adminService.getQuestionCountByCategoryAndDifficulty(category , difficulty).subscribe({
+        next : (count) => {
+          this.availableQuestions = count;
+          this.maxQuestions = count;
+          this.populateQuestionOptions();
+        },
+        error : () => {
+          this.availableQuestions = 0;
+          this.maxQuestions = 0;
+          this.questionOptions = [];
+        }
+      })
+    }
+  }
+
+  populateQuestionOptions() : void{
+    this.questionOptions = Array.from({length : this.maxQuestions + 1} , (_ , i) => i).slice(1);
+  }
+
+  setMaxQuestions() : void{
+    this.quizForm.get('noOfQuestions')?.setValue(this.maxQuestions);
+  }
+
+    createQuiz(): void {
+    if (this.quizForm.invalid) return;
+
+    const dto: CreateQuizDTO = this.quizForm.value;
+
+    this.adminService.createQuiz(dto).subscribe({
+      next: (res) => {
+        alert('✅ Quiz created successfully!');
+        this.quizForm.reset();
+        this.router.navigate(['/admin/quiz/view', res.title]);
+      },
+      error: (err) =>
+        alert('❌ Error creating quiz: ' + (err?.error?.message || 'Server Error'))
+    });
+  }
+}
+
+---> HTML FILE
+<div class="glass-container">
+  <div class="glass-card">
+    <h2>Create New Quiz</h2>
+    <form [formGroup]="quizForm" (ngSubmit)="createQuiz()">
+
+      <label for="quizTitle">Title</label>
+      <input
+        type="text"
+        id="quizTitle"
+        class="form-control"
+        formControlName="quizTitle"
+        placeholder="Enter quiz title"
+      />
+
+      <label for="category">Category</label>
+      <select
+        id="category"
+        class="form-select"
+        formControlName="category"
+        (change)="onCategoryChange()"
+      >
+        <option value="" disabled selected>Select category</option>
+        <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+      </select>
+      <div *ngIf="availableQuestions > 0" class="info-box">
+        📊 Available: <strong>{{ availableQuestions }}</strong>
+      </div>
+
+      <label for="difficultyLevel">Difficulty Level</label>
+      <select
+        id="difficultyLevel"
+        class="form-select"
+        formControlName="difficultyLevel"
+        (change)="onDifficultyChange()"
+      >
+        <option value="" disabled selected>Select difficulty</option>
+        <option value="EASY">Easy</option>
+        <option value="MEDIUM">Medium</option>
+        <option value="HARD">Hard</option>
+      </select>
+
+      <label for="noOfQuestions">Number of Questions</label>
+      <div class="question-row">
+        <select
+          id="noOfQuestions"
+          class="form-select"
+          formControlName="noOfQuestions"
+        >
+          <option value="" disabled selected>Select number</option>
+          <option *ngFor="let q of questionOptions" [value]="q">{{ q }}</option>
+        </select>
+        <button type="button" class="max-btn" (click)="setMaxQuestions()">Use Max ({{ maxQuestions }})</button>
+      </div>
+
+      <button class="glass-button" type="submit">Create Quiz</button>
+    </form>
+  </div>
+</div>
+
+----> RELATED BACKEND
+---> SERVICE LAYER METHOD
+public QuizDto createQuiz(CreateQuizDto dto){
+        Users users = jwtUtil.getLoggedInUser();
+        if (userRolesCheckForAdminAndCreator(users)){
+            try{
+                List<Questions> availableQuestions = questionRepository.findByCategoryAndDifficultyLevel(dto.getCategory(), dto.getDifficultyLevel());
+                if (availableQuestions == null || availableQuestions.isEmpty()) {
+                    throw new QuizProcessingErrorException("No questions found for category: " + dto.getCategory() + " and difficulty: " + dto.getDifficultyLevel());
+                }
+                if (availableQuestions.size() < dto.getNoOfQuestions()) {
+                    throw new QuizProcessingErrorException("Not enough questions available. Requested: " + dto.getNoOfQuestions() + ", Available: " + availableQuestions.size());
+                }
+                List<Questions> selectedQuestions = selectRandomQuestions(availableQuestions , dto.getNoOfQuestions());
+                Quiz quiz = mapper.toCreateQuiz(dto, users, selectedQuestions);
+                Quiz savedQuiz = quizRepository.save(quiz);
+                return mapper.toQuizDto(savedQuiz);
+            }catch(QuizProcessingErrorException ex){
+                throw new QuizProcessingErrorException("Quiz Was Not Created");
+            }
+        }else
+            throw new UserRoleIncorrectException("User Is Not Authorized To Do This");
+    }
+
+---> CONTROLLER LAYER METHOD
+    @PostMapping("create")
+    public ResponseEntity<QuizDto> createQuiz(@RequestBody CreateQuizDto dto) {
+        try {
+            QuizDto createdQuiz = adminService.createQuiz(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdQuiz);
+        } catch (QuizProcessingErrorException ex) {
+            return ResponseEntity.badRequest().build();
+        } catch (UserRoleIncorrectException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+    }
+
+---> MAPPER CLASS FUNCTION 
+    public Quiz toCreateQuiz(CreateQuizDto quizDto , Users creator , List<Questions> selectedQuestions){
+
+        Quiz quiz = new Quiz();
+        quiz.setTitle(quizDto.getQuizTitle());
+        quiz.setCategory(quizDto.getCategory());
+        quiz.setDifficultyLevel(quizDto.getDifficultyLevel());
+        quiz.setCreatedBy(creator);
+        quiz.setParticipants(new ArrayList<>());
+
+        for (Questions q : selectedQuestions){
+            if (q.getQuizzes() == null) q.setQuizzes(new ArrayList<>());
+            q.getQuizzes().add(quiz);
+        }
+        quiz.setQuestions(selectedQuestions);
+        return quiz;
+  }
+
+  public QuizDto toQuizDto(Quiz quiz){
+
+        QuizDto dto = new QuizDto();
+
+        dto.setTitle(quiz.getTitle());
+        dto.setCategory(quiz.getCategory());
+        dto.setDifficultyLevel(quiz.getDifficultyLevel());
+
+        if (quiz.getCreatedBy() != null){
+            dto.setCreatorUserId(quiz.getCreatedBy().getId());
+            dto.setCreatorUserName(quiz.getCreatedBy().getName());
+        }else{
+            dto.setCreatorUserId(null);
+            dto.setCreatorUserName(null);
+        }
+
+        List<Long> questionIds = new ArrayList<>();
+        if (quiz.getQuestions() != null){
+            questionIds = quiz.getQuestions().stream().map(Questions::getId).collect(Collectors.toList());
+        }
+        dto.setQuestionsQuizIds(questionIds);
+
+        List<String> participantNames = new ArrayList<>();
+        if (quiz.getParticipants() == null){
+            dto.setParticipantUserName(participantNames);
+        }else {
+            participantNames = quiz.getParticipants().stream().map(Users::getName).collect(Collectors.toList());
+            dto.setParticipantUserName(participantNames);
+        }
+        return dto;
+  }
+
+      public List<Questions> selectRandomQuestions(List<Questions> availableQuestions, int noOfQuestions) {
+        List<Questions> questionsCopy = new ArrayList<>(availableQuestions);
+        List<Questions> selectedQuestions = new ArrayList<>();
+
+        Random random = new Random();
+
+        for (int i = 0; i < noOfQuestions; i++) {
+            int randomIndex = random.nextInt(questionsCopy.size());
+            selectedQuestions.add(questionsCopy.get(randomIndex));
+            questionsCopy.remove(randomIndex);
+        }
+        return selectedQuestions;
+    }
+
+
+2.) SECOND AFTER THE SUBMITTING THE QUIZ DETAILS THE COMPONENT "VIEW-CREATED-QUIZ" IS TRIGGERED WHICH SHOWS THE DETAILS OF THE CREATED QUIZ IN THE "CREATE-QUIZ" COMPONENT . BUT THE BACKEND IS NOT STORING THE QUESTION ACCORDNG TO THE FILTER PROVIDED IN THE "CREATE-QUIZ" COMPPONENT
+AND THIS ERROR IS COMING 
+
+ERROR -
+:8080/api/admin/created/New%20Quiz%20Example%20Category:1   Failed to load resource: the server responded with a status of 403 ()
+
+---> RELATED SERVICE METHODS AND MODELS
+  getCreatedQuiz(quizTitle : string) : Observable<CreatedQuizDTO> {
+    return this.http.get<CreatedQuizDTO>(`${this.BASE_URL}created/${quizTitle}` , {
+      headers: this.createAuthorizationHeader()
+    });
+  }
+
+--> MODEL 
+export interface CreatedQuizDTO{
+    title : string;
+    category : string;
+    difficultyLevel : string;
+    creatorName : string;
+    questionList : QuestionDTO[];
+}
+
+---> TS FILE
+@Component({
+  selector: 'app-view-created-quiz',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './view-created-quiz.component.html',
+  styleUrl: './view-created-quiz.component.css'
+})
+export class ViewCreatedQuizComponent implements OnInit {
+
+  quizTitle: string = '';
+  createdQuiz: CreatedQuizDTO | null = null;
+  errorMessage: string = '';
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private adminService: AdminServiceService
+  ) {}
+
+  ngOnInit(): void {
+    this.quizTitle = this.route.snapshot.paramMap.get('quizTitle') || '';
+
+    if (this.quizTitle) {
+      this.adminService.getCreatedQuiz(this.quizTitle).subscribe({
+        next: (res) => this.createdQuiz = res,
+        error: (err) => this.errorMessage = err.error?.message || 'Quiz not found'
+      });
+    } else {
+      this.errorMessage = 'No quiz title provided';
+    }
+  }
+
+  goBack() {
+    this.router.navigate(['/admin']);
+  }
+}
+
+---> HTML FILE
+
+<div class="glass-container">
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="createdQuiz">
+    <div class="quiz-header glass-card">
+      <h2>{{ createdQuiz.title }}</h2>
+      <p><strong>Category:</strong> {{ createdQuiz.category }}</p>
+      <p><strong>Difficulty:</strong> {{ createdQuiz.difficultyLevel }}</p>
+      <p><strong>Created By:</strong> {{ createdQuiz.creatorName }}</p>
+    </div>
+
+    <div class="questions-section">
+      <h3>Questions</h3>
+      <div *ngFor="let question of createdQuiz.questionList; let i = index" class="question-card glass-card">
+        <p><strong>Q{{ i + 1 }}:</strong> {{ question.questionTitle }}</p>
+        <div class="options">
+          <div>A. {{ question.option1 }}</div>
+          <div>B. {{ question.option2 }}</div>
+          <div>C. {{ question.option3 }}</div>
+          <div>D. {{ question.option4 }}</div>
+        </div>
+        <p class="correct-answer"><strong>Correct Answer:</strong> {{ question.rightAnswer }}</p>
+      </div>
+    </div>
+
+    <button class="back-btn" (click)="goBack()">← Back to Dashboard</button>
+  </div>
+</div>
+
+----> RELATED BACKEND 
+---> SERVICE LAYER CODE
+public CreatedQuizDto getCreatedQuiz(String quizTitle) {
+    Users users = jwtUtil.getLoggedInUser();
+    if (userRolesCheckForAdminAndCreator(users)){
+        try{
+            Optional<Quiz> optionalQuiz = quizRepository.findQuizByTitle(quizTitle);
+            Quiz quiz = optionalQuiz.get();
+            List<Questions> questionsList = quiz.getQuestions();
+            CreatedQuizDto createdQuizDto = mapper.toCreatedQuizDto(quiz, questionsList);
+            if (quiz.getCreatedBy() != null && quiz.getCreatedBy().getName() != null) {
+                createdQuizDto.setCreatorName(quiz.getCreatedBy().getName());
+            } else {
+                createdQuizDto.setCreatorName("Unknown");
+            }
+            return createdQuizDto;
+        }catch (QuizProcessingErrorException ex){
+            throw new QuizProcessingErrorException("Quiz Was Not Created");
+        }
+    }else
+        throw new UserRoleIncorrectException("User Is Not Authorized To Do This");
+}
+
+---> CONTROLLER LAYER CODE
+    @GetMapping("created/{quizTitle}")
+    public ResponseEntity<CreatedQuizDto> getCreatedQuiz(@PathVariable String quizTitle) {
+        try {
+            CreatedQuizDto quiz = adminService.getCreatedQuiz(quizTitle);
+            return ResponseEntity.ok(quiz);
+        } catch (QuizProcessingErrorException ex) {
+            return ResponseEntity.badRequest().build();
+        } catch (UserRoleIncorrectException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+}
+
+---> MAPPER FUNCTION
+    public CreatedQuizDto toCreatedQuizDto(Quiz quiz , List<Questions> questionsList){
+        CreatedQuizDto quizDto = new CreatedQuizDto();
+        List<QuestionDto> questionDtoList = new ArrayList<>();
+        for (Questions question : questionsList){
+            questionDtoList.add(toQuestionDto(question));
+        }
+        quizDto.setTitle(quiz.getTitle());
+        quizDto.setCategory(quiz.getCategory());
+        quizDto.setDifficultyLevel(quiz.getDifficultyLevel());
+        quizDto.setCreatorName(quizDto.getCreatorName());
+        quizDto.setQuestionList(questionDtoList);
+        return quizDto;
+    }
+

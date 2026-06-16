@@ -1,0 +1,35 @@
+/* ─── Shared Pastel Design Tokens ─────────────────────────
+   Include this comment block in each component CSS so the
+   token values are clear. All components use the :root vars
+   defined in app.component.css (loaded globally).
+   ──────────────────────────────────────────────────────── */
+
+/* Page wrapper pattern */
+.page-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: clamp(1.25rem, 3vw, 2rem) 1rem;
+  overflow-y: auto;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+
+/* Centered card */
+.form-card {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(148, 180, 255, 0.3);
+  border-radius: 1.25rem;
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+  width: 100%;
+  box-shadow: 0 8px 40px rgba(99, 140, 255, 0.14);
+  transition: all 0.22s ease;
+}
+
+.form-card:hover {
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 12px 48px rgba(99, 140, 255, 0.18);
+}

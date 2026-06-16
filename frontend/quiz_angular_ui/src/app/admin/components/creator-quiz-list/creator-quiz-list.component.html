@@ -1,0 +1,88 @@
+<!-- src/app/admin/components/creator-quiz-list/creator-quiz-list.component.html -->
+
+<div class="quiz-list-wrap">
+
+  <!-- ── Filter row ────────────────────────────────────────────────────────── -->
+  <div class="filter-row">
+
+    <!-- Title search (always visible) -->
+    <div class="search-row">
+      <input type="text"
+             class="search-input"
+             [(ngModel)]="searchText"
+             placeholder="Search quizzes by title..."
+             (ngModelChange)="onSearch()" />
+      <button class="search-btn" (click)="onSearch()">🔍</button>
+    </div>
+
+    <!-- Category dropdown -->
+    <select class="category-select"
+            [(ngModel)]="selectedCategory"
+            (change)="onCategoryChange()">
+      <option value="">All Categories</option>
+      <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+    </select>
+
+    <!-- Clear filters (shown when any filter is active) -->
+    <button class="clear-btn"
+            *ngIf="selectedCategory || searchText"
+            (click)="clearFilters()">✕ Clear</button>
+  </div>
+
+  <!-- Active filter pills -->
+  <div class="filter-pills" *ngIf="selectedCategory">
+    <span class="filter-pill">
+      📚 {{ selectedCategory }}
+      <button class="pill-remove" (click)="selectedCategory = ''; onCategoryChange()">✕</button>
+    </span>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-banner">⚠️ {{ errorMessage }}</div>
+
+  <ng-container *ngIf="quizzes.length > 0; else emptyState">
+    <div class="quiz-card"
+         *ngFor="let quiz of quizzes"
+         (mouseenter)="hoveredId = quiz.id"
+         (mouseleave)="hoveredId = 0"
+         [class.expanded]="hoveredId === quiz.id">
+
+      <div class="quiz-card-header">
+        <span class="quiz-card-title">{{ quiz.title }}</span>
+        <span class="quiz-chevron">▼</span>
+      </div>
+
+      <div class="quiz-details">
+        <div style="margin-bottom: 0.5rem;">
+          <span class="detail-pill">📚 {{ quiz.category }}</span>
+          <span class="detail-pill">⚡ {{ quiz.difficultyLevel }}</span>
+          <span class="detail-pill">❓ {{ quiz.questionIds?.length ?? 0 }} Qs</span>
+          <span class="detail-pill">👥 {{ quiz.participantIds?.length ?? 0 }}</span>
+        </div>
+        <div class="detail-text"><strong>By:</strong> {{ quiz.creatorUsername }}</div>
+
+        <div class="card-actions">
+          <button class="action-btn primary-btn"
+                  (click)="viewQuizDetails(quiz); $event.stopPropagation()">
+            📋 Details
+          </button>
+          <button class="action-btn"
+                  (click)="takeQuiz(quiz); $event.stopPropagation()">
+            🎯 Take Quiz
+          </button>
+          <button class="action-btn"
+                  (click)="onViewResults(quiz); $event.stopPropagation()">
+            📊 Results
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </ng-container>
+
+  <ng-template #emptyState>
+    <div *ngIf="!errorMessage" class="empty-state">
+      📂 No quizzes found.
+    </div>
+  </ng-template>
+
+</div>

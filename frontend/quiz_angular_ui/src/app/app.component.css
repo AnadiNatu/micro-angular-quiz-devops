@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+
+:root {
+  --bg-primary:    #f0f4ff;
+  --bg-secondary:  #e8f0fe;
+  --surface:       rgba(255, 255, 255, 0.72);
+  --surface-hover: rgba(255, 255, 255, 0.88);
+  --glass:         rgba(255, 255, 255, 0.55);
+  --glass-border:  rgba(148, 180, 255, 0.35);
+  --glass-shadow:  0 8px 32px rgba(99, 140, 255, 0.12);
+
+  --blue-50:  #eff6ff;
+  --blue-100: #dbeafe;
+  --blue-200: #bfdbfe;
+  --blue-400: #60a5fa;
+  --blue-500: #3b82f6;
+  --blue-600: #2563eb;
+  --blue-700: #1d4ed8;
+
+  --yellow-100: #fef9c3;
+  --yellow-300: #fde047;
+  --yellow-400: #facc15;
+  --yellow-500: #eab308;
+
+  --slate-50:  #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-400: #94a3b8;
+  --slate-500: #64748b;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-800: #1e293b;
+  --slate-900: #0f172a;
+
+  --accent:        #2563eb;
+  --accent-light:  #dbeafe;
+  --accent-hover:  #1d4ed8;
+  --gold:          #eab308;
+  --gold-light:    #fef9c3;
+  --success:       #16a34a;
+  --danger:        #dc2626;
+  --warning:       #d97706;
+
+  --radius-sm:  0.5rem;
+  --radius-md:  0.75rem;
+  --radius-lg:  1rem;
+  --radius-xl:  1.25rem;
+  --radius-2xl: 1.5rem;
+
+  --font-display: 'Sora', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+
+  --transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+.background-wrapper {
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  position: relative;
+  transition: background-image 1.2s ease;
+}
+
+.content-overlay {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(219, 234, 254, 0.88) 0%,
+    rgba(240, 244, 255, 0.82) 40%,
+    rgba(254, 249, 195, 0.75) 100%
+  );
+}

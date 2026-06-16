@@ -1,0 +1,90 @@
+<!-- src/app/admin/components/participant-quiz/participant-quiz.component.html -->
+
+<div class="participant-wrapper">
+
+  <!-- ── Page Header ─────────────────────────────────────────────────────── -->
+  <div class="page-header">
+    <h2 class="page-title">🎯 Available <span>Quizzes</span></h2>
+    <p class="page-subtitle">Browse, filter by category, and jump straight into a quiz.</p>
+  </div>
+
+  <!-- ── Filter Bar ──────────────────────────────────────────────────────── -->
+  <div class="filter-bar">
+
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text"
+             class="search-input"
+             [(ngModel)]="searchText"
+             placeholder="Search by quiz title…"
+             (ngModelChange)="onSearch()" />
+    </div>
+
+    <select class="category-select"
+            [(ngModel)]="selectedCategory"
+            (change)="onCategoryChange()">
+      <option value="">All Categories</option>
+      <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+    </select>
+
+    <button class="clear-btn"
+            *ngIf="selectedCategory || searchText"
+            (click)="clearFilters()">✕ Clear</button>
+  </div>
+
+  <!-- Active filter pill -->
+  <div class="filter-pills" *ngIf="selectedCategory">
+    <span class="filter-pill">
+      📚 {{ selectedCategory }}
+      <button class="pill-remove" (click)="selectedCategory = ''; onCategoryChange()">✕</button>
+    </span>
+  </div>
+
+  <!-- Results count -->
+  <p class="results-count" *ngIf="!isLoading">
+    {{ filteredQuizzes.length }} quiz{{ filteredQuizzes.length !== 1 ? 'zes' : '' }} found
+    <ng-container *ngIf="selectedCategory || searchText"> for current filters</ng-container>
+  </p>
+
+  <!-- ── Loading ─────────────────────────────────────────────────────────── -->
+  <div *ngIf="isLoading" class="loading-wrap">
+    <span class="spinner"></span> Loading quizzes…
+  </div>
+
+  <!-- ── Error ───────────────────────────────────────────────────────────── -->
+  <div *ngIf="errorMessage && !isLoading" class="error-banner">⚠️ {{ errorMessage }}</div>
+
+  <!-- ── Quiz Grid ────────────────────────────────────────────────────────── -->
+  <div class="quiz-grid" *ngIf="!isLoading && filteredQuizzes.length > 0">
+    <div class="quiz-card" *ngFor="let quiz of filteredQuizzes">
+
+      <div class="quiz-card-top">
+        <div class="quiz-category-tag">📚 {{ quiz.category }}</div>
+        <span class="difficulty-badge" [ngClass]="getDifficultyClass(quiz.difficultyLevel)">
+          {{ quiz.difficultyLevel }}
+        </span>
+      </div>
+
+      <h3 class="quiz-card-title">{{ quiz.title }}</h3>
+
+      <div class="quiz-meta">
+        <span class="meta-item">❓ {{ quiz.questionIds?.length ?? 0 }} questions</span>
+        <span class="meta-item">👥 {{ quiz.participantIds?.length ?? 0 }} attempts</span>
+      </div>
+
+      <div class="quiz-card-footer">
+        <span class="creator-tag">by {{ quiz.creatorUsername }}</span>
+        <button class="start-btn" (click)="startQuiz(quiz)">Start →</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Empty State ──────────────────────────────────────────────────────── -->
+  <div *ngIf="!isLoading && filteredQuizzes.length === 0 && !errorMessage" class="empty-state">
+    <div class="empty-icon">📭</div>
+    <p>No quizzes match your filters.</p>
+    <button class="clear-btn" (click)="clearFilters()">Clear Filters</button>
+  </div>
+
+</div>

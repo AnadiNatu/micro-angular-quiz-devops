@@ -1,0 +1,1 @@
+the text color needs to be turned black 

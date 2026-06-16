@@ -1,0 +1,109 @@
+<div class="home-wrapper">
+
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="hero-content">
+
+      <div class="badge-pill">🎓 Quiz Platform</div>
+
+      <h1 class="hero-title">
+        Learn. Compete.<br />
+        <span class="highlight">Achieve.</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        A microservice-powered quiz platform where admins, curators,
+        and participants connect through knowledge.
+      </p>
+
+      <div class="hero-buttons">
+        <a routerLink="/login" class="btn-primary-glass">
+          🚀 Get Started
+        </a>
+        <a routerLink="/signup" class="btn-outline-glass">
+          ✨ Create Account
+        </a>
+      </div>
+
+      <!-- Animated Stats -->
+      <div class="stats-row">
+        <div *ngFor="let stat of stats; let i = index"
+             class="stat-pill"
+             [class.active-stat]="i === currentStat">
+          <span class="stat-value">{{ stat.value }}</span>
+          <span class="stat-label">{{ stat.label }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Decorative floating cards -->
+    <div class="hero-visual">
+      <div class="floating-card fc-1">
+        <span>📝</span>
+        <p>Quiz Started!</p>
+      </div>
+      <div class="floating-card fc-2">
+        <span>✅</span>
+        <p>Score: 95%</p>
+      </div>
+      <div class="floating-card fc-3">
+        <span>🏆</span>
+        <p>Passed!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <div class="features-section">
+    <h2 class="section-title">Everything You Need</h2>
+    <div class="features-grid">
+      <div *ngFor="let f of features" class="feature-card">
+        <div class="feature-icon">{{ f.icon }}</div>
+        <h3 class="feature-title">{{ f.title }}</h3>
+        <p class="feature-desc">{{ f.desc }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Roles Section -->
+  <div class="roles-section">
+    <h2 class="section-title">Pick Your Role</h2>
+    <div class="roles-grid">
+
+      <div class="role-card-home">
+        <div class="role-icon-home">🛡️</div>
+        <h3>Admin</h3>
+        <p>Manage users, oversee all quizzes, disable accounts, and access the full platform.</p>
+        <a routerLink="/signup" class="role-cta">Join as Admin →</a>
+      </div>
+
+      <div class="role-card-home featured-role">
+        <div class="role-badge">Most Popular</div>
+        <div class="role-icon-home">✏️</div>
+        <h3>Curator</h3>
+        <p>Create and manage quizzes, add questions, and track participant performance.</p>
+        <a routerLink="/signup" class="role-cta">Join as Curator →</a>
+      </div>
+
+      <div class="role-card-home">
+        <div class="role-icon-home">🎯</div>
+        <h3>Participant</h3>
+        <p>Browse available quizzes, test your knowledge, and view your progress reports.</p>
+        <a routerLink="/signup" class="role-cta">Join as Participant →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer CTA -->
+  <div class="footer-cta">
+    <h2>Ready to start?</h2>
+    <p>Join thousands of learners on the Quiz Platform.</p>
+    <div class="hero-buttons">
+      <a routerLink="/login"  class="btn-primary-glass">Login</a>
+      <a routerLink="/signup" class="btn-outline-glass">Sign Up Free</a>
+    </div>
+  </div>
+
+</div>
