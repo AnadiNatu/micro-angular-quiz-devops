@@ -1,0 +1,59 @@
+# =============================================================================
+# api-gateway/src/main/resources/application-prod.yml
+# PROFILE: prod  (set by docker-compose.prod.yml: SPRING_PROFILES_ACTIVE=prod)
+#
+# ✅ SAFE TO COMMIT — all secrets come from environment variables
+#    injected by docker-compose.prod.yml which reads from .env.prod (on EC2)
+# =============================================================================
+
+server:
+  port: 8080
+
+jwt:
+  secret: ${JWT_SECRET}           # injected from .env.prod on EC2
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+          lower-case-service-id: true
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origins: "*"
+            allowed-methods: "GET,POST,PUT,DELETE,OPTIONS,PATCH"
+            allowed-headers: "*"
+            allow-credentials: false
+      routes:
+        - id: auth-service
+          uri: http://auth-service:8082
+          predicates:
+            - Path=/api/auth/**
+        - id: question-service
+          uri: http://question-service:8083
+          predicates:
+            - Path=/api/questions/**
+        - id: quiz-service
+          uri: http://quiz-service:8084
+          predicates:
+            - Path=/api/quiz/**
+        - id: notification-service
+          uri: http://notification-service:8085
+          predicates:
+            - Path=/api/notify/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://api-gateway:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+logging:
+  level:
+    org.springframework.cloud.gateway: WARN
+    reactor.netty: WARN
