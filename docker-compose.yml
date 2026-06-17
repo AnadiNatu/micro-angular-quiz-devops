@@ -1,0 +1,281 @@
+# =============================================================================
+# docker-compose.yml
+# Quiz Platform — Full Stack Microservices
+#
+# Services:
+#   postgres          — PostgreSQL 16 (persistent volume)
+#   api-gateway       — Spring Cloud Gateway :8080
+#   auth-service      — Auth + JWT :8081
+#   question-service  — Questions + AI :8082
+#   quiz-service      — Quizzes + Results :8083
+#   notification-service — Email :8084
+#   frontend          — Angular + Nginx :80
+#
+# Usage:
+#   docker compose up -d                  (docker profile — uses .env)
+#   docker compose --env-file .env.prod up -d  (prod — uses .env.prod)
+# =============================================================================
+
+services:
+
+  # ── PostgreSQL Database ─────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: quiz-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER:     ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB:       postgres              # default admin db
+
+      # Passed to init script (01-init-databases.sh)
+      AUTH_DB_NAME:       ${AUTH_DB_NAME}
+      AUTH_DB_USER:       ${AUTH_DB_USER}
+      AUTH_DB_PASSWORD:   ${AUTH_DB_PASSWORD}
+
+      QUESTION_DB_NAME:   ${QUESTION_DB_NAME}
+      QUESTION_DB_USER:   ${QUESTION_DB_USER}
+      QUESTION_DB_PASSWORD: ${QUESTION_DB_PASSWORD}
+
+      QUIZ_DB_NAME:       ${QUIZ_DB_NAME}
+      QUIZ_DB_USER:       ${QUIZ_DB_USER}
+      QUIZ_DB_PASSWORD:   ${QUIZ_DB_PASSWORD}
+
+    volumes:
+      # ── PERSISTENT VOLUME — data survives container stop/restart/EC2 reboot ─
+      - postgres-data:/var/lib/postgresql/data
+      # ── Init script — runs once on first container creation ──────────────────
+      - ./postgres-init:/docker-entrypoint-initdb.d:ro
+
+    ports:
+      - "5432:5432"      # expose for local psql access — remove in prod if RDS
+
+    networks:
+      - quiz-network
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ── API Gateway ──────────────────────────────────────────────────────────────
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: quiz-api-gateway
+    restart: unless-stopped
+
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      JWT_SECRET:             ${JWT_SECRET}
+
+    ports:
+      - "8080:8080"      # Only this port is exposed to host (nginx proxies to it)
+
+    networks:
+      - quiz-network
+
+    depends_on:
+      auth-service:
+        condition: service_healthy
+      question-service:
+        condition: service_healthy
+      quiz-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ── Auth Service ─────────────────────────────────────────────────────────────
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: quiz-auth-service
+    restart: unless-stopped
+
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      POSTGRES_HOST:          postgres
+      POSTGRES_PORT:          5432
+      AUTH_DB_NAME:           ${AUTH_DB_NAME}
+      AUTH_DB_USER:           ${AUTH_DB_USER}
+      AUTH_DB_PASSWORD:       ${AUTH_DB_PASSWORD}
+      JWT_SECRET:             ${JWT_SECRET}
+      MAIL_HOST:              ${MAIL_HOST}
+      MAIL_PORT:              ${MAIL_PORT}
+      MAIL_USERNAME:          ${MAIL_USERNAME}
+      MAIL_PASSWORD:          ${MAIL_PASSWORD}
+
+    networks:
+      - quiz-network
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8081/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+
+  # ── Question Service ─────────────────────────────────────────────────────────
+  question-service:
+    build:
+      context: ./question-service
+      dockerfile: Dockerfile
+    container_name: quiz-question-service
+    restart: unless-stopped
+
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      POSTGRES_HOST:          postgres
+      POSTGRES_PORT:          5432
+      QUESTION_DB_NAME:       ${QUESTION_DB_NAME}
+      QUESTION_DB_USER:       ${QUESTION_DB_USER}
+      QUESTION_DB_PASSWORD:   ${QUESTION_DB_PASSWORD}
+      JWT_SECRET:             ${JWT_SECRET}
+      MAIL_HOST:              ${MAIL_HOST}
+      MAIL_PORT:              ${MAIL_PORT}
+      MAIL_USERNAME:          ${MAIL_USERNAME}
+      MAIL_PASSWORD:          ${MAIL_PASSWORD}
+      OPENAI_API_KEY:         ${OPENAI_API_KEY}
+
+    networks:
+      - quiz-network
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8082/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+
+  # ── Quiz Service ─────────────────────────────────────────────────────────────
+  quiz-service:
+    build:
+      context: ./quiz-service
+      dockerfile: Dockerfile
+    container_name: quiz-quiz-service
+    restart: unless-stopped
+
+    environment:
+      SPRING_PROFILES_ACTIVE:    ${SPRING_PROFILES_ACTIVE:-docker}
+      POSTGRES_HOST:             postgres
+      POSTGRES_PORT:             5432
+      QUIZ_DB_NAME:              ${QUIZ_DB_NAME}
+      QUIZ_DB_USER:              ${QUIZ_DB_USER}
+      QUIZ_DB_PASSWORD:          ${QUIZ_DB_PASSWORD}
+      JWT_SECRET:                ${JWT_SECRET}
+      MAIL_HOST:                 ${MAIL_HOST}
+      MAIL_PORT:                 ${MAIL_PORT}
+      MAIL_USERNAME:             ${MAIL_USERNAME}
+      MAIL_PASSWORD:             ${MAIL_PASSWORD}
+
+    networks:
+      - quiz-network
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+      question-service:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8083/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+
+  # ── Notification Service ──────────────────────────────────────────────────────
+  notification-service:
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+    container_name: quiz-notification-service
+    restart: unless-stopped
+
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      JWT_SECRET:             ${JWT_SECRET}
+      MAIL_HOST:              ${MAIL_HOST}
+      MAIL_PORT:              ${MAIL_PORT}
+      MAIL_USERNAME:          ${MAIL_USERNAME}
+      MAIL_PASSWORD:          ${MAIL_PASSWORD}
+
+    networks:
+      - quiz-network
+
+    depends_on:
+      auth-service:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8084/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ── Frontend (Angular + Nginx) ────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: quiz-frontend
+    restart: unless-stopped
+
+    ports:
+      - "80:80"          # HTTP — the only port users access
+
+    networks:
+      - quiz-network
+
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:80/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+# ── Named Volume — DATA PERSISTENCE ──────────────────────────────────────────
+# This volume persists EVEN IF containers are stopped, restarted, or EC2 reboots
+# Docker volume is stored on the EC2 EBS disk
+# For production, AWS RDS handles persistence instead of this volume
+volumes:
+  postgres-data:
+    driver: local
+    name: quiz-postgres-data      # named volume for easy identification
+
+# ── Internal Network ──────────────────────────────────────────────────────────
+# All services communicate via this private network
+# Only api-gateway (:8080) and frontend (:80) are exposed to the host
+networks:
+  quiz-network:
+    driver: bridge
+    name: quiz-network
