@@ -3,24 +3,26 @@
 # AWS Production override — extends docker-compose.yml
 #
 # Usage (on EC2):
-#   docker compose -f docker-compose.yml -f docker-compose.prod.yml \
-#     --env-file .env.prod up -d
+#   docker compose \
+#     -f docker-compose.yml \
+#     -f docker-compose.prod.yml \
+#     --env-file .env.prod \
+#     up -d
 #
 # Changes from base:
 #   - postgres service REMOVED (AWS RDS handles it)
 #   - POSTGRES_HOST = your RDS endpoint from .env.prod
-#   - Resource limits added
-#   - Port 5432 not exposed (RDS is external)
+#   - Resource limits added for EC2 sizing
 # =============================================================================
 
 services:
 
-  # ── Disable local postgres (RDS is used instead) ─────────────────────────────
+  # ── Disable local postgres — RDS is used instead ──────────────────────────
   postgres:
     deploy:
-      replicas: 0     # disables the service in this override
+      replicas: 0
 
-  # ── API Gateway — point to RDS in environment ─────────────────────────────────
+  # ── API Gateway ───────────────────────────────────────────────────────────
   api-gateway:
     environment:
       SPRING_PROFILES_ACTIVE: prod
@@ -30,11 +32,11 @@ services:
           memory: 512m
           cpus: "0.5"
 
-  # ── Auth Service — RDS endpoint injected via .env.prod ───────────────────────
+  # ── Auth Service ──────────────────────────────────────────────────────────
   auth-service:
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      POSTGRES_HOST: ${POSTGRES_HOST}   # RDS endpoint from .env.prod
+      POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
     deploy:
       resources:
@@ -42,7 +44,7 @@ services:
           memory: 512m
           cpus: "0.5"
 
-  # ── Question Service ──────────────────────────────────────────────────────────
+  # ── Question Service ──────────────────────────────────────────────────────
   question-service:
     environment:
       SPRING_PROFILES_ACTIVE: prod
@@ -54,7 +56,7 @@ services:
           memory: 512m
           cpus: "0.5"
 
-  # ── Quiz Service ──────────────────────────────────────────────────────────────
+  # ── Quiz Service ──────────────────────────────────────────────────────────
   quiz-service:
     environment:
       SPRING_PROFILES_ACTIVE: prod
@@ -66,7 +68,7 @@ services:
           memory: 512m
           cpus: "0.5"
 
-  # ── Notification Service ──────────────────────────────────────────────────────
+  # ── Notification Service ──────────────────────────────────────────────────
   notification-service:
     environment:
       SPRING_PROFILES_ACTIVE: prod
@@ -76,7 +78,7 @@ services:
           memory: 256m
           cpus: "0.25"
 
-  # ── Frontend ──────────────────────────────────────────────────────────────────
+  # ── Frontend ──────────────────────────────────────────────────────────────
   frontend:
     deploy:
       resources:
@@ -84,7 +86,7 @@ services:
           memory: 128m
           cpus: "0.25"
 
-# ── No local postgres volume needed in prod (RDS handles persistence) ─────────
+# ── No local postgres volume in prod (RDS handles persistence) ────────────
 volumes:
   postgres-data:
     external: false

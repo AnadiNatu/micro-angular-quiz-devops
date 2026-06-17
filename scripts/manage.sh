@@ -1,27 +1,30 @@
 #!/bin/bash
 # =============================================================================
 # scripts/manage.sh
-# Handy management commands for the quiz platform containers
+# Day-to-day management for the quiz platform containers.
 #
 # Usage:
-#   ./scripts/manage.sh logs              — tail all service logs
-#   ./scripts/manage.sh logs auth-service — tail one service log
-#   ./scripts/manage.sh restart           — restart all containers
-#   ./scripts/manage.sh stop              — stop all containers (data safe)
-#   ./scripts/manage.sh status            — show status + health
-#   ./scripts/manage.sh clean             — remove containers + images (keeps DB volume)
-#   ./scripts/manage.sh nuke              — remove EVERYTHING including DB data (⚠ DANGER)
-#   ./scripts/manage.sh db-shell          — open psql shell in postgres container
-#   ./scripts/manage.sh db-backup         — backup all databases to ./backups/
+#   ./scripts/manage.sh status                   — container status + health
+#   ./scripts/manage.sh logs                     — tail all logs
+#   ./scripts/manage.sh logs auth-service        — tail one service
+#   ./scripts/manage.sh restart                  — restart all
+#   ./scripts/manage.sh restart quiz-service     — restart one service
+#   ./scripts/manage.sh stop                     — stop all (data safe)
+#   ./scripts/manage.sh clean                    — remove containers+images (keeps DB)
+#   ./scripts/manage.sh nuke                     — DANGER: removes everything + DB data
+#   ./scripts/manage.sh db-shell                 — open psql in postgres container
+#   ./scripts/manage.sh db-backup                — backup all DBs to ./backups/
+#   ./scripts/manage.sh db-restore <db> <file>   — restore a DB from backup
+#
+# Append --prod to use .env.prod + docker-compose.prod.yml override.
 # =============================================================================
 
-DEVOPS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$DEVOPS_DIR"
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$PROJECT_ROOT"
 
 COMPOSE_CMD="docker compose"
 ENV_FILE=".env"
 
-# Use prod env if --prod flag passed
 if [[ "$*" == *"--prod"* ]]; then
   COMPOSE_CMD="docker compose -f docker-compose.yml -f docker-compose.prod.yml"
   ENV_FILE=".env.prod"
@@ -31,7 +34,7 @@ case "$1" in
 
   logs)
     SERVICE="${2:-}"
-    if [ -n "$SERVICE" ]; then
+    if [ -n "$SERVICE" ] && [[ "$SERVICE" != "--prod" ]]; then
       $COMPOSE_CMD --env-file "$ENV_FILE" logs -f "$SERVICE"
     else
       $COMPOSE_CMD --env-file "$ENV_FILE" logs -f
@@ -40,7 +43,7 @@ case "$1" in
 
   restart)
     SERVICE="${2:-}"
-    if [ -n "$SERVICE" ]; then
+    if [ -n "$SERVICE" ] && [[ "$SERVICE" != "--prod" ]]; then
       echo "Restarting $SERVICE..."
       $COMPOSE_CMD --env-file "$ENV_FILE" restart "$SERVICE"
     else
@@ -50,7 +53,7 @@ case "$1" in
     ;;
 
   stop)
-    echo "Stopping all containers (volumes and data preserved)..."
+    echo "Stopping all containers (volumes preserved)..."
     $COMPOSE_CMD --env-file "$ENV_FILE" stop
     echo "Done. Run 'docker compose up -d' to restart."
     ;;
@@ -65,7 +68,8 @@ case "$1" in
     echo "  Health Endpoints"
     echo "════════════════════════════════════════"
     for PORT in 8080 8081 8082 8083 8084; do
-      STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$PORT/actuator/health 2>/dev/null || echo "DOWN")
+      STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+        http://localhost:$PORT/actuator/health 2>/dev/null || echo "DOWN")
       echo "  :$PORT → $STATUS"
     done
     ;;
@@ -77,7 +81,7 @@ case "$1" in
     ;;
 
   nuke)
-    echo "⚠️  WARNING: This will DELETE ALL DATA including the database volume!"
+    echo "⚠️  WARNING: This will DELETE ALL DATA including the database!"
     read -rp "Type 'yes-delete-everything' to confirm: " CONFIRM
     if [ "$CONFIRM" = "yes-delete-everything" ]; then
       $COMPOSE_CMD --env-file "$ENV_FILE" down -v --rmi local --remove-orphans
@@ -88,23 +92,21 @@ case "$1" in
     ;;
 
   db-shell)
-    echo "Opening PostgreSQL shell..."
+    echo "Opening PostgreSQL shell in quiz-postgres..."
     docker exec -it quiz-postgres psql -U postgres
     ;;
 
   db-backup)
-    BACKUP_DIR="$DEVOPS_DIR/backups/$(date +%Y-%m-%d_%H-%M-%S)"
+    BACKUP_DIR="$PROJECT_ROOT/backups/$(date +%Y-%m-%d_%H-%M-%S)"
     mkdir -p "$BACKUP_DIR"
+    # shellcheck source=/dev/null
     source "$ENV_FILE"
-
     echo "Backing up databases to $BACKUP_DIR..."
-
     for DB in "$AUTH_DB_NAME" "$QUESTION_DB_NAME" "$QUIZ_DB_NAME"; do
       echo "  Dumping $DB..."
       docker exec quiz-postgres pg_dump -U postgres "$DB" > "$BACKUP_DIR/${DB}.sql"
-      echo "  ✅ $DB backed up"
+      echo "  ✅ $DB"
     done
-
     echo "Backup complete: $BACKUP_DIR"
     ls -lh "$BACKUP_DIR"
     ;;
@@ -113,7 +115,7 @@ case "$1" in
     DB_NAME="${2:-}"
     BACKUP_FILE="${3:-}"
     if [ -z "$DB_NAME" ] || [ -z "$BACKUP_FILE" ]; then
-      echo "Usage: ./manage.sh db-restore <db_name> <backup_file.sql>"
+      echo "Usage: ./scripts/manage.sh db-restore <db_name> <backup_file.sql>"
       exit 1
     fi
     echo "Restoring $DB_NAME from $BACKUP_FILE..."
@@ -122,7 +124,7 @@ case "$1" in
     ;;
 
   *)
-    echo "Usage: $0 {logs|restart|stop|status|clean|nuke|db-shell|db-backup|db-restore} [--prod]"
+    echo "Usage: $0 {status|logs|restart|stop|clean|nuke|db-shell|db-backup|db-restore} [service] [--prod]"
     exit 1
     ;;
 esac
