@@ -5,11 +5,13 @@ import { Injectable } from "@angular/core";
 import { Observable, tap } from "rxjs";
 import { SignUpRequest, SignUpResponse, LoginAuthRequest, LoginAuthResponse, ForgotPasswordRequest, ResetPasswordRequest } from "../../models/dtos";
 import { UserStorageService } from "../user-storage/user-storage.service";
+import { environment } from "../../../../environments/environment";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private BASE_URL = 'http://localhost:8080/api/auth';
+  private BASE_URL = environment.apiBaseUrl +
+   '/api/auth';
 
   constructor(
     private http: HttpClient,

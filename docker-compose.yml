@@ -63,7 +63,7 @@ services:
   # ── API Gateway ───────────────────────────────────────────────────────────────
   api-gateway:
     build:
-      context: ./api-gateway
+      context: ./backend/psuedo quiz micro/api-gateway
       dockerfile: Dockerfile
     image: quiz/api-gateway:latest
     container_name: quiz-api-gateway
@@ -94,7 +94,7 @@ services:
   # ── Auth Service ──────────────────────────────────────────────────────────────
   auth-service:
     build:
-      context: ./auth-service
+      context: ./backend/psuedo quiz micro/auth-service
       dockerfile: Dockerfile
     image: quiz/auth-service:latest
     container_name: quiz-auth-service
@@ -126,7 +126,7 @@ services:
   # ── Question Service ──────────────────────────────────────────────────────────
   question-service:
     build:
-      context: ./question-service
+      context: ./backend/psuedo quiz micro/question-service
       dockerfile: Dockerfile
     image: quiz/question-service:latest
     container_name: quiz-question-service
@@ -161,7 +161,7 @@ services:
   # ── Quiz Service ──────────────────────────────────────────────────────────────
   quiz-service:
     build:
-      context: ./quiz-service
+      context: ./backend/psuedo quiz micro/quiz-service
       dockerfile: Dockerfile
     image: quiz/quiz-service:latest
     container_name: quiz-quiz-service
@@ -197,7 +197,7 @@ services:
   # ── Notification Service ──────────────────────────────────────────────────────
   notification-service:
     build:
-      context: ./notification-service
+      context: ./backend/psuedo quiz micro/notification-service
       dockerfile: Dockerfile
     image: quiz/notification-service:latest
     container_name: quiz-notification-service
@@ -224,7 +224,7 @@ services:
   # ── Frontend (Angular + Nginx) ────────────────────────────────────────────────
   frontend:
     build:
-      context: ./quiz_angular_ui
+      context: ./frontend/quiz_angular_ui
       dockerfile: Dockerfile
     image: quiz/frontend:latest
     container_name: quiz-frontend

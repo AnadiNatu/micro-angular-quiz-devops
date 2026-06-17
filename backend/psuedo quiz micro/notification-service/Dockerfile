@@ -25,10 +25,10 @@ RUN chown appuser:appgroup app.jar
 
 USER appuser
 
-EXPOSE 8084
+EXPOSE 8085
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD wget -qO- http://localhost:8084/actuator/health || exit 1
+  CMD wget -qO- http://localhost:8085/actuator/health || exit 1
 
 ENTRYPOINT ["java", \
   "-XX:+UseContainerSupport", \
