@@ -13,15 +13,15 @@ import {
 } from '../models/admin-dtos';
 import { UsersDTO } from '../../auth/models/dtos';
 import { UserStorageService } from '../../auth/services/user-storage/user-storage.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AdminServiceService {
 
-  private AUTH     = 'http://localhost:8080/api/auth';
-  private QUESTION = 'http://localhost:8080/api/questions';
-  private QUIZ     = 'http://localhost:8080/api/quiz';
-  private NOTIFY   = 'http://localhost:8080/api/notify';
-
+private AUTH     = environment.apiBaseUrl + '/api/auth';
+private QUESTION = environment.apiBaseUrl + '/api/questions';
+private QUIZ     = environment.apiBaseUrl + '/api/quiz';
+private NOTIFY   = environment.apiBaseUrl + '/api/notify';
   constructor(
     private http: HttpClient,
     private storage: UserStorageService
