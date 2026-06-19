@@ -32,6 +32,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader("Authorization");
 
+        String path = request.getRequestURI();
+
+        // Skip JWT validation entirely for public paths
+        if (path.startsWith("/api/questions/generate")
+                || path.startsWith("/api/questions/fetch")
+                || path.startsWith("/actuator")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;

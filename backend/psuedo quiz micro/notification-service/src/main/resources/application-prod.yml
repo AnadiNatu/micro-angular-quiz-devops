@@ -1,10 +1,3 @@
-# =============================================================================
-# notification-service/src/main/resources/application-prod.yml
-# PROFILE: prod
-#
-# ✅ SAFE TO COMMIT — all secrets are ${ENV_VAR} references.
-# =============================================================================
-
 server:
   port: 8085
 
@@ -31,7 +24,7 @@ spring:
     cache: true
 
 jwt:
-  secret: ${JWT_SECRET}
+  secret: YourSecretKeyHereMustBeLongEnoughForHS512AlgorithmAtLeast64Characters123456
 
 eureka:
   client:
@@ -49,7 +42,10 @@ management:
         include: health,info
   endpoint:
     health:
-      show-details: never     # don't expose internals in prod
+      show-details: never
+  health:
+    mail:
+      enabled: false
 
 logging:
   level:

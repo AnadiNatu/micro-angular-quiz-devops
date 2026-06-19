@@ -60,6 +60,12 @@ THis error was coming because of the old/incorrect version of <parent>  -> Solut
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
 
+<!--	Actuator	-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
 		<!-- Feign Client -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
