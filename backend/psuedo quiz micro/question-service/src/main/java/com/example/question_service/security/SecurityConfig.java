@@ -1,6 +1,7 @@
 package com.example.question_service.security;
 
 import com.example.question_service.enums.UserRoles;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -50,7 +51,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-
+                    .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
                     // 🔓 FEIGN CALLS
                     .requestMatchers(
                             "/api/questions/generate",

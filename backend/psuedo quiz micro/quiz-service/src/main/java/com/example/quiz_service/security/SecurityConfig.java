@@ -1,6 +1,7 @@
 package com.example.quiz_service.security;
 
 import com.example.quiz_service.enums.UserRoles;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -103,7 +104,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(s ->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-
+                        .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
                         // optional health
                         .requestMatchers("/actuator/**").permitAll()
 
