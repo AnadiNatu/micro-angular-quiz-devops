@@ -1,6 +1,7 @@
 package com.example.question_service.security;
 
 import com.example.question_service.enums.UserRoles;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,9 +34,16 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthFilter;
 
+    @PostConstruct
+    public void test() {
+        System.out.println("QUESTION SECURITY CONFIG LOADED");
+    }
+
 //    Light weight security config with pre authorize attribute annotations
 @Bean
 public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+
 
     return http
             .csrf(csrf -> csrf.disable())
@@ -46,7 +54,8 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
                     // 🔓 FEIGN CALLS
                     .requestMatchers(
                             "/api/questions/generate",
-                            "/api/questions/fetch"
+                            "/api/questions/fetch",
+                            "/actuator/**"
                     ).permitAll()
 
                     // 🔒 EVERYTHING ELSE
