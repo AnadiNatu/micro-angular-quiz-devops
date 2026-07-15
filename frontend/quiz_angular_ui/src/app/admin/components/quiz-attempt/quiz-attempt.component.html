@@ -1,0 +1,369 @@
+<div class="page-wrap">
+
+  <!-- ===================== NAVBAR ===================== -->
+
+  <div class="attempt-navbar">
+
+    <div class="attempt-progress-info">
+
+      <strong>{{ quizTitle }}</strong>
+
+      <span
+        *ngIf="isTestMode"
+        class="tester-badge">
+
+        🧪 TEST MODE
+
+      </span>
+
+    </div>
+
+    <button
+      class="btn-close-sm"
+      (click)="exitQuiz()">
+
+      ✕ Exit Quiz
+
+    </button>
+
+  </div>
+
+
+
+  <!-- ===================== Loading ===================== -->
+
+  <div
+    class="glass-card mt-2"
+    *ngIf="isLoading">
+
+    <div class="loading-wrap">
+
+      <span class="spinner"></span>
+
+      Loading Quiz...
+
+    </div>
+
+  </div>
+
+
+
+  <!-- ===================== Error ===================== -->
+
+  <div
+    class="glass-card error-card mt-2"
+    *ngIf="errorMessage && !isLoading">
+
+    {{ errorMessage }}
+
+  </div>
+
+
+
+  <!-- ===================== Quiz ===================== -->
+
+  <ng-container *ngIf="!isLoading && !errorMessage">
+
+
+
+    <!-- Header -->
+
+    <div class="glass-card mt-2">
+
+      <div class="card-title">
+
+        🎯 Quiz Information
+
+      </div>
+
+      <div class="quiz-info">
+
+        <div>
+
+          <strong>Category</strong>
+
+          <span>{{ category }}</span>
+
+        </div>
+
+        <div>
+
+          <strong>Difficulty</strong>
+
+          <span>{{ difficulty }}</span>
+
+        </div>
+
+        <div>
+
+          <strong>Total Questions</strong>
+
+          <span>{{ questions.length }}</span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- Progress -->
+
+    <div class="glass-card mt-2">
+
+      <div class="card-title">
+
+        📊 Progress
+
+      </div>
+
+      <div class="progress-summary">
+
+        <span>
+
+          Answered
+
+          <strong>{{ answeredCount }}</strong>
+
+        </span>
+
+        <span>
+
+          Remaining
+
+          <strong>{{ remainingCount }}</strong>
+
+        </span>
+
+        <span>
+
+          Question
+
+          <strong>
+
+            {{ currentQuestionIndex+1 }}
+
+            /
+
+            {{ questions.length }}
+
+          </strong>
+
+        </span>
+
+      </div>
+
+      <div class="progress">
+
+        <div
+          class="progress-fill"
+          [style.width.%]="progressPercentage">
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- Question Palette -->
+
+    <div class="glass-card mt-2">
+
+      <div class="card-title">
+
+        📝 Question Palette
+
+      </div>
+
+      <div class="pager-dots">
+
+        <button
+
+          *ngFor="let q of questions; let i=index"
+
+          class="pager-dot"
+
+          [class.pager-dot-active]="i==currentQuestionIndex"
+
+          [class.pager-dot-answered]="answers[q.id]"
+
+          (click)="currentQuestionIndex=i">
+
+          {{i+1}}
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- Question -->
+
+    <div
+      *ngIf="currentQuestion as q"
+      class="glass-card mt-2">
+
+      <div class="question-header">
+
+        <h3>
+
+          Question {{currentQuestionIndex+1}}
+
+        </h3>
+
+        <span class="badge">
+
+          {{q.difficultyLevel}}
+
+        </span>
+
+      </div>
+
+      <p class="question-text">
+
+        {{q.questionTitle}}
+
+      </p>
+
+
+
+      <div class="options-list">
+
+        <button
+
+          class="option-btn"
+
+          [disabled]="submitted"
+
+          [class.selected]="answers[q.id]==q.option1"
+
+          (click)="selectAnswer(q.id,q.option1)">
+
+          {{q.option1}}
+
+        </button>
+
+
+
+        <button
+
+          class="option-btn"
+
+          [disabled]="submitted"
+
+          [class.selected]="answers[q.id]==q.option2"
+
+          (click)="selectAnswer(q.id,q.option2)">
+
+          {{q.option2}}
+
+        </button>
+
+
+
+        <button
+
+          class="option-btn"
+
+          [disabled]="submitted"
+
+          [class.selected]="answers[q.id]==q.option3"
+
+          (click)="selectAnswer(q.id,q.option3)">
+
+          {{q.option3}}
+
+        </button>
+
+
+
+        <button
+
+          class="option-btn"
+
+          [disabled]="submitted"
+
+          [class.selected]="answers[q.id]==q.option4"
+
+          (click)="selectAnswer(q.id,q.option4)">
+
+          {{q.option4}}
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- Bottom Navigation -->
+
+    <div class="attempt-actions mt-2">
+
+      <button
+
+        class="btn-close-sm"
+
+        (click)="previousQuestion()"
+
+        [disabled]="currentQuestionIndex==0">
+
+        ← Previous
+
+      </button>
+
+
+
+      <button
+
+        class="btn-primary"
+
+        *ngIf="currentQuestionIndex<questions.length-1"
+
+        (click)="nextQuestion()">
+
+        Next →
+
+      </button>
+
+
+
+      <button
+
+        class="btn-submit"
+
+        *ngIf="currentQuestionIndex==questions.length-1"
+
+        [disabled]="submitted || isSubmitting"
+
+        (click)="submit()">
+
+        {{isSubmitting ? 'Submitting...' : '✅ Submit Quiz'}}
+
+      </button>
+
+    </div>
+
+
+
+    <div
+      class="empty-msg mt-2"
+      *ngIf="remainingCount>0">
+
+      ⚠️
+
+      {{remainingCount}}
+
+      unanswered question(s)
+
+    </div>
+
+  </ng-container>
+
+</div>

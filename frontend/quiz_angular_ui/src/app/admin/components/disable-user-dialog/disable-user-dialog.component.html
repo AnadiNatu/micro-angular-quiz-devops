@@ -1,0 +1,67 @@
+<!-- Usage inside manage-users.component.html -->
+
+<!-- src/app/admin/components/disable-user-dialog/disable-user-dialog.component.html -->
+
+<div *ngIf="visible" class="dialog-backdrop" (click)="onBackdropClick($event)">
+  <div class="glass-card dialog-card">
+
+    <div class="card-title">
+      <div class="title-icon">⚠️</div>
+      Disable User
+    </div>
+
+    <ng-container *ngIf="user; else noUser">
+
+      <p class="dialog-text">
+        Are you sure you want to disable this user? They will lose access
+        to the platform until re-enabled.
+      </p>
+
+      <div class="dialog-user-row">
+        <div class="dialog-user-avatar">👤</div>
+        <div class="dialog-user-info">
+          <div class="dialog-user-name">{{ getDisplayName() }}</div>
+          <div class="dialog-user-email">{{ getEmail() }}</div>
+        </div>
+        <span class="role-badge" [ngClass]="getRoleClass()">{{ user.role }}</span>
+      </div>
+
+      <div class="user-detail-row">
+        <span class="user-detail-label">Status</span>
+        <span class="status-badge" [ngClass]="getStatusClass()">{{ getStatusText() }}</span>
+      </div>
+
+      <div *ngIf="!user.enabled" class="dialog-warning">
+        This user is already disabled.
+      </div>
+
+      <div class="dialog-actions">
+        <button class="btn-close-sm" (click)="close()" [disabled]="loading">Cancel</button>
+        <button
+          class="btn-danger"
+          (click)="confirmDisable()"
+          [disabled]="!canDisable()">
+          {{ loading ? 'Disabling…' : '🚫 Disable User' }}
+        </button>
+      </div>
+
+    </ng-container>
+
+    <ng-template #noUser>
+      <div class="empty-msg">No user selected.</div>
+      <div class="dialog-actions">
+        <button class="btn-close-sm" (click)="close()">Close</button>
+      </div>
+    </ng-template>
+
+  </div>
+</div>
+<!-- 
+<p>disable-user-dialog works!</p>
+<app-disable-user-dialog
+    [visible]="showDisableDialog"
+    [user]="selectedUser"
+    [loading]="isDisabling"
+    (cancel)="closeDisableDialog()"
+    (confirm)="confirmDisableUser($event)">
+</app-disable-user-dialog> -->

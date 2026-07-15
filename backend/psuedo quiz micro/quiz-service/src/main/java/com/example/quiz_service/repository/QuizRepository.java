@@ -12,7 +12,8 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
     Optional<Quiz> findByTitleIgnoreCase(String title);
 
-    List<Quiz> findByCreatedByUserId(Long userId);
+    @Query("SELECT q FROM Quiz q WHERE q.createdByUserId = :creatorUserId ")
+    List<Quiz> findByCreatedByUserId(@Param("creatorUserId") Long creatorUserId);
 
     @Query("SELECT q FROM Quiz q WHERE :userId MEMBER OF q.participantIds")
     List<Quiz> findByParticipantId(@Param("userId") Long userId);

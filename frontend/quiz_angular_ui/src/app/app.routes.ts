@@ -19,6 +19,12 @@ export const routes: Routes = [
       import('./admin/admin.routes').then(m => m.adminRoutes)
   },
 
+  {
+    path: 'participant',
+    loadChildren: () =>
+      import('./participant/participant.routes').then(m => m.participantRoutes)
+  },
+
   // Wildcard always last
   { path: '**', redirectTo: 'home' }
 ];

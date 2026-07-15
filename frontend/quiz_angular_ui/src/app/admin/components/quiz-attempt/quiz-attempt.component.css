@@ -1,0 +1,372 @@
+/* ── Reset ────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.page-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: clamp(0.75rem, 2vw, 1.25rem);
+  max-width: 860px;
+  margin: 0 auto;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+
+/* ── Attempt Navbar ───────────────────────────────── */
+.attempt-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  padding: 0.85rem clamp(1rem, 3vw, 1.5rem);
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 180, 255, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 4px 24px rgba(99, 140, 255, 0.1);
+}
+
+.attempt-progress-info {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.tester-badge {
+  padding: 0.2rem 0.6rem;
+  background: #ede9fe;
+  color: #5b21b6;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  border: 1px solid rgba(124, 58, 237, 0.25);
+}
+
+/* ── Glass Card ───────────────────────────────────── */
+.glass-card {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(148, 180, 255, 0.3);
+  border-radius: 1rem;
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  color: #1e293b;
+  box-shadow: 0 4px 24px rgba(99, 140, 255, 0.1);
+}
+
+.glass-card.error-card {
+  background: rgba(254, 226, 226, 0.7);
+  border-color: rgba(220, 38, 38, 0.25);
+  color: #b91c1c;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.card-title {
+  font-family: var(--font-display, 'Sora', sans-serif);
+  font-size: clamp(0.88rem, 2vw, 1rem);
+  color: #1e293b;
+  font-weight: 700;
+  margin-bottom: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ── Loading ──────────────────────────────────────── */
+.loading-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 2rem 0;
+  color: #475569;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(37, 99, 235, 0.2);
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Quiz Info Grid ───────────────────────────────── */
+.quiz-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.quiz-info > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.7rem 0.85rem;
+  background: rgba(219, 234, 254, 0.4);
+  border: 1px solid rgba(37, 99, 235, 0.15);
+  border-radius: 0.6rem;
+}
+
+.quiz-info strong {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.quiz-info span {
+  font-size: 0.95rem;
+  color: #1e293b;
+  font-weight: 700;
+}
+
+/* ── Progress Summary ─────────────────────────────── */
+.progress-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+.progress-summary strong {
+  color: #1e293b;
+  font-size: 0.95rem;
+  margin-left: 0.3rem;
+}
+
+.progress {
+  width: 100%;
+  height: 10px;
+  background: rgba(148, 180, 255, 0.2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(135deg, #2563eb, #60a5fa);
+  border-radius: 999px;
+  transition: width 0.25s ease;
+}
+
+/* ── Pager Dots ───────────────────────────────────── */
+.pager-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.pager-dot {
+  width: 34px;
+  height: 34px;
+  border-radius: 0.55rem;
+  border: 1.5px solid rgba(37, 99, 235, 0.2);
+  background: rgba(255, 255, 255, 0.7);
+  color: #475569;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.22s ease;
+}
+
+.pager-dot:hover { background: #dbeafe; }
+
+.pager-dot-answered {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: rgba(37, 99, 235, 0.3);
+}
+
+.pager-dot-active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.35);
+}
+
+/* ── Question Header ──────────────────────────────── */
+.question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.question-header h3 {
+  font-family: var(--font-display, 'Sora', sans-serif);
+  font-size: 1rem;
+  color: #1e293b;
+}
+
+.badge {
+  padding: 0.25rem 0.7rem;
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* ── Question Text ────────────────────────────────── */
+.question-text {
+  font-size: clamp(0.95rem, 2.2vw, 1.1rem);
+  color: #1e293b;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+}
+
+/* ── Options ──────────────────────────────────────── */
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.option-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid rgba(37, 99, 235, 0.18);
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.22s ease;
+  font-size: 0.9rem;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  color: #334155;
+}
+
+.option-btn:hover:not(:disabled) {
+  background: rgba(219, 234, 254, 0.5);
+  border-color: rgba(37, 99, 235, 0.35);
+}
+
+.option-btn.selected {
+  background: #dbeafe;
+  border-color: #2563eb;
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.option-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+/* ── Actions ──────────────────────────────────────── */
+.attempt-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.btn-close-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.6rem 1.1rem;
+  background: transparent;
+  border: 1.5px solid rgba(100, 116, 139, 0.25);
+  color: #64748b;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  transition: all 0.22s ease;
+}
+
+.btn-close-sm:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #334155;
+}
+
+.btn-close-sm:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: linear-gradient(135deg, #2563eb, #60a5fa);
+  border: none;
+  color: #fff;
+  padding: 0.6rem 1.3rem;
+  border-radius: 0.65rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  transition: all 0.22s ease;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+}
+
+.btn-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: linear-gradient(135deg, #16a34a, #4ade80);
+  border: none;
+  color: #fff;
+  padding: 0.6rem 1.3rem;
+  border-radius: 0.65rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.3);
+  transition: all 0.22s ease;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+
+.btn-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
+}
+
+.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.empty-msg {
+  color: #b45309;
+  background: rgba(253, 230, 138, 0.35);
+  border: 1px solid rgba(217, 119, 6, 0.25);
+  border-radius: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.65rem 0.9rem;
+}
+
+.mt-2 { margin-top: 0.75rem; }

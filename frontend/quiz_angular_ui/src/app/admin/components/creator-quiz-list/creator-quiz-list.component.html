@@ -67,7 +67,7 @@
           </button>
           <button class="action-btn"
                   (click)="takeQuiz(quiz); $event.stopPropagation()">
-            🎯 Take Quiz
+                {{ isTester ? '🧪 Test Quiz' : '🎯 Take Quiz' }}
           </button>
           <button class="action-btn"
                   (click)="onViewResults(quiz); $event.stopPropagation()">

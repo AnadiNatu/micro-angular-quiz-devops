@@ -7,6 +7,7 @@ import {
 import { AdminServiceService } from '../../services/admin-service.service';
 import { Router, RouterLink } from '@angular/router';
 import { CreateQuestionDTO, QuestionDTO } from '../../models/admin-dtos';
+import { UserStorageService } from '../../../auth/services/user-storage/user-storage.service';
 
 @Component({
   selector: 'app-create-question',
@@ -25,8 +26,9 @@ export class CreateQuestionComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private adminService: AdminServiceService,
-    public router: Router
+  private adminService: AdminServiceService,
+  private storage: UserStorageService,
+  public router: Router
   ) {
     this.questionForm = this.fb.group({
       questionTitle:  ['', Validators.required],
@@ -42,10 +44,10 @@ export class CreateQuestionComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.adminService.getAllCategories().subscribe({
-      next:  data  => this.categories = data,
-      error: ()    => alert('Failed to load categories')
-    });
+    this.adminService.getCategories().subscribe({
+    next: categories => {this.categories = categories;},
+    error: () => {alert("Failed to load categories");}
+  });
   }
 
   selectRightAnswer(optionKey: string): void {
@@ -63,35 +65,91 @@ export class CreateQuestionComponent implements OnInit {
     }
   }
 
-  submitQuestion(): void {
-    if (this.questionForm.invalid) {
-      this.questionForm.markAllAsTouched();
-      return;
+submitQuestion(): void {
+
+  if (this.questionForm.invalid) {
+    this.questionForm.markAllAsTouched();
+    return;
+  }
+
+  const creatorAuthServiceId = this.storage.getCreatorAuthUserId();
+
+  if (creatorAuthServiceId == null) {
+
+    alert('Please login again.');
+
+    return;
+
+  }
+
+  const creatorUsername = this.storage.getCreatorUsername();
+
+  const creatorRole = this.storage.getCreatorRole();
+
+  const fv = this.questionForm.value;
+
+  const finalCategory =
+    fv.category === 'ADD_NEW'
+      ? fv.newCategory
+      : fv.category;
+
+  const dto: CreateQuestionDTO = {
+
+    questionTitle: fv.questionTitle,
+
+    category: finalCategory,
+
+    difficultyLevel: fv.difficultyLevel,
+
+    option1: fv.option1,
+
+    option2: fv.option2,
+
+    option3: fv.option3,
+
+    option4: fv.option4,
+
+    rightAnswer: fv.rightAnswer,
+
+    creatorAuthServiceId,
+
+    creatorUsername: creatorUsername ?? '',
+
+    creatorRole: creatorRole ?? ''
+
+  };
+
+  console.log('Submitting Question');
+
+  console.log(dto);
+
+  this.adminService.addQuestion(dto).subscribe({
+
+    next: (response: QuestionDTO) => {
+
+      this.submittedQuestion = response;
+
+      this.questionForm.reset();
+
+      this.selectedAnswer = '';
+
+      this.addNewCategory = false;
+
+    },
+
+    error: err => {
+
+      console.error(err);
+
+      alert(
+        err?.error?.message ??
+        err?.error ??
+        'Unable to create question.'
+      );
+
     }
 
-    const fv = this.questionForm.value;
-    const finalCategory = fv.category === 'ADD_NEW' ? fv.newCategory : fv.category;
+  });
 
-    const dto: CreateQuestionDTO = {
-      questionTitle:   fv.questionTitle,
-      category:        finalCategory,
-      difficultyLevel: fv.difficultyLevel,
-      option1:         fv.option1,
-      option2:         fv.option2,
-      option3:         fv.option3,
-      option4:         fv.option4,
-      rightAnswer:     fv.rightAnswer
-    };
-
-    this.adminService.addQuestion(dto).subscribe({
-      next: (response: QuestionDTO) => {
-        this.submittedQuestion = response;
-        this.questionForm.reset();
-        this.addNewCategory = false;
-        this.selectedAnswer = '';
-      },
-      error: err =>
-        alert('❌ Error: ' + (err?.error?.message || 'Server Error'))
-    });
-  }
+}
 }

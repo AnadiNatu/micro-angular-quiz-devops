@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AdminServiceService } from '../../services/admin-service.service';
 import { FormsModule } from '@angular/forms';
 import { QuizDTO, QuizStatsDTO } from '../../models/admin-dtos';
+import { UserStorageService } from '../../../auth/services/user-storage/user-storage.service';
 
 @Component({
   selector: 'app-creator-quiz-details',
@@ -26,7 +27,8 @@ export class CreatorQuizDetailsComponent implements OnInit {
   constructor(
     private route:        ActivatedRoute,
     private adminService: AdminServiceService,
-    private router:       Router
+    private router:       Router,
+    private storage:      UserStorageService
   ) {}
 
   ngOnInit(): void {
@@ -78,7 +80,77 @@ export class CreatorQuizDetailsComponent implements OnInit {
     this.fetchQuizDetails(title);
   }
 
-  goToAllResults(): void {
-    if (this.quiz) this.router.navigate(['/admin/results/all', this.quiz.id]);
+  goToStats(): void {
+
+  if (!this.quiz) {
+    return;
   }
+
+  this.router.navigate([
+    '/admin/quiz-leaderboard',
+    this.quiz.id
+  ]);
+
+}
+
+ goToAllResults(): void {
+
+  if (!this.quiz) {
+    return;
+  }
+
+  this.router.navigate(
+    ['/admin/results/all', this.quiz.id],
+    {
+      state: {
+        quizTitle: this.quiz.title
+      }
+    }
+  );
+
+}
+
+  takeQuiz(): void {
+
+  if (!this.quiz) {
+    return;
+  }
+
+  // Without this, quiz-result.component.ts never knows it's a preview run —
+  // it shows normal participant-result copy and "Back" returns to /admin
+  // instead of /admin/creator/quizzes.
+  this.storage.enableQuizTester();
+
+  this.router.navigate(
+    ['/admin/participant/quiz', this.quiz.id],
+    {
+      state: {
+        previewMode: true,
+        quizTitle: this.quiz.title,
+         category: this.quiz.category,
+        difficulty: this.quiz.difficultyLevel,
+      }
+    }
+  );
+
+}
+
+printReport(): void {
+
+  if (!this.quiz) {
+    return;
+  }
+
+  // Route through the Report Center (search/email/print) instead of an
+  // instant popup, to match the rest of the admin reporting flow.
+  this.router.navigate(['/admin/reports'], {
+    state: {
+      quizId: this.quiz.id,
+      quizTitle: this.quiz.title
+    }
+  });
+
+}
+
+
 }

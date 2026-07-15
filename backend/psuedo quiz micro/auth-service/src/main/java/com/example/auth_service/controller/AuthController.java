@@ -96,8 +96,8 @@ public class AuthController {
         return ResponseEntity.ok(authService.getUserById(id));
     }
 
-    // FEIGN INTERNAL -  fetch user (Quiz/Question Service)
-    @GetMapping("/internal/{authServiceId}")
+    // FEIGN INTERNAL - fetch user (Quiz/Question Service)
+    @GetMapping("/internal/auth-id/{authServiceId}")
     public ResponseEntity<UserDto> getUserByAuthServiceId(@PathVariable Long authServiceId) {
         log.debug("[AUTH-FEIGN] getUserByAuthServiceId={}", authServiceId);
         return ResponseEntity.ok(authService.getUserByAuthServiceId(authServiceId));

@@ -1,11 +1,15 @@
 package com.example.question_service.mapper;
 
 import com.example.question_service.dto.applicationDTO.*;
+import com.example.question_service.dto.quizDTO.QuestionResponseDTO;
 import com.example.question_service.entity.Questions;
+import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
 public class QuestionMapper {
 
     // ================= ENTITY → DTO =================
@@ -88,7 +92,7 @@ public class QuestionMapper {
 
         return responses.stream().map(r -> {
             Questions q = questions.stream()
-                    .filter(x -> x.getQuestionTitle().equalsIgnoreCase(r.getQuestionTitle()))
+                    .filter(x -> x.getId() == (r.getQuestionId()))
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("Question not found"));
 
@@ -100,5 +104,35 @@ public class QuestionMapper {
                     .correctAnswer(q.getRightAnswer())
                     .build();
         }).toList();
+    }
+
+    public static QuestionResponseDTO toQuestionResponse(Questions question) {
+
+        if (question == null) {
+            return null;
+        }
+
+        return QuestionResponseDTO.builder()
+                .id(question.getId())
+                .questionTitle(question.getQuestionTitle())
+                .option1(question.getOption1())
+                .option2(question.getOption2())
+                .option3(question.getOption3())
+                .option4(question.getOption4())
+                .rightAnswer(question.getRightAnswer())
+                .category(question.getCategory())
+                .difficultyLevel(question.getDifficultyLevel())
+                .build();
+    }
+
+    public static List<QuestionResponseDTO> toQuestionResponse(List<Questions> questions) {
+
+        if (questions == null || questions.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return questions.stream()
+                .map(QuestionMapper::toQuestionResponse)
+                .toList();
     }
 }

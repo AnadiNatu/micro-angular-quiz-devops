@@ -1,0 +1,103 @@
+<!-- src/app/participant/components/participant-profile/participant-profile.component.html -->
+
+<div class="page-wrap">
+
+  <div class="dashboard-header">
+    <div class="header-greeting">
+      <h1>👤 My Profile</h1>
+      <p>View and manage your account details.</p>
+    </div>
+    <button class="btn-close-sm" (click)="goDashboard()">← Back to Dashboard</button>
+  </div>
+
+  <div *ngIf="hasError" class="glass-card error-card">
+    ⚠️ {{ errorMessage }}
+  </div>
+
+  <div *ngIf="isLoading" class="empty-msg mt-2">Loading profile…</div>
+
+  <ng-container *ngIf="!isLoading && user">
+
+    <div class="dashboard-grid mt-2">
+
+      <!-- Profile Card -->
+      <div class="glass-card profile-card">
+        <div class="profile-avatar-wrapper">
+          <img [src]="profileImage" alt="Profile Photo" class="profile-avatar" />
+          <div class="avatar-ring"></div>
+        </div>
+        <div class="profile-name">{{ getDisplayName() }}</div>
+        <div class="profile-role">{{ getRole() }}</div>
+
+        <label class="upload-btn">
+          📷 Choose Photo
+          <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
+        </label>
+        <button class="btn-sm mt-1" (click)="uploadProfilePhoto()">⬆️ Upload Photo</button>
+      </div>
+
+      <!-- Stats -->
+      <div class="glass-card">
+        <div class="card-title">
+          <div class="title-icon">📊</div>
+          Activity
+        </div>
+        <div class="stats-strip">
+          <div class="stat-block">
+            <div class="stat-val">{{ getQuizzesTaken() }}</div>
+            <div class="stat-lbl">Quizzes Taken</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-val">{{ getQuizzesCreated() }}</div>
+            <div class="stat-lbl">Quizzes Created</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-val">{{ getQuestionsCreated() }}</div>
+            <div class="stat-lbl">Questions Added</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Info -->
+      <div class="glass-card">
+        <div class="card-title">
+          <div class="title-icon">ℹ️</div>
+          Account Info
+        </div>
+        <div class="user-detail-row">
+          <span class="user-detail-label">Username</span>
+          <span>{{ user.username }}</span>
+        </div>
+        <div class="user-detail-row">
+          <span class="user-detail-label">Email</span>
+          <span>{{ user.email }}</span>
+        </div>
+        <div class="user-detail-row">
+          <span class="user-detail-label">Role</span>
+          <span>{{ user.role }}</span>
+        </div>
+        <div class="user-detail-row">
+          <span class="user-detail-label">Status</span>
+          <span>{{ user.enabled ? '✅ Active' : '❌ Disabled' }}</span>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="glass-card">
+        <div class="card-title">
+          <div class="title-icon">⚙️</div>
+          Account Actions
+        </div>
+        <div class="quick-links">
+          <a class="quick-link-btn" (click)="editProfile()">✏️ Edit Profile</a>
+          <a class="quick-link-btn" (click)="changePassword()">🔑 Change Password</a>
+          <a class="quick-link-btn" (click)="refreshProfile()">🔄 Refresh</a>
+          <a class="quick-link-btn" (click)="logout()">← Log Out</a>
+        </div>
+      </div>
+
+    </div>
+
+  </ng-container>
+
+</div>

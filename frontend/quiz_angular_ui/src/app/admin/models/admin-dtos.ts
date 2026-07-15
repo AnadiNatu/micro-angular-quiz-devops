@@ -10,7 +10,7 @@ export interface CreateQuestionDTO {
   option3: string;
   option4: string;
 
-    creatorAuthServiceId?: number;
+    creatorAuthServiceId: number;
   creatorUsername?:      string;
   creatorRole?:          string;
 }
@@ -25,6 +25,9 @@ export interface QuestionDTO {
   option2: string;
   option3: string;
   option4: string;
+  creatorAuthServiceId: number;
+  creatorUsername: string;
+  creatorRole: string;
 }
 
 // Returned by POST /api/quiz/{id}/start  and  POST /api/questions/fetch
@@ -36,6 +39,8 @@ export interface QuestionResponseDTO {
   option3: string;
   option4: string;
   rightAnswer:     string;
+  difficultyLevel: string;
+  category:        string;
 }
 
 // ─── Quiz ─────────────────────────────────────────────────
@@ -68,6 +73,12 @@ export interface QuizDTO {
 export interface ResponseDTO {
   questionId:     number;
   selectedAnswer: string | null;
+}
+
+export interface ResponseEvaluationDTO {
+  questionTitle : string;
+  correctAnswer : string;
+  selectedAnswer : string | null;
 }
 
 // POST /api/quiz/submit  body
@@ -128,16 +139,51 @@ export interface QuizStatsDTO {
   participantResults: QuizResultDTO[];
 }
 
+export interface QuizSubmittedNotificationDTO {
+  quizId : number;
+  quizTitle : string;
+  category : string;
+  difficultyLevel : string;
+  participantId : number;
+  participantUsername : string;
+  participantEmail : string;
+ 
+  curatorId : number;
+  curatorUsername : string;
+  curatorEmail : string;
+
+  totalQuestions : number;
+  correctAnswers : number;
+  incorrectAnswers : number;
+
+  percentage : number;
+}
+
+export interface QuizResultNotificationDTO {
+ quizId : number;
+  quizTitle : string;
+  category : string;
+  difficultyLevel : string;
+  
+  participantId : number;
+  participantUsername : string;
+  participantEmail : string;
+ 
+  curatorId : number;
+  curatorUsername : string;
+  curatorEmail : string;
+}
+
 // ─── Legacy stubs (keep for components not yet fully updated) ─
 
-/** @deprecated — kept only so un-migrated components compile */
-export interface CreatedQuizDTO {
-  title:           string;
-  category:        string;
-  difficultyLevel: string;
-  creatorName:     string;
-  questionList:    QuestionDTO[];
-}
+// /** @deprecated — kept only so un-migrated components compile */
+// export interface CreatedQuizDTO {
+//   title:           string;
+//   category:        string;
+//   difficultyLevel: string;
+//   creatorName:     string;
+//   questionList:    QuestionDTO[];
+// }
 
 /** @deprecated */
 export interface CreatorUserDTO {
@@ -153,12 +199,12 @@ export interface QuizTakenReponse {
   responseList: { questionTitle: string; selectedAnswer: string | null }[];
 }
 
-/** @deprecated */
-export interface ResponseEvaluationDTO {
-  questionTitle:     string;
-  correctAnswer:     string;
-  participantAnswer: string;
-}
+// /** @deprecated */
+// export interface ResponseEvaluationDTO {
+//   questionTitle:     string;
+//   correctAnswer:     string;
+//   participantAnswer: string;
+// }
 
 /** @deprecated use QuestionResponseDTO */
 export interface QuestionWrapper {
@@ -187,4 +233,70 @@ export interface AiGeneratedQuestionDTO {
   optionC:       string;
   optionD:       string;
   correctAnswer: string;  // full text of the correct option
+}
+
+export interface CategoryLeaderboardDTO {
+  category : string;
+  totalEntries : number;
+  rankings : LeaderboardEntryDTO[];
+}
+
+export interface LeaderboardEntryDTO {
+rank : number;
+participantId : number;
+participantUsername : string;
+participantEmail : string;
+quizId : number;
+quizTitle : string;
+category : string;
+difficultyLevel : string;
+totalQuestions : number;
+correctAnswers : number;
+incorrectAnswers : number;
+percentage : number;
+takenAt : Date;
+}
+
+export interface GlobalLeaderboardDTO {
+  totalEntries : number;
+  rankings : GlobalRankEntryDTO[];
+}
+
+export interface GlobalRankEntryDTO {
+rank : number;
+participantId : number;
+participantUsername : string;
+participantEmail : string;
+totalQuizzesTaken : number;
+totalCorrectAnswers : number;
+totalQuestions : number;
+averagePercentage : number;
+highestPercentage : number;
+}
+
+export interface ParticipantRankDTO {
+  participantId : number;
+  participantUsername : string;
+  quizRank : number;
+  rankedQuizId : number;
+  rankedQuizTitle : string;
+  totalQuizzesTaken : number;
+  averagePercentage : number;
+  highestPercentage : number;
+  totalCorrectAnswers : number;
+  totalQuestions : number;
+  quizHistory : LeaderboardEntryDTO[];
+}
+
+export interface QuizLeaderboardDTO{
+  quizId : number;
+  quizTitle : string;
+  category : string;
+  difficultyLevel : string;
+  creatorUsername : string;
+  totalParticipants : number;
+  averagePercentage : number;
+  highestPercentage : number;
+  lowestPercentage : number;
+  rankings : LeaderboardEntryDTO[];
 }

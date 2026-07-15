@@ -1,3 +1,4 @@
+/* ─── Global Reset ─────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -15,45 +16,93 @@ body {
   min-height: 100dvh;
   overflow-x: hidden;
   overflow-y: auto;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
   font-size: 16px;
-  line-height: 1.5;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #ffffff;
+  /* FIXED: was #ffffff which bled white text onto light admin components */
+  color: #1e293b;
 }
 
+/* ─── Scrollbar ─────────────────────────────────────────────── */
 ::-webkit-scrollbar        { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track  { background: transparent; }
-::-webkit-scrollbar-thumb  { background: rgba(0,188,212,0.6); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #00e5ff; }
+::-webkit-scrollbar-thumb  { background: rgba(37, 99, 235, 0.35); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #2563eb; }
 
+/* ─── Bootstrap form overrides — light theme ─────────────────
+   CRITICAL FIX: the old styles.css forced all form controls to
+   have white text on dark backgrounds with !important, which
+   completely overrode the per-component light styles.
+   These rules now provide a neutral base that each component
+   can override freely without fighting global !important.
+──────────────────────────────────────────────────────────────── */
 .form-control,
 .form-select {
-  color: #fff !important;
-  background-color: rgba(10, 15, 40, 0.75) !important;
-  border-color: rgba(0, 229, 255, 0.55) !important;
+  color: #1e293b;
+  background-color: rgba(241, 245, 249, 0.8);
+  border-color: rgba(148, 180, 255, 0.4);
+  border-radius: 0.75rem;
+  font-family: 'DM Sans', sans-serif;
+  transition: border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
 }
 
 .form-control:focus,
 .form-select:focus {
-  border-color: #00e5ff !important;
-  box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.25) !important;
-  outline: none !important;
-  background-color: rgba(10, 15, 40, 0.9) !important;
+  color: #1e293b;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  outline: none;
+  background-color: #fff;
 }
 
-.form-control::placeholder { color: rgba(255,255,255,0.45) !important; }
+.form-control::placeholder { color: #94a3b8; }
+
+.form-label {
+  color: #334155;
+  font-weight: 600;
+  font-size: 0.82rem;
+}
 
 .form-select option {
-  background: #0d1b3e;
-  color: #fff;
+  background: #f8fafc;
+  color: #1e293b;
 }
 
+/* ─── Bootstrap alert base overrides ────────────────────────── */
 .alert {
-  border-radius: 0.75rem;
-  font-size: 0.88rem;
+  border-radius: 0.85rem;
+  font-size: 0.87rem;
+  padding: 0.65rem 1rem;
 }
 
+.alert-success {
+  background: rgba(187, 247, 208, 0.55);
+  border: 1px solid rgba(22, 163, 74, 0.28);
+  color: #15803d;
+}
+
+.alert-danger {
+  background: rgba(254, 202, 202, 0.5);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  color: #b91c1c;
+}
+
+.alert-warning {
+  background: rgba(254, 249, 195, 0.6);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  color: #92400e;
+}
+
+/* ─── Bootstrap list-group — neutralise dark defaults ───────── */
+.list-group-item {
+  background-color: rgba(248, 250, 252, 0.9) !important;
+  color: #1e293b !important;
+  border-color: rgba(148, 180, 255, 0.2) !important;
+}
+
+/* ─── Utilities ─────────────────────────────────────────────── */
 .w-100       { width: 100% !important; }
 .text-center { text-align: center !important; }
+.text-muted  { color: #64748b !important; }

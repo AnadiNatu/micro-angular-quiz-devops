@@ -545,3 +545,166 @@
   .quick-links { grid-template-columns: 1fr; }
   .stats-strip { grid-template-columns: 1fr; }
 }
+
+/* Append to admin-dasboard.component.css —
+   .dashboard-actions and .glass-button are used in the HTML
+   (the "Test a Quiz / Leaderboards / Reports" row) but were never
+   defined, so they fell back to unstyled default <button> rendering. */
+
+.dashboard-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.glass-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1.2rem;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(37, 99, 235, 0.22);
+  border-radius: 0.75rem;
+  color: #1d4ed8;
+  font-weight: 700;
+  font-size: clamp(0.8rem, 1.8vw, 0.88rem);
+  cursor: pointer;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  transition: all 0.22s ease;
+  box-shadow: 0 3px 12px rgba(37, 99, 235, 0.1);
+  white-space: nowrap;
+}
+
+.glass-button:hover {
+  background: #dbeafe;
+  border-color: rgba(37, 99, 235, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.18);
+}
+
+/* Fallback avatar circle shown briefly before the (error) swap kicks in,
+   so there's never a flash of a broken-image icon. */
+.profile-avatar {
+  background: #dbeafe;
+}
+
+.nav-right{
+
+display:flex;
+
+align-items:center;
+
+gap:18px;
+
+margin-left:auto;
+
+}
+
+.nav-user{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+margin-left:auto;
+
+}
+
+.user-chip{
+
+padding:8px 16px;
+
+border-radius:30px;
+
+background:#dbeafe;
+
+color:#2563eb;
+
+font-weight:700;
+
+}
+
+.dashboard-grid{
+
+display:grid;
+
+grid-template-columns:
+
+300px
+
+1fr
+
+340px;
+
+gap:24px;
+
+align-items:start;
+
+}
+
+.quiz-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:16px;
+
+    max-height:420px;
+
+    overflow-y:auto;
+
+}
+
+.quiz-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:16px;
+
+    border-radius:14px;
+
+    background:rgba(255,255,255,.55);
+
+    border:1px solid rgba(37,99,235,.15);
+
+    transition:.25s;
+
+}
+
+.quiz-item:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:0 8px 18px rgba(37,99,235,.12);
+
+}
+
+.quiz-details h5{
+
+    margin:0;
+
+    font-size:18px;
+
+    font-weight:700;
+
+}
+
+.quiz-details p{
+
+    margin-top:4px;
+
+    color:#64748b;
+
+    font-size:14px;
+
+}

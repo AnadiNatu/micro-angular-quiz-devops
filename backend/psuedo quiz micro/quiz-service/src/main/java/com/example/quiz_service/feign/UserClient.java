@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name = "auth-service")
 public interface UserClient {
-    @GetMapping("/api/auth/internal/{id}") // The feign interface of endpoint for the user sync has been changed
-    UserResponseDTO getUserById(@PathVariable Long id);
+   @GetMapping("/api/auth/internal/auth-id/{authServiceId}")
+   UserResponseDTO getUserByAuthServiceId(@PathVariable("authServiceId") Long authServiceId);
 
     // Increment a stat counter for a user in auth-service
     @PostMapping("/api/auth/internal/sync-stat")

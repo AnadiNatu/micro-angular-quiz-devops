@@ -24,6 +24,7 @@ export class AdminDasboardComponent implements OnInit {
   profileImageUrl = 'assets/default-profile.png';
   userDetails: UsersDTO | null = null;
   toggleMenu  = false;
+  createdQuizzes: QuizDTO[] = [];
 
   // ── Mock stats for demo purposes (overridden by real data if available) ──
   mockStats = {
@@ -63,10 +64,20 @@ export class AdminDasboardComponent implements OnInit {
 
     // Try to load real stats for display
     this.adminService.getAllQuizzesByCreator().subscribe({
-      next: quizzes => {
-        this.mockStats.totalQuizzes = quizzes.length || this.mockStats.totalQuizzes;
-      },
-      error: () => {}
+       next: quizzes => {
+
+    this.createdQuizzes = quizzes;
+
+    this.mockStats.totalQuizzes = quizzes.length;
+
+  },
+
+  error: err => {
+
+    console.error(err);
+
+  }
+
     });
   }
 
@@ -81,14 +92,22 @@ export class AdminDasboardComponent implements OnInit {
     }
   }
 
-  viewCreatedQuiz(quiz: QuizDTO): void {
-    this.router.navigate(['/admin/quiz/view', quiz.title]);
-  }
+  // viewCreatedQuiz(quiz: QuizDTO): void {
+  //   this.router.navigate(['/admin/quiz/view', quiz.title]);
+  // }
 
-  viewAllResultsForQuiz(quiz: QuizDTO): void {
-    this.router.navigate(['/admin/results/all', quiz.id]);
-  }
+ viewAllResultsForQuiz(quiz: QuizDTO): void {
 
+  this.router.navigate(
+    ['/admin/results/all', quiz.id],
+    {
+      state: {
+        quizTitle: quiz.title
+      }
+    }
+  );
+
+}
   viewParticipantResult(): void {
     this.router.navigate(['/admin/participant/result']);
   }
@@ -101,4 +120,53 @@ export class AdminDasboardComponent implements OnInit {
     this.storage.logout();
     this.router.navigate(['/login']);
   }
+
+  openQuizPreview(): void {
+
+  this.router.navigate([
+    '/admin/participant/quiz'
+  ]);
+
+}
+
+openLeaderboards(): void {
+
+  this.router.navigate([
+    '/admin/global-leaderboard'
+  ]);
+
+}
+
+viewCreatedQuiz(quiz: QuizDTO): void {
+
+  this.router.navigate(
+    ['/admin/quiz/view', quiz.title],
+    {
+      state: {
+        quizId: quiz.id,
+        quizTitle: quiz.title
+      }
+    }
+  );
+
+}
+
+// Inline SVG avatar so a missing/unset profile photo never 404s or
+// shows broken-image alt text — no dependency on an actual asset file.
+private fallbackAvatar =
+  'data:image/svg+xml;utf8,' + encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+      <rect width="96" height="96" rx="48" fill="#dbeafe"/>
+      <circle cx="48" cy="38" r="16" fill="#60a5fa"/>
+      <path d="M20 82c4-18 20-26 28-26s24 8 28 26" fill="#60a5fa"/>
+    </svg>
+  `);
+
+onAvatarError(event: Event): void {
+  const img = event.target as HTMLImageElement;
+  img.onerror = null; // prevent any retry loop if the fallback itself ever failed
+  img.src = this.fallbackAvatar;
+}
+
+
 }

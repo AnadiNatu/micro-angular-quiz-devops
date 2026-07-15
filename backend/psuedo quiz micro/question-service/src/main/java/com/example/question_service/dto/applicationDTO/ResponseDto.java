@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResponseDto {
-    private String questionTitle;
+    private Long questionId;
     private String selectedAnswer;
 }

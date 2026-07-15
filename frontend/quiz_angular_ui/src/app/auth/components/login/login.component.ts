@@ -6,6 +6,13 @@ import { LoginAuthRequest, UserRoles } from '../../models/dtos';
 import { UserStorageService } from '../../services/user-storage/user-storage.service';
 import { CommonModule } from '@angular/common';
 
+interface DemoUser {
+  name: string;
+  role: string;
+  username: string;
+  password: string;
+}
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -19,6 +26,38 @@ export class LoginComponent {
   hovered = false;
   isLoading = false;
   errorMessage = '';
+
+  selectedRole: 'ADMIN' | 'PARTICIPANT' | 'CURATOR' = 'PARTICIPANT';
+
+demoUsers: Record<'ADMIN' | 'PARTICIPANT' | 'CURATOR', DemoUser[]> = {
+  ADMIN: [
+    {
+      name: 'Administrator',
+      role: 'ADMIN',
+      username: 'admin',
+      password: 'Admin@123'
+    }
+  ],
+
+  PARTICIPANT: [
+    {
+      name: 'Demo Participant',
+      role: 'PARTICIPANT',
+      username: 'participant',
+      password: 'Participant@123'
+    }
+  ],
+
+  CURATOR: [
+    {
+      name: 'Demo Curator',
+      role: 'CURATOR',
+      username: 'curator',
+      password: 'Curator@123'
+    }
+  ]
+
+};
 
   constructor(
     private auth: AuthService,
@@ -41,7 +80,7 @@ export class LoginComponent {
             this.router.navigate(['/admin']);
             break;
           case UserRoles.PARTICIPANT:
-            this.router.navigate(['/admin']);
+            this.router.navigate(['/participant']);
             break;
           default:
             this.errorMessage = 'Unknown role. Please contact support.';
@@ -54,4 +93,18 @@ export class LoginComponent {
       complete: () => { this.isLoading = false; }
     });
   }
+
+  selectRole(role: 'ADMIN' | 'PARTICIPANT' | 'CURATOR'): void {
+  this.selectedRole = role;
+}
+
+fillCredentials(user: DemoUser): void {
+  this.loginData.username = user.username;
+  this.loginData.password = user.password;
+}
+
+quickLogin(user: DemoUser): void {
+  this.fillCredentials(user);
+  this.onSubmit();
+}
 }

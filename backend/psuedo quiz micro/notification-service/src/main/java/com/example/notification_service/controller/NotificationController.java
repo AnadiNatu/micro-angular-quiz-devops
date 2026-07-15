@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+//@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/notify")
 @RequiredArgsConstructor
-@CrossOrigin("*")
 @Slf4j
 public class NotificationController {
 
@@ -52,6 +52,7 @@ public class NotificationController {
 
 //    Email Endpoint
 
+    // Done
 //    A participant can only request their own report card.
     @PostMapping("/email/report/{userId}")
     @PreAuthorize("hasAuthority('PARTICIPANT') or hasAuthority('ADMIN')")
@@ -63,6 +64,7 @@ public class NotificationController {
         return ResponseEntity.ok(" Report card sent to " + user.getEmail());
     }
 
+    // Done
     @PostMapping("/email/result/{userId}/quiz/{quizId}")
     @PreAuthorize("hasAuthority('PARTICIPANT') or hasAuthority('ADMIN')")
     public ResponseEntity<String> sendSingleResultEmail(@PathVariable Long userId ,@PathVariable Long quizId){
@@ -97,6 +99,7 @@ public class NotificationController {
 
 //    Document endpoints
 
+    // Done
 //    ADMIN / CURATOR: Printable result table for ONE quiz
     @GetMapping(value = "/document/quiz/{quizId}/results" , produces = MediaType.TEXT_HTML_VALUE)
     @PreAuthorize("hasAnyAuthority('ADMIN' , 'CURATOR')")
@@ -105,6 +108,7 @@ public class NotificationController {
         return ResponseEntity.ok(documentService.generateQuizResultTable(stats));
     }
 
+    // Done
 //     PARTICIPANT: Printable personal report card.
     @GetMapping(value = "/document/participant/{userId}/report" , produces = MediaType.TEXT_HTML_VALUE)
     @PreAuthorize("hasAnyAuthority('PARTICIPANT' , 'ADMIN')")
@@ -115,6 +119,7 @@ public class NotificationController {
         return ResponseEntity.ok(documentService.generateParticipantReportCard(user.getUsername(), user.getEmail(), results));
     }
 
+    // Done
 //    PARTICIPANT: Printable result certificate for ONE quiz.
     @GetMapping(value = "/document/participant/{userId}/quiz/{quizId}/result",
             produces = MediaType.TEXT_HTML_VALUE)

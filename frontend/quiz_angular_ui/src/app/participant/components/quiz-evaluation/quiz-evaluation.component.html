@@ -1,0 +1,84 @@
+<!-- src/app/participant/components/quiz-evaluation/quiz-evaluation.component.html -->
+
+<div class="page-wrap">
+
+  <div class="dashboard-header">
+    <div class="header-greeting">
+      <h1>✅ Quiz Evaluation</h1>
+      <p>Here's how you did — review your answers below.</p>
+    </div>
+  </div>
+
+  <div *ngIf="hasError" class="glass-card error-card">
+    ⚠️ {{ errorMessage }}
+  </div>
+
+  <div *ngIf="loading" class="empty-msg mt-2">Evaluating your answers…</div>
+
+  <ng-container *ngIf="!loading && !hasError">
+
+    <!-- ── Summary ──────────────────────────────────── -->
+    <div class="glass-card summary-card mt-2">
+      <div class="score-ring-wrap">
+        <div class="score-ring" [ngStyle]="{'background': 'conic-gradient(#2563eb ' + (percentage * 3.6) + 'deg, rgba(148,180,255,0.18) 0deg)'}">
+          <div class="score-ring-inner">
+            <span class="score-ring-val">{{ percentage | number:'1.0-0' }}%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-strip">
+        <div class="stat-block">
+          <div class="stat-val">{{ totalQuestions }}</div>
+          <div class="stat-lbl">Total Questions</div>
+        </div>
+        <div class="stat-block stat-good">
+          <div class="stat-val">{{ correctAnswers }}</div>
+          <div class="stat-lbl">Correct</div>
+        </div>
+        <div class="stat-block stat-bad">
+          <div class="stat-val">{{ incorrectAnswers }}</div>
+          <div class="stat-lbl">Incorrect</div>
+        </div>
+      </div>
+
+      <div class="summary-actions">
+        <button class="btn-sm" (click)="retakeQuiz()">↺ Retake</button>
+        <button class="btn-close-sm" (click)="dashboard()">🏠 Dashboard</button>
+        <button class="btn-primary" (click)="finish()">✅ Finish</button>
+      </div>
+    </div>
+
+    <!-- ── Answer Breakdown ─────────────────────────── -->
+    <div class="glass-card mt-2">
+      <div class="card-title">
+        <div class="title-icon">📝</div>
+        Answer Breakdown
+      </div>
+
+      <div class="eval-list">
+        <div class="eval-item" *ngFor="let e of evaluations; let i = index" [class.eval-correct]="isCorrect(e)" [class.eval-incorrect]="!isCorrect(e)">
+          <div class="eval-item-header">
+            <span class="eval-index">Q{{ i + 1 }}</span>
+            <span class="eval-icon">{{ isCorrect(e) ? '✅' : '❌' }}</span>
+          </div>
+          <p class="eval-question">{{ e.questionTitle }}</p>
+          <div class="eval-answers">
+            <div class="eval-answer-row">
+              <span class="eval-label">Your answer</span>
+              <span class="eval-value" [class.eval-value-wrong]="!isCorrect(e)">{{ e.selectedAnswer || '— No answer —' }}</span>
+            </div>
+            <div class="eval-answer-row" *ngIf="!isCorrect(e)">
+              <span class="eval-label">Correct answer</span>
+              <span class="eval-value eval-value-correct">{{ e.correctAnswer }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-msg" *ngIf="!evaluations.length">No evaluation data available.</div>
+    </div>
+
+  </ng-container>
+
+</div>

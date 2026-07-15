@@ -23,6 +23,9 @@ public class Users implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "auth_service_id" , unique = true)
+    private Long authServiceId;
+
     @Column(unique = true, nullable = false)
     private String username;
 

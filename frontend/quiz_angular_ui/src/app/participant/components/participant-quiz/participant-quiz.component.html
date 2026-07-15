@@ -1,0 +1,73 @@
+<!-- src/app/participant/components/participant-quiz/participant-quiz.component.html -->
+
+<div class="page-wrap">
+
+  <div class="dashboard-header">
+    <div class="header-greeting">
+      <h1>🎯 Take a Quiz</h1>
+      <p>Browse available quizzes and start when you're ready.</p>
+    </div>
+    <button class="btn-sm" (click)="refresh()">🔄 Refresh</button>
+  </div>
+
+  <div *ngIf="hasError" class="glass-card error-card">
+    ⚠️ {{ errorMessage }}
+  </div>
+
+  <!-- ── Filters ──────────────────────────────────── -->
+  <div class="glass-card mt-2">
+    <div class="filters-row">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="🔍 Search quizzes…"
+          [(ngModel)]="searchText"
+          (ngModelChange)="onSearch()" />
+      </div>
+
+      <select class="filter-select" [(ngModel)]="selectedCategory" (ngModelChange)="onCategoryChange()">
+        <option value="">All Categories</option>
+        <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+      </select>
+
+      <select class="filter-select" [(ngModel)]="selectedDifficulty" (ngModelChange)="onDifficultyChange()">
+        <option value="">All Difficulties</option>
+        <option value="EASY">Easy</option>
+        <option value="MEDIUM">Medium</option>
+        <option value="HARD">Hard</option>
+      </select>
+
+      <select class="filter-select" [(ngModel)]="sortBy" (ngModelChange)="applyFilters()">
+        <option value="title">Sort: Title</option>
+        <option value="difficulty">Sort: Difficulty</option>
+      </select>
+
+      <button class="btn-close-sm" (click)="clearFilters()">✕ Clear Filters</button>
+    </div>
+  </div>
+
+  <!-- ── Quiz Grid ────────────────────────────────── -->
+  <div *ngIf="isLoading" class="empty-msg mt-2">Loading quizzes…</div>
+
+  <div class="quiz-grid mt-2" *ngIf="!isLoading && filteredQuizzes.length">
+    <div class="glass-card quiz-card" *ngFor="let q of filteredQuizzes; trackBy: trackQuiz">
+      <div class="quiz-card-top">
+        <span class="badge-tag">{{ q.category }}</span>
+        <span class="badge-difficulty" [ngClass]="getDifficultyClass(q.difficultyLevel)">
+          {{ q.difficultyLevel }}
+        </span>
+      </div>
+      <div class="quiz-card-title">{{ q.title }}</div>
+      <!-- <p class="quiz-card-desc" *ngIf="q.description">{{ q.description }}</p> -->
+      <div class="quiz-card-actions">
+        <button class="btn-sm" (click)="viewQuizDetails(q)">Details</button>
+        <button class="btn-primary" (click)="startQuiz(q)">🚀 Start</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-msg mt-2" *ngIf="!isLoading && !filteredQuizzes.length">
+    No quizzes match your filters.
+  </div>
+
+</div>

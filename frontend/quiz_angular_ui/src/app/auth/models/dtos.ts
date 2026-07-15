@@ -42,9 +42,12 @@ export interface LoginAuthRequest {
 }
 
 export interface LoginAuthResponse {
-  token: string;
-  username: string;
-  role: string;
+id: number;
+authServiceId: number;
+token: string;
+email: string;
+username: string;
+role: string;
 }
 
 export interface ForgotPasswordRequest {

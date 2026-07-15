@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdminServiceService } from '../../services/admin-service.service';
 import { QuizDTO } from '../../models/admin-dtos';
+import { UserStorageService } from '../../../auth/services/user-storage/user-storage.service';
 
 @Component({
   selector: 'app-view-created-quiz',
@@ -21,7 +22,8 @@ export class ViewCreatedQuizComponent implements OnInit {
   constructor(
     private route:        ActivatedRoute,
     private router:       Router,
-    private adminService: AdminServiceService
+    private adminService: AdminServiceService,
+    private storage : UserStorageService
   ) {}
 
   ngOnInit(): void {
@@ -47,4 +49,26 @@ export class ViewCreatedQuizComponent implements OnInit {
   }
 
   goBack(): void { this.router.navigate(['/admin']); }
+
+  takeQuiz(): void {
+
+  if (!this.quiz) {
+    return;
+  }
+
+  this.storage.enableQuizTester();
+
+  this.router.navigate(
+    ['/admin/participant/quiz', this.quiz.id],
+    {
+      state: {
+        quizTitle: this.quiz.title,
+        category: this.quiz.category,
+        difficulty: this.quiz.difficultyLevel,
+        previewMode: true
+      }
+    }
+  );
+
+}
 }

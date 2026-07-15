@@ -1,0 +1,108 @@
+<!-- src/app/participant/components/participant-dashboard/participant-dashboard.component.html -->
+
+<div class="page-wrap">
+
+  <!-- ── Greeting Banner ─────────────────────────── -->
+  <div class="dashboard-header">
+    <div class="header-greeting">
+      <h1>{{ getGreeting() }}, {{ getDisplayName() }} <span class="wave">👋</span></h1>
+      <p>Here's a snapshot of your quiz activity.</p>
+    </div>
+    <button class="btn-sm" (click)="refreshDashboard()">🔄 Refresh</button>
+  </div>
+
+  <div *ngIf="hasError" class="glass-card error-card">
+    ⚠️ {{ errorMessage }}
+  </div>
+
+  <div *ngIf="isLoading" class="empty-msg mt-2">Loading dashboard…</div>
+
+  <ng-container *ngIf="!isLoading">
+
+    <!-- ── Stats Strip ────────────────────────────── -->
+    <div class="stats-strip mt-2">
+      <div class="stat-block">
+        <div class="stat-val">{{ availableQuizCount }}</div>
+        <div class="stat-lbl">Available Quizzes</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-val">{{ totalAttempts }}</div>
+        <div class="stat-lbl">Attempts</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-val">{{ averageScore | number:'1.0-1' }}%</div>
+        <div class="stat-lbl">Avg Score</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-val">{{ highestScore | number:'1.0-1' }}%</div>
+        <div class="stat-lbl">Best Score</div>
+      </div>
+    </div>
+
+    <!-- ── Dashboard Grid ─────────────────────────── -->
+    <div class="dashboard-grid mt-2">
+
+      <!-- Profile Card -->
+      <div class="glass-card profile-card">
+        <img [src]="getProfileImage()" alt="Profile Photo" class="profile-avatar" />
+        <div class="profile-name">{{ getDisplayName() }}</div>
+        <div class="profile-role">PARTICIPANT</div>
+        <button class="btn-sm" (click)="goToProfile()">👤 View Profile</button>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="glass-card">
+        <div class="card-title">
+          <div class="title-icon">⚡</div>
+          Quick Actions
+        </div>
+        <div class="quick-links">
+          <a class="quick-link-btn" (click)="goToAvailableQuizzes()">🎯 Take a Quiz</a>
+          <a class="quick-link-btn" (click)="goToResults()">📊 My Results</a>
+          <a class="quick-link-btn" (click)="goToProfile()">👤 My Profile</a>
+          <a class="quick-link-btn" (click)="logout()">← Log Out</a>
+        </div>
+      </div>
+
+      <!-- Recent Results -->
+      <div class="glass-card">
+        <div class="card-title">
+          <div class="title-icon">📝</div>
+          Recent Results
+        </div>
+        <div class="quiz-scroll-container">
+          <ul class="taken-quiz-list">
+            <li *ngFor="let r of recentResults.slice(0, 5)" class="taken-quiz-item">
+              <span>{{ r.quizTitle }}</span>
+              <span class="badge-pct" [class.badge-pass]="r.percentage >= 60" [class.badge-fail]="r.percentage < 60">
+                {{ r.percentage | number:'1.0-1' }}%
+              </span>
+            </li>
+            <li *ngIf="!recentResults.length" class="empty-msg">No quizzes taken yet.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Available Quizzes -->
+      <div class="glass-card">
+        <div class="card-title">
+          <div class="title-icon">🎯</div>
+          Available Quizzes
+        </div>
+        <div class="quiz-scroll-container">
+          <ul class="taken-quiz-list">
+            <li *ngFor="let q of availableQuizzes.slice(0, 5)" class="taken-quiz-item">
+              <span>{{ q.title }}</span>
+              <span class="badge-tag">{{ q.category }}</span>
+            </li>
+            <li *ngIf="!availableQuizzes.length" class="empty-msg">No quizzes available yet.</li>
+          </ul>
+        </div>
+        <button class="btn-close-sm mt-2" (click)="goToAvailableQuizzes()">View All →</button>
+      </div>
+
+    </div>
+
+  </ng-container>
+
+</div>

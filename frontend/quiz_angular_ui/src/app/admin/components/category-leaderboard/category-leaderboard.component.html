@@ -1,0 +1,89 @@
+<!-- src/app/admin/components/category-leaderboard/category-leaderboard.component.html -->
+
+<div class="page-wrap">
+
+  <div class="dashboard-header">
+    <div class="header-greeting">
+      <h1>🏷️ Category Leaderboard</h1>
+      <p>Compare top performers within a specific category.</p>
+    </div>
+    <button class="btn-close-sm" (click)="back()">← Back to Leaderboards</button>
+  </div>
+
+  <div *ngIf="hasError" class="glass-card error-card">
+    ⚠️ {{ errorMessage }}
+  </div>
+
+  <div class="glass-card mt-2">
+    <div class="card-title">
+      <div class="title-icon">📂</div>
+      Choose a Category
+    </div>
+
+    <select
+      class="filter-select"
+      [(ngModel)]="category"
+      (ngModelChange)="onCategoryChange()">
+      <option value="">— Select category —</option>
+      <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+    </select>
+  </div>
+
+  <div class="glass-card mt-2" *ngIf="category">
+    <div class="card-title">
+      <div class="title-icon">🏆</div>
+      Rankings — {{ category }}
+      <button class="btn-sm ml-auto" (click)="refresh()">🔄 Refresh</button>
+    </div>
+
+    <div class="search-bar">
+      <input
+        type="text"
+        placeholder="🔍 Search by name or email…"
+        [(ngModel)]="searchText"
+        (ngModelChange)="onSearch()" />
+      <button class="btn-sm" *ngIf="searchText" (click)="clearSearch()">✕ Clear</button>
+    </div>
+
+    <div *ngIf="isLoading" class="empty-msg mt-2">Loading leaderboard…</div>
+
+    <div class="table-wrap mt-2" *ngIf="!isLoading && filteredRankings.length">
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Participant</th>
+            <th>Email</th>
+            <th>Score</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of filteredRankings; trackBy: trackRank" (click)="viewParticipant(r)">
+            <td><span class="medal">{{ getMedal(r.rank) }}</span> #{{ r.rank }}</td>
+            <td>{{ r.participantUsername }}</td>
+            <td>{{ r.participantEmail }}</td>
+            <td>
+              <div class="progress-cell">
+                <div class="progress-track">
+                  <div class="progress-fill" [style.width.%]="getProgressValue(r)"></div>
+                </div>
+                <span>{{ r.percentage | number:'1.0-1' }}%</span>
+              </div>
+            </td>
+            <td><button class="btn-sm" (click)="viewParticipant(r); $event.stopPropagation()">View</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="empty-msg mt-2" *ngIf="!isLoading && !filteredRankings.length">
+      No ranking data available for this category.
+    </div>
+  </div>
+
+  <div class="empty-msg mt-2" *ngIf="!category">
+    Select a category above to view its leaderboard.
+  </div>
+
+</div>

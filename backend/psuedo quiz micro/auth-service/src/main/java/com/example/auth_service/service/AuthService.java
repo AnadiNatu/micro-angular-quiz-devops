@@ -34,28 +34,28 @@ public class AuthService {
     private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-
+    private final UserSyncService userSyncService;
     // ================= ADMIN INIT =================
-    @PostConstruct
-    public void createAdminAccount() {
-
-        if (userRepository.findByUsernameIgnoreCase("admin").isEmpty()) {
-
-            Users admin = new Users();
-            admin.setUsername("admin");
-            admin.setPassword(passwordEncoder.encode("admin123"));
-            admin.setRoles(UserRoles.ADMIN);
-            admin.setEnabled(true);
-
-            Users saved = userRepository.save(admin);
-
-            saved.setAuthServiceId(saved.getId());
-            userRepository.save(saved);
-            log.info("[AUTH-SERVICE] Admin account created");
-        } else {
-            log.debug("[AUTH-SERVICE] Admin account already exists, skipping creation");
-        }
-    }
+//    @PostConstruct
+//    public void createAdminAccount() {
+//
+//        if (userRepository.findByUsernameIgnoreCase("admin").isEmpty()) {
+//
+//            Users admin = new Users();
+//            admin.setUsername("admin");
+//            admin.setPassword(passwordEncoder.encode("admin123"));
+//            admin.setRoles(UserRoles.ADMIN);
+//            admin.setEnabled(true);
+//
+//            Users saved = userRepository.save(admin);
+//
+//            saved.setAuthServiceId(saved.getId());
+//            userRepository.save(saved);
+//            log.info("[AUTH-SERVICE] Admin account created");
+//        } else {
+//            log.debug("[AUTH-SERVICE] Admin account already exists, skipping creation");
+//        }
+//    }
 
     // ================= SIGNUP =================
     public SignUpResponseDTO signup(SignUpRequestDTO request) {
@@ -87,8 +87,10 @@ public class AuthService {
         Users savedUser = userRepository.save(user);
 
         savedUser.setAuthServiceId(savedUser.getId());
-        userRepository.save(savedUser);
+        userSyncService.syncUser(savedUser);
+        savedUser = userRepository.save(savedUser);
 
+        log.info("[AUTH] User Created | username={} | authServiceId={}", savedUser.getUsername(), savedUser.getAuthServiceId());
         log.info("[AUTH-SERVICE] New user registered: username={}, role={}", savedUser.getUsername(), savedUser.getRoles());
         return UserMapper.toSignUpResponse(savedUser);
     }

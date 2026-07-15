@@ -1,64 +1,286 @@
-:host {
+/* ═══════════════════════════════════════════════════════════════
+   signup.component.css  —  Quiz Platform
+   Same dark glass language as login. White text throughout.
+═══════════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Outer centering shell ────────────────────────────────────── */
+.glass-container {
   display: flex;
-  min-height: 100vh;
-  align-items: center;
   justify-content: center;
-  padding: clamp(0.75rem, 2vw, 1.5rem);
+  align-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  overflow-y: auto;
 }
 
-.signup-card-wrapper {
-  max-width: 440px;
+/* ── Card ─────────────────────────────────────────────────────── */
+.glass-signup-card {
   width: 100%;
-  margin: 0 auto;
+  max-width: 460px;
+  background: rgba(10, 18, 50, 0.62);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 1.5rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.25rem, 4vw, 2.25rem);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 1px 0   rgba(255, 255, 255, 0.12) inset;
+  animation: cardIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-/* ──── Advanced Role Picker Visual cards ──── */
-.role-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.68rem;
-  margin-bottom: 1.2rem;
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(28px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
 }
 
-.role-visual-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 0.85rem;
-  padding: 0.75rem;
+/* ── Header ───────────────────────────────────────────────────── */
+.card-header-section {
   text-align: center;
-  cursor: pointer;
-  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-  user-select: none;
+  margin-bottom: 1.75rem;
 }
 
-.role-visual-card:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.3);
+.logo-icon {
+  font-size: clamp(2rem, 6vw, 2.75rem);
+  display: block;
+  margin-bottom: 0.4rem;
+  line-height: 1;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+}
+
+h2 {
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(1.4rem, 4vw, 1.75rem);
+  font-weight: 800;
+  color: #f1c40f;
+  letter-spacing: -0.01em;
+  text-shadow: 0 2px 12px rgba(241, 196, 15, 0.35);
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: clamp(0.78rem, 2.2vw, 0.87rem);
+  margin-top: 0.3rem;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ── Field labels ─────────────────────────────────────────────── */
+.form-label {
+  display: block;
+  color: rgba(255, 255, 255, 0.78) !important;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 0.38rem;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ── Input with icon ──────────────────────────────────────────── */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 0.85rem;
+  font-size: 1rem;
+  pointer-events: none;
+  z-index: 2;
+  line-height: 1;
+}
+
+.form-control {
+  width: 100% !important;
+  padding: 0.7rem 0.85rem 0.7rem 2.55rem !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+  color: #fff !important;
+  border-radius: 0.85rem !important;
+  font-size: clamp(0.87rem, 2.5vw, 0.94rem) !important;
+  font-family: 'DM Sans', sans-serif !important;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease !important;
+  -webkit-appearance: none;
+}
+
+.form-control::placeholder { color: rgba(255, 255, 255, 0.28) !important; }
+
+.form-control:focus {
+  outline: none !important;
+  border-color: #00bcd4 !important;
+  box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.22) !important;
+  background: rgba(255, 255, 255, 0.11) !important;
+  color: #fff !important;
+}
+
+.form-control:-webkit-autofill,
+.form-control:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 100px rgba(10,18,50,0.95) inset !important;
+  -webkit-text-fill-color: #fff !important;
+  border-color: rgba(0, 188, 212, 0.4) !important;
+}
+
+/* ── Role picker grid ─────────────────────────────────────────── */
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+  margin-top: 0.35rem;
+}
+
+.role-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.18rem;
+  padding: 0.8rem 0.4rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.14);
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  font-family: 'DM Sans', sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.role-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06), transparent);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.role-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.28);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+}
+
+.role-card.active-role {
+  background: rgba(0, 188, 212, 0.15);
+  border-color: #00bcd4;
+  box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.18), 0 6px 20px rgba(0, 188, 212, 0.25);
   transform: translateY(-2px);
 }
 
-.role-visual-card.selected {
-  background: rgba(0, 229, 255, 0.1);
-  border-color: #00e5ff;
-  box-shadow: 0 0 12px rgba(0, 229, 255, 0.2);
+.role-icon {
+  font-size: 1.55rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
 }
 
-.role-visual-card .role-emoji {
-  font-size: 1.5rem;
-  margin-bottom: 0.2rem;
-  display: block;
-}
-
-.role-visual-card .role-title {
-  font-weight: 800;
+.role-name {
+  font-size: 0.8rem;
+  font-weight: 700;
   color: #fff;
-  font-size: 0.85rem;
-  display: block;
+  font-family: 'Sora', sans-serif;
 }
 
-.role-visual-card .role-subtitle {
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.55);
-  display: block;
-  margin-top: 0.1rem;
+.role-desc {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.48);
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* ── Alerts ───────────────────────────────────────────────────── */
+.alert-glass {
+  border-radius: 0.8rem;
+  padding: 0.65rem 0.95rem;
+  font-size: 0.84rem;
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.45;
+}
+
+.alert-danger-glass {
+  background: rgba(220, 38, 38, 0.18);
+  border: 1px solid rgba(220, 38, 38, 0.4);
+  color: #fca5a5;
+}
+
+.alert-success-glass {
+  background: rgba(22, 163, 74, 0.18);
+  border: 1px solid rgba(22, 163, 74, 0.4);
+  color: #86efac;
+}
+
+/* ── Submit button ────────────────────────────────────────────── */
+.glass-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.82rem 1rem;
+  background: linear-gradient(135deg, #0891b2, #2563eb);
+  border: none;
+  border-radius: 0.95rem;
+  color: #fff;
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 18px rgba(8, 145, 178, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
+  border-radius: inherit;
+}
+
+.glass-button:hover {
+  background: linear-gradient(135deg, #0e7490, #1d4ed8);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(8, 145, 178, 0.5);
+}
+
+.glass-button:active { transform: translateY(0); }
+
+/* ── Footer link ──────────────────────────────────────────────── */
+.glass-link-btn {
+  color: #38bdf8;
+  text-decoration: none;
+  font-size: clamp(0.82rem, 2.3vw, 0.9rem);
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  transition: color 0.22s ease, text-shadow 0.22s ease;
+}
+
+.glass-link-btn:hover {
+  color: #f1c40f;
+  text-shadow: 0 0 12px rgba(241, 196, 15, 0.5);
+}
+
+.text-muted-light {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: clamp(0.8rem, 2.2vw, 0.87rem);
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ── Bootstrap helpers ────────────────────────────────────────── */
+.w-100  { width: 100% !important; }
+.mt-2   { margin-top: 0.5rem !important; }
+.mt-3   { margin-top: 0.85rem !important; }
+.mb-3   { margin-bottom: 1rem !important; }
+.ms-1   { margin-left: 0.25rem !important; }
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 400px) {
+  .role-grid             { grid-template-columns: 1fr; }
+  .glass-signup-card     { border-radius: 1.1rem; }
 }

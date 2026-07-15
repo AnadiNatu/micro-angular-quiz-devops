@@ -86,7 +86,7 @@ export class AiGenerateQuestionComponent implements OnInit {
       },
       error: () => {
         // Fallback: derive from questions list if the new endpoint isn't deployed yet
-        this.adminService.getAllCategories().subscribe({
+        this.adminService.getCategories().subscribe({
           next:  cats => { this.categories = cats; this.categoriesLoading = false; },
           error: ()   => { this.categories = [];   this.categoriesLoading = false; }
         });

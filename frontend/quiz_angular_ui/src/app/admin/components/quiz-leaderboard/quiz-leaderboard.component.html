@@ -1,0 +1,141 @@
+<!-- src/app/admin/components/quiz-leaderboard/quiz-leaderboard.component.html -->
+
+<div class="page-wrap">
+
+  <div class="dashboard-header">
+    <div class="header-greeting">
+      <h1>🎯 Quiz Leaderboard</h1>
+      <div
+class="leaderboard-summary"
+*ngIf="leaderboard">
+
+<span>
+
+👥
+{{leaderboard.totalParticipants}}
+Participants
+
+</span>
+
+<span>
+
+📊
+{{leaderboard.averagePercentage
+| number:'1.0-1'}}%
+
+Average
+
+</span>
+
+<span>
+
+🥇
+{{leaderboard.highestPercentage
+| number:'1.0-1'}}%
+
+Highest
+
+</span>
+
+<span>
+
+📉
+{{leaderboard.lowestPercentage
+| number:'1.0-1'}}%
+
+Lowest
+
+</span>
+
+</div>
+      <p *ngIf="leaderboard">{{ leaderboard.quizTitle }}</p>
+    </div>
+    <button class="btn-close-sm" (click)="back()">← Back to Leaderboards</button>
+  </div>
+
+  <div *ngIf="hasError" class="glass-card error-card">
+    ⚠️ {{ errorMessage }}
+  </div>
+
+  <div class="glass-card mt-2">
+    <div class="card-title">
+      <div class="title-icon">🏆</div>
+      Rankings
+      <button class="btn-sm ml-auto" (click)="refresh()">🔄 Refresh</button>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="🔍 Search by name or email…"
+          [(ngModel)]="searchText"
+          (ngModelChange)="onSearch()" />
+        <button class="btn-sm" *ngIf="searchText" (click)="clearSearch()">✕ Clear</button>
+      </div>
+
+      <div class="limit-toggle">
+        <button
+          class="chip"
+          *ngFor="let l of [5, 10, 20, 50]"
+          [class.chip-active]="limit === l"
+          (click)="changeLimit(l)">Top {{ l }}</button>
+      </div>
+    </div>
+
+    <div class="loading-state">
+
+<div class="spinner"></div>
+
+Loading Quiz Leaderboard...
+
+</div>
+
+    <div class="table-wrap mt-2" *ngIf="!isLoading && filteredRankings.length">
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Participant</th>
+            <th>Email</th>
+            <th>Score</th>
+            <th>Taken</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of filteredRankings; trackBy: trackRank" (click)="viewParticipant(r)">
+            <td><span class="medal">{{ getMedal(r.rank) }}</span> #{{ r.rank }}</td>
+            <td>{{ r.participantUsername }}</td>
+            <td>{{ r.participantEmail }}</td>
+            <td>
+              <div class="progress-cell">
+                <div class="progress-track">
+                  <div class="progress-fill" [style.width.%]="getProgressValue(r)"></div>
+                </div>
+                <span>{{ r.percentage | number:'1.0-1' }}%</span>
+              </div>
+            </td>
+            <td>{{ r.takenAt | date:'MMM d, y' }}</td>
+            <td><button class="btn-sm" (click)="viewParticipant(r); $event.stopPropagation()">View</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="empty-state">
+
+🏆
+
+<h3>No Rankings Yet</h3>
+
+<p>
+
+Nobody has attempted this quiz yet.
+
+</p>
+
+</div>
+  </div>
+
+</div>

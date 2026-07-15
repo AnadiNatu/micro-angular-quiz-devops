@@ -40,7 +40,7 @@ export class AllUserResultComponent implements OnInit {
       return;
     }
 
-    this.adminService.getAllUserResults(this.quizId).subscribe({
+    this.adminService.getResultsByQuiz(this.quizId).subscribe({
       next: res => {
         this.results   = res;
         this.quizTitle = res[0]?.quizTitle ?? `Quiz #${this.quizId}`;

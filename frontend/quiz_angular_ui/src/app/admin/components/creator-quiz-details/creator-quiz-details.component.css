@@ -287,3 +287,19 @@
 @media (max-width: 520px) {
   .search-row { grid-template-columns: 1fr; }
 }
+
+/* Append to creator-quiz-details.component.css —
+   the four review buttons (Test/Stats/Participants/Reports) need a
+   grid layout; .btn-primary was written as a single full-width block
+   button, so override its width/margin when placed inside the grid. */
+
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.65rem;
+  margin-top: 1.25rem;
+}
+
+.action-grid .btn-primary {
+  margin-top: 0;
+}

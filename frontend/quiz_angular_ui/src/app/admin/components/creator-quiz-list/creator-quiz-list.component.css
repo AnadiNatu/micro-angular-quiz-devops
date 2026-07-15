@@ -294,3 +294,19 @@
   .filter-row { flex-direction: column; }
   .category-select { width: 100%; }
 }
+/* ── Demo / preview notice ───────────────────────────────────── */
+.demo-notice {
+  background: rgba(254, 249, 195, 0.65);
+  border: 1px solid rgba(234, 179, 8, 0.32);
+  color: #78350f;
+  padding: 0.65rem 0.9rem;
+  border-radius: 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+/* Demo cards slightly muted; disable action buttons */
+.demo-card { opacity: 0.85; cursor: default; }
+.demo-card button[disabled] { opacity: 0.45; cursor: not-allowed; pointer-events: none; }

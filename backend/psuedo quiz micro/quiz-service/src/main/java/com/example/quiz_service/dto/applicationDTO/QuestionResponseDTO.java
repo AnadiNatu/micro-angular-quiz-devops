@@ -16,4 +16,6 @@ public class QuestionResponseDTO {
     private String option4;
 
     private String rightAnswer;
+    private String difficultyLevel;
+    private String category;
 }

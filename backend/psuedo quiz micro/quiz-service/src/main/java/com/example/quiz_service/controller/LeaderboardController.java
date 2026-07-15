@@ -20,6 +20,7 @@ public class LeaderboardController {
 
     // ===================== QUIZ LEADERBOARD =====================
 
+    // Done
     // Full ranked leaderboard for a single quiz — authenticated users
     @GetMapping("/quiz/{quizId}")
     @PreAuthorize("isAuthenticated()")
@@ -28,6 +29,7 @@ public class LeaderboardController {
         return ResponseEntity.ok(leaderboardService.getQuizLeaderboard(quizId));
     }
 
+    // Done
     // Top N podium entries for a quiz — useful for trophy/medal display
     @GetMapping("/quiz/{quizId}/top")
     @PreAuthorize("isAuthenticated()")
@@ -40,6 +42,7 @@ public class LeaderboardController {
 
     // ===================== GLOBAL LEADERBOARD =====================
 
+    // Done
     // Global leaderboard aggregated across all quizzes — authenticated users
     @GetMapping("/global")
     @PreAuthorize("isAuthenticated()")

@@ -47,8 +47,8 @@ export const adminRoutes: Routes = [
     // :quizId is a numeric quiz ID for the microservice
     path: 'participant/quiz/:quizId',
     loadComponent: () =>
-      import('./components/participant-quiz/participant-quiz.component')
-        .then(m => m.ParticipantQuizComponent)
+      import('./components/quiz-attempt/quiz-attempt.component')
+        .then(m => m.QuizAttemptComponent)
   },
   {
     path: 'participant/quiz',
@@ -74,5 +74,51 @@ export const adminRoutes: Routes = [
     loadComponent: () =>
       import('./components/ai-generate-question/ai-generate-question.component')
         .then(m => m.AiGenerateQuestionComponent)
-  }
+  },
+  {
+    path: 'all-questions',
+    loadComponent: () =>
+      import('./components/all-question/all-question.component')
+        .then(m => m.AllQuestionComponent)
+  },
+
+  {
+  path: 'quiz-leaderboard/:quizId',
+  loadComponent: () =>
+    import('./components/quiz-leaderboard/quiz-leaderboard.component')
+      .then(m => m.QuizLeaderboardComponent)
+},
+{
+  path: 'global-leaderboard',
+  loadComponent: () =>
+    import('./components/global-leaderboard/global-leaderboard.component')
+      .then(m => m.GlobalLeaderboardComponent)
+},
+{
+  path: 'category-leaderboard/:category',
+  loadComponent: () =>
+    import('./components/category-leaderboard/category-leaderboard.component')
+      .then(m => m.CategoryLeaderboardComponent)
+},
+// {
+//   // :participantId is required; :quizId is passed as a query param (?quizId=...)
+//   // by quiz-leaderboard / global-leaderboard / category-leaderboard "View" actions
+//   path: 'participant-ranking/:participantId',
+//   loadComponent: () =>
+//     import('./components/')
+//       .then(m => m.ParticipantRankingComponent)
+// },
+{
+  path: 'manage-users',
+  loadComponent: () =>
+    import('./components/manage-users/manage-users.component')
+      .then(m => m.ManageUsersComponent)
+},
+{
+  path: 'reports',
+  loadComponent: () =>
+    import('./components/admin-report-center/admin-report-center.component')
+      .then(m => m.AdminReportCenterComponent)
+}
+
 ];

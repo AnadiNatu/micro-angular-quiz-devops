@@ -126,7 +126,7 @@ public GlobalLeaderboardDTO getGlobalLeaderboard(int limit) {
                     .quizHistory(List.of())
                     .build();
         }
-        String username = history.get(0).getCuratorUsername();
+        String username = history.get(0).getParticipantUsername();;
 
         int totalQuizzes = history.size();
         int totalCorrect = history.stream().mapToInt(QuizResult::getCorrectAnswers).sum();
@@ -214,7 +214,7 @@ public GlobalLeaderboardDTO getGlobalLeaderboard(int limit) {
         for (int i = 0 ; i< sorted.size() ; i++){
             GlobalRankEntryDTO current = sorted.get(i);
 
-            if (i < 0){
+            if (i > 0){
                 GlobalRankEntryDTO prev = sorted.get(i - 1);
 
                 boolean tied = (Double.compare(current.getAveragePercentage(), prev.getAveragePercentage())) == 0 && (current.getTotalCorrectAnswers() == prev.getTotalCorrectAnswers());
@@ -263,7 +263,7 @@ public GlobalLeaderboardDTO getGlobalLeaderboard(int limit) {
 
     private String fetchUsernameOrFallback(Long authServiceId ,String fallback){
         try{
-            UserResponseDTO user = userClient.getUserById(authServiceId);
+            UserResponseDTO user = userClient.getUserByAuthServiceId(authServiceId);
             return user != null ? user.getUsername() : fallback;
         }catch (Exception ex){
             log.warn("[LEADERBOARD] Could not fetch username for authServiceId={} : {}" , authServiceId , ex.getMessage());

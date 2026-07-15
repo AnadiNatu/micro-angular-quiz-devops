@@ -56,6 +56,109 @@
 
     </form>
 
+    <hr class="my-4">
+
+<div class="demo-section">
+
+  <h6 class="text-center fw-bold mb-3">
+    Demo Accounts
+  </h6>
+
+  <div class="demo-toggle mb-3">
+
+    <button
+      type="button"
+      class="btn"
+      [class.btn-success]="selectedRole === 'ADMIN'"
+      [class.btn-outline-success]="selectedRole !== 'ADMIN'"
+      (click)="selectRole('ADMIN')">
+
+      🛡 Admin
+
+    </button>
+
+    <button
+      type="button"
+      class="btn ms-2"
+      [class.btn-primary]="selectedRole === 'PARTICIPANT'"
+      [class.btn-outline-primary]="selectedRole !== 'PARTICIPANT'"
+      (click)="selectRole('PARTICIPANT')">
+
+      👤 Participants
+
+    </button>
+
+    <button
+      type="button"
+      class="btn"
+      [class.btn-success]="selectedRole === 'CURATOR'"
+      [class.btn-outline-success]="selectedRole !== 'CURATOR'"
+      (click)="selectRole('CURATOR')">
+
+      🛡 Curator
+
+    </button>
+
+  </div>
+
+  <div
+    *ngFor="let user of demoUsers[selectedRole]"
+    class="demo-card mb-3">
+
+   <div class="demo-card-body">
+
+    <div class="demo-info">
+
+        <h5>{{user.name}}</h5>
+
+        <span class="role-chip">
+
+            {{user.role}}
+
+        </span>
+
+        <div class="credential">
+
+            <label>Username</label>
+
+            <p>{{user.username}}</p>
+
+        </div>
+
+        <div class="credential">
+
+            <label>Password</label>
+
+            <p>{{user.password}}</p>
+
+        </div>
+
+    </div>
+
+    <div class="demo-actions">
+
+        <button
+            class="btn-fill"
+            (click)="fillCredentials(user)">
+
+            Fill
+
+        </button>
+
+        <button
+            class="btn-login-demo"
+            (click)="quickLogin(user)">
+
+            Login
+
+        </button>
+
+    </div>
+
+</div>
+  </div>
+</div>
+
     <div class="divider">
       <span>or</span>
     </div>

@@ -26,7 +26,7 @@ public interface QuestionRepository extends JpaRepository<Questions , Long>{
             SELECT q.id 
             FROM questions q 
             WHERE LOWER(q.category) = LOWER(:category) 
-            ORDER BY RAND() 
+            ORDER BY RANDOM() 
             LIMIT :num
             """, nativeQuery = true)
     List<Long> findRandomQuestionsByCategory(
@@ -36,4 +36,14 @@ public interface QuestionRepository extends JpaRepository<Questions , Long>{
 
     List<Questions> findByIdIn(List<Long> ids);
 
+    @Query("""
+           SELECT DISTINCT q.category
+           FROM Questions q
+           WHERE q.category IS NOT NULL
+           AND TRIM(q.category) <> ''
+           ORDER BY q.category ASC
+           """)
+    List<String> findAllDistinctCategories();
+
+    List<Questions> findByCreatorAuthServiceIdOrderByIdDesc(Long creatorAuthServiceId);
 }

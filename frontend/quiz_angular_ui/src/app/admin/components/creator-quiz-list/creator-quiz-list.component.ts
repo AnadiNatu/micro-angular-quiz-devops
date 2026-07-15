@@ -4,6 +4,7 @@ import { AdminServiceService } from '../../services/admin-service.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { UserStorageService } from '../../../auth/services/user-storage/user-storage.service';
 
 @Component({
   selector: 'app-creator-quiz-list',
@@ -21,6 +22,7 @@ export class CreatorQuizListComponent implements OnInit {
   hoveredId      = 0;
   searchText     = '';
   showAllQuizzes = false;
+  isTester : boolean;
  
   // Category filter
   categories:       string[] = [];
@@ -31,6 +33,7 @@ export class CreatorQuizListComponent implements OnInit {
  
   constructor(
     private adminService: AdminServiceService,
+    private storage:      UserStorageService,
     private router: Router
   ) {}
  
@@ -38,6 +41,7 @@ export class CreatorQuizListComponent implements OnInit {
     this.showAllQuizzes = this.router.url.includes('all/quizzes');
     this.loadQuizzes();
     this.loadCategories();
+    this.isTester = this.storage.isQuizTester();
   }
  
   loadQuizzes(): void {
@@ -52,17 +56,11 @@ export class CreatorQuizListComponent implements OnInit {
   }
  
   loadCategories(): void {
-    // Try the dedicated quiz categories endpoint first; fall back to question categories
-    this.adminService.getQuizCategories().subscribe({
-      next:  cats => this.categories = cats,
-      error: ()   => {
-        this.adminService.getCategories().subscribe({
-          next:  cats => this.categories = cats,
-          error: ()   => this.categories = []
-        });
-      }
+    this.adminService.getCategories().subscribe({
+        next: cats => this.categories = cats,
+        error: () => this.categories = []
     });
-  }
+}
  
   // ── Filtering ───────────────────────────────────────────────────────────────
  

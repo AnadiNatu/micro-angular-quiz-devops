@@ -1,0 +1,88 @@
+<!-- src/app/admin/components/manage-users/manage-users.component.html -->
+
+<div class="page-wrap">
+
+  <div class="dashboard-header">
+    <div class="header-greeting">
+      <h1>👥 Manage Users</h1>
+      <p>View, filter, and manage platform users.</p>
+    </div>
+    <button class="btn-sm" (click)="refresh()">🔄 Refresh</button>
+  </div>
+
+  <div *ngIf="hasError" class="glass-card error-card">
+    ⚠️ {{ errorMessage }}
+  </div>
+
+  <!-- ── Filters ──────────────────────────────────── -->
+  <div class="glass-card mt-2">
+    <div class="filters-row">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="🔍 Search by username or email…"
+          [(ngModel)]="searchText"
+          (ngModelChange)="onSearch()" />
+      </div>
+
+      <select class="filter-select" [(ngModel)]="selectedRole" (ngModelChange)="onRoleChange()">
+        <option value="">All Roles</option>
+        <option value="ADMIN">Admin</option>
+        <option value="CURATOR">Curator</option>
+        <option value="PARTICIPANT">Participant</option>
+      </select>
+
+      <label class="toggle-check">
+        <input type="checkbox" [(ngModel)]="showEnabledOnly" (ngModelChange)="onEnabledToggle()" />
+        Enabled only
+      </label>
+
+      <button class="btn-close-sm" (click)="clearFilters()">✕ Clear Filters</button>
+    </div>
+  </div>
+
+  <!-- ── Users Table ──────────────────────────────── -->
+  <div class="glass-card mt-2">
+    <div class="card-title">
+      <div class="title-icon">🗂️</div>
+      Users ({{ filteredUsers.length }})
+    </div>
+
+    <div *ngIf="isLoading" class="empty-msg">Loading users…</div>
+
+    <div class="table-wrap" *ngIf="!isLoading && filteredUsers.length">
+      <table>
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let u of filteredUsers; trackBy: trackUser">
+            <td>{{ u.username }}</td>
+            <td>{{ u.email }}</td>
+            <td><span class="role-badge" [ngClass]="getRoleClass(u.role)">{{ u.role }}</span></td>
+            <td>
+              <span class="status-badge" [class.status-active]="u.enabled" [class.status-disabled]="!u.enabled">
+                {{ u.enabled ? 'Active' : 'Disabled' }}
+              </span>
+            </td>
+            <td class="action-cell">
+              <button class="btn-sm" (click)="viewUser(u)">View</button>
+              <button class="btn-danger-sm" (click)="disableUser(u)" [disabled]="!u.enabled">Disable</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="empty-msg" *ngIf="!isLoading && !filteredUsers.length">
+      No users match your filters.
+    </div>
+  </div>
+
+</div>

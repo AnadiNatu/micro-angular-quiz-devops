@@ -1,39 +1,54 @@
-<div class="glass-container">
-  <div class="glass-content-wrapper">
+<!-- src/app/admin/components/view-created-quiz/view-created-quiz.component.html -->
 
-    <div *ngIf="errorMessage" class="glass-card">
-      <p class="text-danger text-center">{{ errorMessage }}</p>
+<div class="page-wrap">
+
+  <div class="dashboard-header">
+    <div class="header-greeting">
+      <h1>📋 Quiz Details</h1>
+      <p *ngIf="quiz">{{ quiz.title }}</p>
+    </div>
+    <button class="btn-close-sm" (click)="goBack()">← Back to Dashboard</button>
+  </div>
+
+  <div *ngIf="errorMessage" class="glass-card error-card">
+    ⚠️ {{ errorMessage }}
+  </div>
+
+  <ng-container *ngIf="quiz">
+
+    <div class="glass-card mt-2">
+      <div class="card-title">
+        <div class="title-icon">📝</div>
+        {{ quiz.title }}
+      </div>
+
+      <div class="quiz-meta">
+        <span class="badge-tag">{{ quiz.category }}</span>
+        <span class="badge-difficulty" [ngClass]="'badge-' + (quiz.difficultyLevel | lowercase)">
+          {{ quiz.difficultyLevel }}
+        </span>
+      </div>
+
+      <!-- <p class="quiz-desc mt-2" *ngIf="quiz.description">{{ quiz.description }}</p> -->
+
+      <button class="btn-primary mt-3" (click)="takeQuiz()">🎯 Take This Quiz</button>
     </div>
 
-    <ng-container *ngIf="quiz">
-      <div class="glass-card quiz-card">
-
-        <div class="quiz-header">
-          <h2>{{ quiz.title }}</h2>
-          <p><strong>Category:</strong>   {{ quiz.category }}</p>
-          <p><strong>Difficulty:</strong> {{ quiz.difficultyLevel }}</p>
-          <p><strong>Created By:</strong> {{ quiz.creatorUsername }}</p>
-          <p><strong>Total Questions:</strong> {{ quiz.questionIds?.length ?? 0 }}</p>
-          <p><strong>Participants:</strong>    {{ quiz.participantIds?.length ?? 0 }}</p>
-        </div>
-
-        <div class="questions-section quiz-scroll-container mt-3">
-          <h4>Question Titles</h4>
-          <div *ngIf="questionTitles.length === 0" class="text-muted">
-            Loading questions...
-          </div>
-          <div *ngFor="let title of questionTitles; let i = index"
-               class="question-card">
-            <p><strong>Q{{ i + 1 }}:</strong> {{ title }}</p>
-          </div>
-        </div>
-
-        <div class="d-flex gap-3 mt-4 flex-wrap">
-          <button class="glass-button" (click)="goBack()">← Dashboard</button>
-        </div>
-
+    <div class="glass-card mt-2">
+      <div class="card-title">
+        <div class="title-icon">❓</div>
+        Questions ({{ questionTitles.length }})
       </div>
-    </ng-container>
 
-  </div>
+      <ol class="question-list" *ngIf="questionTitles.length; else noQuestions">
+        <li *ngFor="let title of questionTitles">{{ title }}</li>
+      </ol>
+
+      <ng-template #noQuestions>
+        <div class="empty-msg">No questions added to this quiz yet.</div>
+      </ng-template>
+    </div>
+
+  </ng-container>
+
 </div>

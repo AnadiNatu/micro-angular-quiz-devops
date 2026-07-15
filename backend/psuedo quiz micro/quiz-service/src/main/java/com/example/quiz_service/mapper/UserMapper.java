@@ -1,4 +1,4 @@
-package com.example.question_service.mapper;
+package com.example.quiz_service.mapper;
 
 
 import com.example.quiz_service.dto.authDTO.LoginResponseDTO;

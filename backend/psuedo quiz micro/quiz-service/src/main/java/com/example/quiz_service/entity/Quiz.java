@@ -22,12 +22,12 @@ public class Quiz {
     private String category;
     private String difficultyLevel;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "quiz_question_ids", joinColumns = @JoinColumn(name = "quiz_id"))
     @Column(name = "question_id")
     private List<Long> questionIds;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "quiz_participant_ids", joinColumns = @JoinColumn(name = "quiz_id"))
     @Column(name = "user_id")
     private List<Long> participantIds;

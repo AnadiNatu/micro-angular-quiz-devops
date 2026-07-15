@@ -1,0 +1,173 @@
+<div class="page-wrap">
+
+    <!-- ===================== TOP BAR ===================== -->
+
+    <div class="attempt-navbar">
+
+        <div>
+            <h2>Quiz #{{ quizId }}</h2>
+        </div>
+
+        <div class="attempt-progress-info">
+
+            <span class="tester-badge" *ngIf="isTester">
+                ADMIN PREVIEW
+            </span>
+
+            <span class="timer-badge" [class.timer-danger]="remainingSeconds <= 60">
+                ⏱ {{ formatTime() }}
+            </span>
+
+            <span>
+                {{ answeredCount }}/{{ questions.length }}
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================== ERROR ===================== -->
+
+    <div
+        *ngIf="hasError"
+        class="glass-card error-card mt-2">
+
+        {{ errorMessage }}
+
+    </div>
+
+
+    <!-- ===================== LOADING ===================== -->
+
+    <div
+        *ngIf="isLoading"
+        class="loading-wrap">
+
+        <span class="spinner"></span>
+
+        Loading Quiz...
+
+    </div>
+
+
+    <ng-container *ngIf="!isLoading && !hasError && getCurrentQuestion() as q">
+
+        <!-- ===================== QUESTION ===================== -->
+
+        <div class="glass-card mt-2">
+
+            <div class="card-title">
+
+                <div class="title-icon">
+                    ❓
+                </div>
+
+                Question {{ currentIndex + 1 }}
+                /
+                {{ questions.length }}
+
+            </div>
+
+            <div class="question-text">
+                {{ q.questionTitle }}
+            </div>
+
+            <div class="options-list">
+
+                <label
+                    class="option-item"
+                    *ngFor="let opt of getOptions(q)"
+                    [class.option-selected]="getSelectedAnswer() === opt">
+
+                    <input
+                        type="radio"
+                        [checked]="getSelectedAnswer() === opt"
+                        [disabled]="isSubmitting"
+                        (change)="selectAnswer(opt)">
+
+                    {{ opt }}
+
+                </label>
+
+            </div>
+
+        </div>
+
+
+        <!-- ===================== PROGRESS DOTS ===================== -->
+
+        <div class="pager-dots">
+
+            <button
+                *ngFor="let question of questions; let i = index"
+                class="pager-dot"
+                [class.pager-dot-active]="currentIndex === i"
+                [class.pager-dot-answered]="responses[i]?.selectedAnswer"
+                (click)="goToQuestion(i)">
+
+                {{ i + 1 }}
+
+            </button>
+
+        </div>
+
+
+        <!-- ===================== ACTIONS ===================== -->
+
+        <div class="glass-card mt-2">
+
+            <div class="attempt-actions">
+
+                <button
+                    class="btn-close-sm"
+                    (click)="exitQuiz()">
+
+                    Exit
+
+                </button>
+
+                <button
+                    class="btn-close-sm"
+                    (click)="previousQuestion()"
+                    [disabled]="isFirstQuestion()">
+
+                    ← Previous
+
+                </button>
+
+                <button
+                    class="btn-primary"
+                    *ngIf="!isLastQuestion()"
+                    (click)="nextQuestion()">
+
+                    Next →
+
+                </button>
+
+                <button
+                    class="btn-submit"
+                    *ngIf="isLastQuestion()"
+                    [disabled]="isSubmitting"
+                    (click)="submitQuiz()">
+
+                    {{ isSubmitting ? 'Submitting...' : 'Submit Quiz' }}
+
+                </button>
+
+            </div>
+
+            <div
+                class="empty-msg mt-2"
+                *ngIf="remainingCount">
+
+                {{ remainingCount }}
+                question(s) remaining
+
+            </div>
+
+        </div>
+
+    </ng-container>
+
+</div>

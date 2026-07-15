@@ -1,0 +1,85 @@
+<p>user-report-center works!</p>
+<!-- src/app/participant/components/user-report-center/user-report-center.component.html -->
+
+<div class="page-wrap">
+
+  <div class="dashboard-header">
+    <div class="header-greeting">
+      <h1>📄 My Report Center</h1>
+      <p>View your quiz history and download your report card.</p>
+    </div>
+    <button class="btn-close-sm" (click)="back()">← Back to Dashboard</button>
+  </div>
+
+  <div *ngIf="errorMessage" class="glass-card error-card">
+    ⚠️ {{ errorMessage }}
+  </div>
+
+  <!-- ── Report Card Actions ──────────────────────── -->
+  <div class="glass-card mt-2">
+    <div class="card-title">
+      <div class="title-icon">🏆</div>
+      Overall Report Card
+    </div>
+    <p class="hint-text">Generate a printable summary of your quiz performance, or have it emailed to you.</p>
+    <div class="action-row mt-2">
+      <button class="btn-primary" (click)="openReportCard()" [disabled]="generatingReport">
+        {{ generatingReport ? 'Generating…' : '🖨️ View Report Card' }}
+      </button>
+      <button class="btn-sm" (click)="emailReportCard()" [disabled]="sendingEmail">
+        {{ sendingEmail ? 'Sending…' : '✉️ Email Me a Copy' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Results History ──────────────────────────── -->
+  <div class="glass-card mt-2">
+    <div class="card-title">
+      <div class="title-icon">📝</div>
+      Quiz History
+    </div>
+
+    <div class="search-bar">
+      <input
+        type="text"
+        placeholder="🔍 Search by quiz title or category…"
+        [(ngModel)]="searchText"
+        (ngModelChange)="applySearch()" />
+      <button class="btn-sm" *ngIf="searchText" (click)="clearSearch()">✕ Clear</button>
+    </div>
+
+    <div *ngIf="loading" class="empty-msg mt-2">Loading history…</div>
+
+    <div class="table-wrap mt-2" *ngIf="!loading && filteredResults.length">
+      <table>
+        <thead>
+          <tr>
+            <th>Quiz</th>
+            <th>Category</th>
+            <th>Score</th>
+            <th>Percentage</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of filteredResults; trackBy: trackResult">
+            <td>{{ r.quizTitle }}</td>
+            <td>{{ r.category }}</td>
+            <td>{{ r.correctAnswers }}</td>
+            <td>
+              <span class="badge-pct" [class.badge-pass]="r.percentage >= 60" [class.badge-fail]="r.percentage < 60">
+                {{ r.percentage | number:'1.0-1' }}%
+              </span>
+            </td>
+            <td><button class="btn-sm" (click)="printQuizResult(r)">🖨️ Report</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="empty-msg mt-2" *ngIf="!loading && !filteredResults.length">
+      No quiz attempts found yet.
+    </div>
+  </div>
+
+</div>

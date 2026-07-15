@@ -1,0 +1,59 @@
+<!-- src/app/admin/components/user-details/user-details.component.html -->
+
+<div class="page-wrap">
+
+  <div class="dashboard-header">
+    <div class="header-greeting">
+      <h1>👤 User Details</h1>
+      <p>Full profile and account information.</p>
+    </div>
+    <button class="btn-close-sm" (click)="goBack()">← Back to Users</button>
+  </div>
+
+  <div *ngIf="hasError" class="glass-card error-card">
+    ⚠️ {{ errorMessage }}
+  </div>
+
+  <div *ngIf="isLoading" class="empty-msg mt-2">Loading user…</div>
+
+  <ng-container *ngIf="!isLoading && user">
+
+    <div class="glass-card profile-card mt-2">
+      <img [src]="getProfileImage()" alt="Profile Photo" class="profile-avatar" />
+      <div class="profile-name">{{ user.username }}</div>
+      <span class="role-badge" [ngClass]="getRoleClass()">{{ user.role }}</span>
+      <span class="status-badge mt-1" [ngClass]="getStatusClass()">{{ getStatusLabel() }}</span>
+
+      <div class="action-row mt-3">
+        <button class="btn-sm" (click)="refresh()">🔄 Refresh</button>
+        <button class="btn-danger-sm" (click)="disableUser()" [disabled]="!user.enabled">🚫 Disable User</button>
+      </div>
+    </div>
+
+    <div class="glass-card mt-2">
+      <div class="card-title">
+        <div class="title-icon">ℹ️</div>
+        Account Information
+      </div>
+
+      <div class="user-detail-row">
+        <span class="user-detail-label">Username</span>
+        <span>{{ user.username }}</span>
+      </div>
+      <div class="user-detail-row">
+        <span class="user-detail-label">Email</span>
+        <span>{{ user.email }}</span>
+      </div>
+      <div class="user-detail-row">
+        <span class="user-detail-label">Role</span>
+        <span>{{ user.role }}</span>
+      </div>
+      <div class="user-detail-row">
+        <span class="user-detail-label">Status</span>
+        <span>{{ user.enabled ? '✅ Active' : '❌ Disabled' }}</span>
+      </div>
+    </div>
+
+  </ng-container>
+
+</div>

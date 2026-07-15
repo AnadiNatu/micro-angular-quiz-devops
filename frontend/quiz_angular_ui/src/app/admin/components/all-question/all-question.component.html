@@ -1,0 +1,332 @@
+<div class="page-wrapper">
+
+  <div class="question-card">
+
+    <!-- ========================================================= -->
+    <!-- Header -->
+    <!-- ========================================================= -->
+
+    <div class="page-header">
+
+      <a
+        routerLink="/admin"
+        class="back-link">
+
+        ← Dashboard
+
+      </a>
+
+      <h2 class="page-title">
+
+        <span>My</span> Questions
+
+      </h2>
+
+      <p class="page-subtitle">
+
+        View, search and manage all questions created by you.
+
+      </p>
+
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- Filters -->
+    <!-- ========================================================= -->
+
+    <div class="filter-section">
+
+      <!-- Search -->
+
+      <div class="filter-group">
+
+        <label class="field-label">
+
+          Search Question
+
+        </label>
+
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="searchText"
+          (input)="applyFilters()"
+          placeholder="Search by question title..." />
+
+      </div>
+
+      <!-- Category -->
+
+      <div class="filter-group">
+
+        <label class="field-label">
+
+          Category
+
+        </label>
+
+        <select
+          class="form-select"
+          [(ngModel)]="selectedCategory"
+          (change)="applyFilters()">
+
+          <option value="">
+
+            All Categories
+
+          </option>
+
+          <option
+            *ngFor="let category of categories"
+            [value]="category">
+
+            {{ category }}
+
+          </option>
+
+        </select>
+
+      </div>
+
+      <!-- Difficulty -->
+
+      <div class="filter-group">
+
+        <label class="field-label">
+
+          Difficulty
+
+        </label>
+
+        <select
+          class="form-select"
+          [(ngModel)]="selectedDifficulty"
+          (change)="applyFilters()">
+
+          <option value="">
+
+            All Levels
+
+          </option>
+
+          <option
+            *ngFor="let difficulty of difficultyLevels"
+            [value]="difficulty">
+
+            {{ difficulty }}
+
+          </option>
+
+        </select>
+
+      </div>
+
+      <!-- Clear -->
+
+      <div class="filter-buttons">
+
+        <button
+          class="btn-secondary"
+          (click)="clearFilters()">
+
+          Reset Filters
+
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- Loading -->
+    <!-- ========================================================= -->
+
+    <div
+      *ngIf="loading"
+      class="loading-state">
+
+      <div class="spinner-border text-primary"></div>
+
+      <p>
+
+        Loading Questions...
+
+      </p>
+
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- Empty -->
+    <!-- ========================================================= -->
+
+    <div
+      *ngIf="!loading && filteredQuestions.length === 0"
+      class="empty-state">
+
+      <div class="empty-icon">
+
+        📚
+
+      </div>
+
+      <h4>
+
+        No Questions Found
+
+      </h4>
+
+      <p>
+
+        Try changing the filters or create your first question.
+
+      </p>
+
+      <button
+        class="btn-primary"
+        routerLink="/admin/create-question">
+
+        ➕ Create Question
+
+      </button>
+
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- Question Cards -->
+    <!-- ========================================================= -->
+
+    <div
+      *ngIf="!loading && filteredQuestions.length > 0"
+      class="question-grid">
+
+      <div
+        class="question-item"
+        *ngFor="let question of filteredQuestions">
+
+        <!-- Title -->
+
+        <div class="question-title">
+
+          {{ question.questionTitle }}
+
+        </div>
+
+        <!-- Category -->
+
+        <div class="question-row">
+
+          <span class="label">
+
+            Category
+
+          </span>
+
+          <span class="value">
+
+            {{ question.category }}
+
+          </span>
+
+        </div>
+
+        <!-- Difficulty -->
+
+        <div class="question-row">
+
+          <span class="label">
+
+            Difficulty
+
+          </span>
+
+          <span
+            class="difficulty-badge"
+            [ngClass]="getDifficultyClass(question.difficultyLevel)">
+
+            {{ question.difficultyLevel }}
+
+          </span>
+
+        </div>
+
+        <!-- Options -->
+
+        <div class="options-section">
+
+          <div class="option">
+
+            A. {{ question.option1 }}
+
+          </div>
+
+          <div class="option">
+
+            B. {{ question.option2 }}
+
+          </div>
+
+          <div class="option">
+
+            C. {{ question.option3 }}
+
+          </div>
+
+          <div class="option">
+
+            D. {{ question.option4 }}
+
+          </div>
+
+        </div>
+
+        <!-- Answer -->
+
+        <div class="answer-section">
+
+          <span class="answer-label">
+
+            Correct Answer
+
+          </span>
+
+          <span class="answer-value">
+
+            ✔ {{ question.rightAnswer }}
+
+          </span>
+
+        </div>
+
+        <!-- Actions -->
+
+        <div class="button-row">
+
+          <button
+            class="btn-primary"
+            (click)="viewQuestion(question)">
+
+            👁 View
+
+          </button>
+
+          <button
+            class="btn-danger"
+            [disabled]="deletingQuestionId === question.id"
+            (click)="deleteQuestion(question)">
+
+            {{ deletingQuestionId === question.id
+                ? 'Deleting...'
+                : '🗑 Delete'
+            }}
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

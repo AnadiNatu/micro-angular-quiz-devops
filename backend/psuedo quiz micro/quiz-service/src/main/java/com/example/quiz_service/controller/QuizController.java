@@ -13,14 +13,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+//@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/quiz")
 @RequiredArgsConstructor
-@CrossOrigin("*")
 public class QuizController {
 
     private final QuizService quizService;
 
+    // Done
     // 🔒 ADMIN / CURATOR
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMIN','CURATOR')")
@@ -28,6 +29,7 @@ public class QuizController {
         return ResponseEntity.ok(quizService.createQuiz(dto));
     }
 
+    // Done
     // 🔒 AUTHENTICATED
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
@@ -35,6 +37,7 @@ public class QuizController {
         return ResponseEntity.ok(quizService.getQuiz(id));
     }
 
+    // Done
     // 🔒 AUTHENTICATED
     @GetMapping("/title/{title}")
     @PreAuthorize("isAuthenticated()")
@@ -42,13 +45,15 @@ public class QuizController {
         return ResponseEntity.ok(quizService.getQuizByTitle(title));
     }
 
+    // Done
     // 🔒 ADMIN / CURATOR
-    @GetMapping("/creator/{userId}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','CURATOR')")
-    public ResponseEntity<List<QuizDTO>> getByCreator(@PathVariable Long userId) {
-        return ResponseEntity.ok(quizService.getQuizzesByCreator(userId));
+    @GetMapping("/creator/{creatorUserId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','CURATOR' , 'PARTICIPANT')")
+    public ResponseEntity<List<QuizDTO>> getByCreator(@PathVariable("creatorUserId") Long creatorUserId) {
+        return ResponseEntity.ok(quizService.getQuizzesByCreator(creatorUserId));
     }
 
+    // Done
     // 🔒 PARTICIPANT
     @GetMapping("/participant/{userId}")
     @PreAuthorize("hasAuthority('PARTICIPANT')")
@@ -56,6 +61,7 @@ public class QuizController {
         return ResponseEntity.ok(quizService.getQuizTitlesByParticipant(userId));
     }
 
+    // Done
     // 🔒 AUTHENTICATED
     @GetMapping("/{quizId}/questions")
     @PreAuthorize("isAuthenticated()")
@@ -64,15 +70,16 @@ public class QuizController {
     }
 
     // 🔒 AUTHENTICATED
-    @GetMapping("/category/{category}")
+    @GetMapping("/questions/category/{category}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<QuestionResponseDTO>> getByCategory(@PathVariable String category) {
         return ResponseEntity.ok(quizService.getQuestionsByCategory(category));
     }
 
+    // Done
     // 🔒 PARTICIPANT
     @PostMapping("/{quizId}/start")
-    @PreAuthorize("hasAuthority('PARTICIPANT')")
+    @PreAuthorize("hasAnyAuthority('PARTICIPANT' , 'CURATOR' , 'ADMIN')")
     public ResponseEntity<List<QuestionResponseDTO>> startQuiz(
             @PathVariable Long quizId,
             @RequestParam Long userId) {
@@ -80,13 +87,15 @@ public class QuizController {
         return ResponseEntity.ok(quizService.startQuiz(quizId, userId));
     }
 
+    // Done
     // 🔒 PARTICIPANT
     @PostMapping("/submit")
-    @PreAuthorize("hasAuthority('PARTICIPANT')")
+    @PreAuthorize("hasAnyAuthority('PARTICIPANT' , 'ADMIN' , 'CURATOR')")
     public ResponseEntity<ResultDTO> submitQuiz(@RequestBody QuizTakenRequestDTO request) {
         return ResponseEntity.ok(quizService.submitQuiz(request));
     }
 // ===== NOTIFICATION SERVICE ENDPOINTS
+    // Done
     //  All results for a specific quiz
     @GetMapping("/{quizId}/results")
     @PreAuthorize("isAuthenticated()")
@@ -94,6 +103,7 @@ public class QuizController {
         return ResponseEntity.ok(quizService.getResultsByQuiz(quizId));
     }
 
+    // Done
     // All results for a participant
     @GetMapping("/results/user/{userId}")
     @PreAuthorize("isAuthenticated()")
@@ -101,6 +111,7 @@ public class QuizController {
         return ResponseEntity.ok(quizService.getResultsByUser(userId));
     }
 
+    // Done
     // Aggregated stats for a quiz
     @GetMapping("/{quizId}/stats")
     @PreAuthorize("hasAnyAuthority('ADMIN','CURATOR')")
@@ -108,10 +119,18 @@ public class QuizController {
         return ResponseEntity.ok(quizService.getQuizStats(quizId));
     }
 
+    // Done
     // DELETE QUIZ
     @DeleteMapping("/{id}")
     @PostAuthorize("hasAnyAuthority('ADMIN','CURATOR')")
     public ResponseEntity<QuizDTO> deleteQuiz(@PathVariable Long id) {
         return ResponseEntity.ok(quizService.deleteQuiz(id));
+    }
+
+    // Done
+    @GetMapping("/all")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<QuizDTO>> getAllQuizzes() {
+        return ResponseEntity.ok(quizService.getAllQuizzes());
     }
 }
