@@ -2,7 +2,7 @@ server:
   port: 8080
 
 jwt:
-  secret: YourSecretKeyHereMustBeLongEnoughForHS512AlgorithmAtLeast64Characters123456
+  secret: ${JWT_SECRET}
 
 spring:
   application:

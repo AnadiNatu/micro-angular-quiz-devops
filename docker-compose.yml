@@ -65,7 +65,7 @@ services:
     build:
       context: ./backend/psuedo quiz micro/api-gateway
       dockerfile: Dockerfile
-    image: quiz/api-gateway:latest
+    image: anadinatu/quiz-api-gateway:latest
     container_name: quiz-api-gateway
     restart: unless-stopped
     environment:
@@ -98,7 +98,7 @@ services:
     build:
       context: ./backend/psuedo quiz micro/auth-service
       dockerfile: Dockerfile
-    image: quiz/auth-service:latest
+    image: anadinatu/quiz-auth-service:latest
     container_name: quiz-auth-service
     restart: unless-stopped
     environment:
@@ -132,7 +132,7 @@ services:
     build:
       context: ./backend/psuedo quiz micro/question-service
       dockerfile: Dockerfile
-    image: quiz/question-service:latest
+    image: anadinatu/quiz-question-service:latest
     container_name: quiz-question-service
     restart: unless-stopped
     environment:
@@ -169,7 +169,7 @@ services:
     build:
       context: ./backend/psuedo quiz micro/quiz-service
       dockerfile: Dockerfile
-    image: quiz/quiz-service:latest
+    image: anadinatu/quiz-quiz-service:latest
     container_name: quiz-quiz-service
     restart: unless-stopped
     environment:
@@ -207,7 +207,7 @@ services:
     build:
       context: ./backend/psuedo quiz micro/notification-service
       dockerfile: Dockerfile
-    image: quiz/notification-service:latest
+    image: anadinatu/quiz-notification-service:latest
     container_name: quiz-notification-service
     restart: unless-stopped
     environment:
@@ -259,7 +259,7 @@ services:
     build:
       context: ./frontend/quiz_angular_ui
       dockerfile: Dockerfile
-    image: quiz/frontend:latest
+    image: anadinatu/frontend:latest
     container_name: quiz-frontend
     restart: unless-stopped
     ports:

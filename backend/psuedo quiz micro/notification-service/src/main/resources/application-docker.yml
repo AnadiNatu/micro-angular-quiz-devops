@@ -24,7 +24,7 @@ spring:
     cache: true
 
 jwt:
-  secret: YourSecretKeyHereMustBeLongEnoughForHS512AlgorithmAtLeast64Characters123456
+  secret: ${JWT_SECRET}
 
 eureka:
   client:

@@ -1,9 +1,6 @@
 server:
   port: 8080
 
-#jwt:
-#  secret: ${JWT_SECRET}
-
 jwt:
   secret: YourSecretKeyHereMustBeLongEnoughForHS512AlgorithmAtLeast64Characters123456
 
