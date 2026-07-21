@@ -211,7 +211,7 @@ services:
     container_name: quiz-notification-service
     restart: unless-stopped
     environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       JWT_SECRET:             ${JWT_SECRET}
       MAIL_HOST:              ${MAIL_HOST}
       MAIL_PORT:              ${MAIL_PORT}
