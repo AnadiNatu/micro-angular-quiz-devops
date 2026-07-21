@@ -69,7 +69,7 @@ services:
     container_name: quiz-api-gateway
     restart: unless-stopped
     environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       JWT_SECRET:             ${JWT_SECRET}
     ports:
       - "8080:8080"
@@ -102,9 +102,9 @@ services:
     container_name: quiz-auth-service
     restart: unless-stopped
     environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
-      POSTGRES_HOST:          postgres
-      POSTGRES_PORT:          5432
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      POSTGRES_HOST:          ${POSTGRES_HOST}
+      POSTGRES_PORT:          ${POSTGRES_PORT}
       AUTH_DB_NAME:           ${AUTH_DB_NAME}
       AUTH_DB_USER:           ${AUTH_DB_USER}
       AUTH_DB_PASSWORD:       ${AUTH_DB_PASSWORD}
@@ -136,9 +136,9 @@ services:
     container_name: quiz-question-service
     restart: unless-stopped
     environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
-      POSTGRES_HOST:          postgres
-      POSTGRES_PORT:          5432
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      POSTGRES_HOST:          ${POSTGRES_HOST}
+      POSTGRES_PORT:          ${POSTGRES_PORT}
       QUESTION_DB_NAME:       ${QUESTION_DB_NAME}
       QUESTION_DB_USER:       ${QUESTION_DB_USER}
       QUESTION_DB_PASSWORD:   ${QUESTION_DB_PASSWORD}
@@ -173,9 +173,9 @@ services:
     container_name: quiz-quiz-service
     restart: unless-stopped
     environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
-      POSTGRES_HOST:          postgres
-      POSTGRES_PORT:          5432
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      POSTGRES_HOST:          ${POSTGRES_HOST}
+      POSTGRES_PORT:          ${POSTGRES_PORT}
       QUIZ_DB_NAME:           ${QUIZ_DB_NAME}
       QUIZ_DB_USER:           ${QUIZ_DB_USER}
       QUIZ_DB_PASSWORD:       ${QUIZ_DB_PASSWORD}
