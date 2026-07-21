@@ -238,7 +238,7 @@ services:
       context: ./backend/psuedo quiz micro/service-registry
       dockerfile: Dockerfile
 
-    image: quiz/service-registry:latest
+    image: anadinatu/quiz-service-registry:latest
     container_name: quiz-service-registry
     restart: unless-stopped
 
