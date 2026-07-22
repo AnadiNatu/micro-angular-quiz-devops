@@ -264,6 +264,8 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro  
     networks:
       - quiz-network
     depends_on:
