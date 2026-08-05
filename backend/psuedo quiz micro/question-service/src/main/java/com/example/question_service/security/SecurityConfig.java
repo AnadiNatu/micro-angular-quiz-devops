@@ -35,12 +35,15 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthFilter;
 
+    @Autowired
+    private GatewayHeaderAuthFilter gatewayHeaderAuthFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         return http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.disable())
+                .cors(cors -> cors.disable()) // At gateway level
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
 
@@ -51,11 +54,12 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/api/questions/internal/**").permitAll()
                         .requestMatchers("/internal/users/sync").permitAll()
-
+                        .requestMatchers("/api/questions/categories").permitAll()
                         // EVERYTHING ELSE — needs auth,
                         // fine-grained control handled by @PreAuthorize/@PostAuthorize
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(gatewayHeaderAuthFilter , UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

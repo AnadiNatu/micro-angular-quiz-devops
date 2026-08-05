@@ -12,16 +12,13 @@ import {
 } from '../../models/dtos';
 
 import { UserStorageService } from '../user-storage/user-storage.service';
-import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private readonly BASE = environment.apiBaseUrl;
-
-  private readonly BASE_URL = `${this.BASE}/api/auth`;
+  private readonly BASE_URL = 'http://localhost:8080/api/auth';
 
   constructor(
     private http: HttpClient,

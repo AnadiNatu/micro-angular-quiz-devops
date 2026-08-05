@@ -7,49 +7,134 @@ jwt:
 spring:
   application:
     name: api-gateway
+
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: false
-          lower-case-service-id: true
+
       globalcors:
+        add-to-simple-url-handler-mapping: true
+
         cors-configurations:
           '[/**]':
-            allowed-origins: "*"
-            allowed-methods: "GET,POST,PUT,DELETE,OPTIONS,PATCH"
-            allowed-headers: "*"
-            allow-credentials: false
+            allowedOriginPatterns:
+              - "http://localhost:4200"
+              - "http://localhost:5173"
+
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+
+            allowedHeaders:
+              - "*"
+
+            exposedHeaders:
+              - Authorization
+              - Content-Type
+
+            allowCredentials: true
+
+            maxAge: 3600
+
       routes:
-        - id: auth-service
-          uri: http://localhost:8082
+
+        ####################################
+        ## AUTH
+        ####################################
+
+        - id: auth-public
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/signup,/api/auth/login,/api/auth/forgot-password,/api/auth/reset-password,/api/auth/validate
+
+        - id: auth-internal
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/internal/**
+
+        - id: auth
+          uri: lb://auth-service
           predicates:
             - Path=/api/auth/**
-        - id: question-service
-          uri: http://localhost:8083
+
+        ####################################
+        ## QUESTION
+        ####################################
+
+        - id: question-internal
+          uri: lb://question-service
+          predicates:
+            - Path=/api/questions/internal/**
+
+        - id: question-user-sync
+          uri: lb://question-service
+          predicates:
+            - Path=/internal/users/sync
+
+        - id: question
+          uri: lb://question-service
           predicates:
             - Path=/api/questions/**
-        - id: quiz-service
-          uri: http://localhost:8084
+
+        ####################################
+        ## QUIZ
+        ####################################
+
+        - id: quiz-internal
+          uri: lb://quiz-service
           predicates:
-            - Path=/api/quiz/**
-        - id: quiz-service
-          uri: http://localhost:8084
+            - Path=/api/quiz/internal/**
+
+        - id: quiz-user-sync
+          uri: lb://quiz-service
           predicates:
-            - Path=/api/notify/**
-        - id: notification-service
-          uri: http://localhost:8085
-          predicates:
-            - Path=/api/notify/**
-        - id: quiz-service
-          uri: http://localhost:8084
+            - Path=/internal/users/sync
+
+        - id: leaderboard
+          uri: lb://quiz-service
           predicates:
             - Path=/api/leaderboard/**
 
+        - id: quiz
+          uri: lb://quiz-service
+          predicates:
+            - Path=/api/quiz/**
+
+        ####################################
+        ## NOTIFICATION
+        ####################################
+
+        - id: notification-internal
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/notify/internal/**
+
+        - id: notification
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/notify/**
+
+        - id: notification-email
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/notify/email/**
+
+        - id: notification-document
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/notify/document/**
+
 eureka:
   client:
+    register-with-eureka: true
+    fetch-registry: true
+
     service-url:
       defaultZone: http://service-registry:8761/eureka/
+
   instance:
     prefer-ip-address: true
 
@@ -57,12 +142,14 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        include: health,info,metrics,gateway
+
   endpoint:
     health:
       show-details: never
 
 logging:
   level:
-    org.springframework.cloud.gateway: WARN
-    reactor.netty: WARN
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.security: DEBUG
+    reactor.netty: DEBUG

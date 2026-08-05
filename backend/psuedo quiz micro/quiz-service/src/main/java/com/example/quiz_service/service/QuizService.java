@@ -43,8 +43,8 @@ public class QuizService {
                 dto.getNumberOfQuestions()
         );
 
-        if(questionIds.size()!=dto.getNumberOfQuestions()){
-            throw new RuntimeException("Only " +questionIds.size()+" questions available.");
+        if(questionIds.size() < dto.getNumberOfQuestions()){
+            throw new RuntimeException("Not enough questions in category '" + dto.getCategory() + "'. Requested " + dto.getNumberOfQuestions() + " but only " + questionIds.size() + " available.");
         }
 
         UserResponseDTO creator = userClient.getUserByAuthServiceId(dto.getCreatedByUserId());
@@ -256,8 +256,11 @@ public class QuizService {
         int skipped = total - answered;
         double percentage = (total > 0) ? (correct * 100.0) / total : 0;
 
-        UserResponseDTO participant = userClient.getUserByAuthServiceId(request.getUserId());
-        UserResponseDTO curator     = userClient.getUserByAuthServiceId(quiz.getCreatedByUserId());
+//        UserResponseDTO participant = userClient.getUserByAuthServiceId(request.getUserId());
+//        UserResponseDTO curator     = userClient.getUserByAuthServiceId(quiz.getCreatedByUserId());
+        UserResponseDTO participant = safeGetUser(request.getUserId(), null);
+        UserResponseDTO curator     = safeGetUser(quiz.getCreatedByUserId(), quiz.getCreatorUsername());
+
 
         // ✅ Persist result (upsert-style: skip if already exists)
 //        if (!quizResultRepository.existsByQuizIdAndParticipantId(quiz.getId(), request.getUserId())) {
@@ -282,8 +285,9 @@ public class QuizService {
             result = quizResultRepository.save(result);
 
             log.info("Quiz Result Saved : {}", result.getId());
-            log.info("[QUIZ] Result saved — quizId={} userId={} correct={}/{} ({:.1f}%)",
-                    quiz.getId(), request.getUserId(), correct, total, percentage);
+            log.info("[QUIZ] Result saved — quizId={} userId={} correct={}/{} ({}%)",
+                    quiz.getId(), request.getUserId(), correct, total,
+                    String.format("%.1f", percentage));
         }else if (!testUser) {
             log.warn("[QUIZ] Duplicate submit ignored — quizId={} userId={}", quiz.getId(), request.getUserId());
         } else {
@@ -331,18 +335,21 @@ public class QuizService {
 //    RESULT QUERIES
 
 //    ---> ALL PARTICIPANT SINGLE QUIZ RESULT
-public List<QuizResultDTO> getResultsByQuiz(Long quizId) {
+    @Transactional(readOnly = true)
+    public List<QuizResultDTO> getResultsByQuiz(Long quizId) {
     return quizResultRepository.findByQuizId(quizId).stream()
             .map(this::toResultDTO).toList();
 }
 
 //   ---> SINGLE PARTICIPANT SINGLE QUIZ RESULT
+    @Transactional(readOnly = true)
     public List<QuizResultDTO> getResultsByUser(Long userId) {
         return quizResultRepository.findByParticipantId(userId).stream()
                 .map(this::toResultDTO).toList();
     }
 
 //    ---->  QUIZ STATS
+    @Transactional(readOnly = true)
     public QuizStatsDTO getQuizStats(Long quizId) {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new RuntimeException("Quiz not found"));
@@ -363,6 +370,7 @@ public List<QuizResultDTO> getResultsByQuiz(Long quizId) {
                 .creatorUsername(creator.getUsername())
                 .totalParticipants(results.size())
                 .totalQuestions(quiz.getQuestionIds() != null ? quiz.getQuestionIds().size() : 0)
+                .averageScore(avgPct)
                 .averagePercentage(avgPct)
                 .highestPercentage(high)
                 .lowestPercentage(low)
@@ -376,6 +384,7 @@ public List<QuizResultDTO> getResultsByQuiz(Long quizId) {
 
 
     // ================= DELETE QUIZ =================
+    @Transactional
     public QuizDTO deleteQuiz(Long id) {
 
         Quiz quiz = quizRepository.findById(id)

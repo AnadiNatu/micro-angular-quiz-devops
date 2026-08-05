@@ -7,6 +7,8 @@ import com.example.auth_service.feign.QuizServiceFeignClient;
 import com.example.auth_service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -26,16 +28,20 @@ public class UserSyncService {
 
     private final UserRepository userRepository;
 
+    @Autowired
+    @Lazy
+    private UserSyncService self;
+
     public void syncUser(Users user) {
 
         UserSyncDTO dto = UserSyncDTO.builder()
                 .authServiceId(user.getAuthServiceId())
                 .username(user.getUsername())
-                .password(user.getPassword())
+//                .password(user.getPassword())
                 .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
                 .profilePicture(user.getProfilePicture())
-                .resetToken(user.getResetToken())
+//                .resetToken(user.getResetToken())
                 .roles(user.getRoles())
                 .enabled(user.isEnabled())
                 .accountNonExpired(user.isAccountNonExpired())
@@ -46,9 +52,9 @@ public class UserSyncService {
         log.info("------------------------------------------------");
         log.info("Synchronizing user : {}", user.getUsername());
 
-        syncQuestionService(dto);
+        self.syncQuestionService(dto);
 
-        syncQuizService(dto);
+        self.syncQuizService(dto);
 
         log.info("Finished synchronization : {}", user.getUsername());
         log.info("------------------------------------------------");
@@ -94,48 +100,25 @@ public class UserSyncService {
 
             try {
 
+                if (user.getAuthServiceId() == null){
+                    user.setAuthServiceId(user.getId());
+                    userRepository.save(user);
+                    log.warn("[SYNC] Repaired null authServiceId for userId={}", user.getId());
+                }
                 syncUser(user);
-
             } catch (Exception ex) {
-
-                log.error(
-                        "Synchronization failed for {}",
-                        user.getUsername(),
-                        ex);
-
+                log.error("Synchronization failed for {}", user.getUsername(), ex);
             }
-
         }
-
-        log.info("========================================================");
         log.info("Full synchronization completed.");
-        log.info("========================================================");
     }
 
-    /**
-     * Validate startup users.
-     */
-    @Transactional
+    @Transactional(readOnly = true)
     public void validateUsers() {
-
         List<Users> users = userRepository.findAll();
-
-        log.info("========================================================");
         log.info("Validation");
-        log.info("========================================================");
-
         log.info("Total Users : {}", users.size());
-
-        users.forEach(user ->
-
-                log.info(
-                        "AUTH_ID={} | USERNAME={} | EMAIL={} | ROLE={}",
-                        user.getAuthServiceId(),
-                        user.getUsername(),
-                        user.getEmail(),
-                        user.getRoles())
+        users.forEach(user -> log.info("AUTH_ID={} | USERNAME={} | EMAIL={} | ROLE={}", user.getAuthServiceId(), user.getUsername(), user.getEmail(), user.getRoles())
         );
-
-        log.info("========================================================");
     }
 }

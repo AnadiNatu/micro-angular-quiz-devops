@@ -1,8 +1,4 @@
-<!-- src/app/admin/components/admin-dasboard/admin-dasboard.component.html -->
-<!-- ONLY CHANGES: added "✨ AI Questions" nav-link + "✨ AI Questions" quick-link button -->
-
-<!-- ── Sticky Navbar ──────────────────────────────── -->
-<nav class="glass-navbar">
+<!-- <nav class="glass-navbar">
   <div class="nav-brand" (click)="toggleAdminCard()">
     <div class="nav-brand-icon">🎓</div>
     <span class="nav-brand-text">Quiz<span>Hub</span></span>
@@ -16,54 +12,27 @@
     {{ toggleMenu ? "✕" : "☰" }}
   </button>
 
-<div class="nav-right" [class.open]="toggleMenu">
+  <div class="nav-right" [class.open]="toggleMenu">
+    <a routerLink="/admin" class="nav-link"> 🏠 Dashboard </a>
 
-    <a routerLink="/admin" class="nav-link">
-        🏠 Dashboard
-    </a>
+    <a routerLink="/admin/create-quiz" class="nav-link"> ➕ Create </a>
 
-    <a routerLink="/admin/create-quiz" class="nav-link">
-        ➕ Create
-    </a>
+    <a routerLink="/admin/create-question" class="nav-link"> 📝 Questions </a>
 
-    <a routerLink="/admin/create-question" class="nav-link">
-        📝 Questions
-    </a>
+    <a routerLink="/admin/creator/quizzes" class="nav-link"> 📋 Quizzes </a>
 
-    <a routerLink="/admin/creator/quizzes" class="nav-link">
-        📋 Quizzes
-    </a>
+    <a routerLink="/admin/participant/quiz" class="nav-link"> 🧪 Testing </a>
 
-    <a routerLink="/admin/participant/quiz" class="nav-link">
-        🧪 Testing
-    </a>
-
-    <a routerLink="/admin/reports" class="nav-link">
-        📊 Reports
-    </a>
+    <a routerLink="/admin/reports" class="nav-link"> 📊 Reports </a>
 
     <div class="nav-user">
+      <span class="user-chip"> 🛡 {{ userRole }} </span>
 
-        <span class="user-chip">
-
-            🛡 {{userRole}}
-
-        </span>
-
-        <button
-            class="nav-logout"
-            (click)="logout()">
-
-            Logout
-
-        </button>
-
+      <button class="nav-logout" (click)="logout()">Logout</button>
     </div>
-
-</div>
+  </div>
 </nav>
 
-<!-- ── User Info Dropdown ─────────────────────────── -->
 <div *ngIf="showAdminCard" class="glass-card user-info-dropdown">
   <div class="card-title">
     <div class="title-icon">👤</div>
@@ -93,7 +62,6 @@
   <button class="btn-close-sm" (click)="toggleAdminCard()">✕ Close</button>
 </div>
 
-<!-- ── Greeting Banner ────────────────────────────── -->
 <div class="dashboard-header">
   <div class="header-greeting">
     <h1>Welcome back, {{ username }} <span class="wave">👋</span></h1>
@@ -102,7 +70,6 @@
   <div class="header-badge">🛡️ {{ userRole }}</div>
 </div>
 
-<!-- ── Stats Strip ────────────────────────────────── -->
 <div class="stats-strip" style="margin-bottom: 1rem">
   <div class="stat-block">
     <div class="stat-val">{{ mockStats.totalQuizzes }}</div>
@@ -130,17 +97,15 @@
   <button class="glass-button" routerLink="/admin/reports">🖨 Reports</button>
 </div>
 
-<!-- ── Dashboard Grid ─────────────────────────────── -->
 <div class="dashboard-grid">
-  <!-- Profile Card -->
   <div class="glass-card profile-card">
     <div class="profile-avatar-wrapper">
-     <img
-  [src]="profileImageUrl"
-  alt="Profile Photo"
-  class="profile-avatar"
-  (error)="onAvatarError($event)"
-/>
+      <img
+        [src]="profileImageUrl"
+        alt="Profile Photo"
+        class="profile-avatar"
+        (error)="onAvatarError($event)"
+      />
       <div class="avatar-ring"></div>
     </div>
     <div class="profile-name">{{ username }}</div>
@@ -156,56 +121,36 @@
     </label>
   </div>
 
-  <!-- Created Quizzes -->
   <div class="glass-card">
     <div class="card-title">
       <div class="title-icon">📋</div>
       Your Created Quizzes
     </div>
     <div class="quiz-list">
+      <div class="quiz-item" *ngFor="let quiz of createdQuizzes">
+        <div>
+          <h5>
+            {{ quiz.title }}
+          </h5>
 
-<div
-class="quiz-item"
-*ngFor="let quiz of createdQuizzes">
+          <p>
+            {{ quiz.category }}
 
-<div>
+            •
 
-<h5>
+            {{ quiz.questionIds.length }}
 
-{{quiz.title}}
+            Questions
+          </p>
+        </div>
 
-</h5>
-
-<p>
-
-{{quiz.category}}
-
-•
-
-{{quiz.questionIds.length}}
-
-Questions
-
-</p>
-
-</div>
-
-<button
-
-class="quick-link-btn"
-
-(click)="viewCreatedQuiz(quiz)">
-
-Open
-
-</button>
-
-</div>
-
-</div>
+        <button class="quick-link-btn" (click)="viewCreatedQuiz(quiz)">
+          Open
+        </button>
+      </div>
+    </div>
   </div>
 
-  <!-- Taken Quizzes (PARTICIPANT only) -->
   <div class="glass-card" *ngIf="userRole === 'PARTICIPANT'">
     <div class="card-title">
       <div class="title-icon">🎯</div>
@@ -224,7 +169,6 @@ Open
     </ul>
   </div>
 
-  <!-- Quick Actions (non-PARTICIPANT) -->
   <div class="glass-card" *ngIf="userRole !== 'PARTICIPANT'">
     <div class="card-title">
       <div class="title-icon">⚡</div>
@@ -254,6 +198,269 @@ Open
       <a routerLink="/admin/reports" class="quick-link-btn"> 🖨 Reports </a>
     </div>
   </div>
+</div>
+
+<router-outlet></router-outlet> -->
+
+<!-- src/app/admin/components/admin-dasboard/admin-dasboard.component.html -->
+<!--
+  FIX 1: Navbar now exposes ALL registered routes, role-gated:
+    ADMIN only: 👥 Users, 🔄 Sync
+    ADMIN + CURATOR: ➕ Create, 📝 Questions, ✨ AI Questions, 📋 Quizzes, 📊 Reports
+    ALL roles: 🏠 Dashboard, 🧪 Testing, 🏆 Leaderboards
+  FIX 2: Quick Actions grid updated to match.
+  FIX 3: Stats strip now loads real questions count via ngOnInit.
+  FIX 4: Participant view shows reports link.
+-->
+
+<!-- ── Sticky Navbar ──────────────────────────────────────────────── -->
+<nav class="glass-navbar">
+  <div class="nav-brand" (click)="toggleAdminCard()">
+    <div class="nav-brand-icon">🎓</div>
+    <span class="nav-brand-text">Quiz<span>Hub</span></span>
+  </div>
+
+  <button
+    class="nav-toggle"
+    (click)="toggleMenu = !toggleMenu"
+    aria-label="Toggle menu">
+    {{ toggleMenu ? '✕' : '☰' }}
+  </button>
+
+  <div class="nav-right" [class.open]="toggleMenu">
+
+    <!-- All roles -->
+    <a routerLink="/admin" class="nav-link" (click)="toggleMenu=false">
+      🏠 Dashboard
+    </a>
+
+    <!-- ADMIN + CURATOR: creation tools -->
+    <ng-container *ngIf="userRole === 'ADMIN' || userRole === 'CURATOR'">
+      <a routerLink="/admin/create-quiz" class="nav-link" (click)="toggleMenu=false">
+        ➕ Create Quiz
+      </a>
+      <a routerLink="/admin/create-question" class="nav-link" (click)="toggleMenu=false">
+        📝 Questions
+      </a>
+      <a routerLink="/admin/ai-generate-question" class="nav-link" (click)="toggleMenu=false">
+        ✨ AI Questions
+      </a>
+      <a routerLink="/admin/creator/quizzes" class="nav-link" (click)="toggleMenu=false">
+        📋 My Quizzes
+      </a>
+      <a routerLink="/admin/all-questions" class="nav-link" (click)="toggleMenu=false">
+        ❓ All Questions
+      </a>
+      <a routerLink="/admin/reports" class="nav-link" (click)="toggleMenu=false">
+        📊 Reports
+      </a>
+    </ng-container>
+
+    <!-- All roles: test + leaderboard -->
+    <a routerLink="/admin/participant/quiz" class="nav-link" (click)="toggleMenu=false">
+      🧪 Testing
+    </a>
+    <a routerLink="/admin/global-leaderboard" class="nav-link" (click)="toggleMenu=false">
+      🏆 Leaderboards
+    </a>
+
+    <!-- ADMIN only: user management -->
+    <ng-container *ngIf="userRole === 'ADMIN'">
+      <a routerLink="/admin/manage-users" class="nav-link" (click)="toggleMenu=false">
+        👥 Users
+      </a>
+    </ng-container>
+
+    <!-- PARTICIPANT: own reports -->
+    <ng-container *ngIf="userRole === 'PARTICIPANT'">
+      <a routerLink="/admin/participant/result" class="nav-link" (click)="toggleMenu=false">
+        📄 My Results
+      </a>
+    </ng-container>
+
+    <div class="nav-user">
+      <span class="user-chip">🛡 {{ userRole }}</span>
+      <button class="nav-logout" (click)="logout()">Logout</button>
+    </div>
+
+  </div>
+</nav>
+
+<!-- ── Account Info Dropdown (click brand to open) ───────────────── -->
+<div *ngIf="showAdminCard" class="glass-card user-info-dropdown">
+  <div class="card-title">
+    <div class="title-icon">👤</div>
+    Account Info
+  </div>
+  <ng-container *ngIf="userDetails; else loadingUser">
+    <div class="user-detail-row">
+      <span class="user-detail-label">Username</span>
+      <span>{{ userDetails.username }}</span>
+    </div>
+    <div class="user-detail-row">
+      <span class="user-detail-label">Email</span>
+      <span>{{ userDetails.email }}</span>
+    </div>
+    <div class="user-detail-row">
+      <span class="user-detail-label">Role</span>
+      <span>{{ userDetails.role }}</span>
+    </div>
+    <div class="user-detail-row">
+      <span class="user-detail-label">Status</span>
+      <span>{{ userDetails.enabled ? '✅ Active' : '❌ Disabled' }}</span>
+    </div>
+    <div class="user-detail-row" *ngIf="userDetails.questionsCreatedCount != null">
+      <span class="user-detail-label">Questions Created</span>
+      <span>{{ userDetails.questionsCreatedCount }}</span>
+    </div>
+    <div class="user-detail-row" *ngIf="userDetails.quizzesCreatedCount != null">
+      <span class="user-detail-label">Quizzes Created</span>
+      <span>{{ userDetails.quizzesCreatedCount }}</span>
+    </div>
+    <div class="user-detail-row" *ngIf="userDetails.quizzesTakenCount != null">
+      <span class="user-detail-label">Quizzes Taken</span>
+      <span>{{ userDetails.quizzesTakenCount }}</span>
+    </div>
+  </ng-container>
+  <ng-template #loadingUser>
+    <div class="empty-msg">Loading…</div>
+  </ng-template>
+  <button class="btn-close-sm" (click)="toggleAdminCard()">✕ Close</button>
+</div>
+
+<!-- ── Greeting Banner ────────────────────────────────────────────── -->
+<div class="dashboard-header">
+  <div class="header-greeting">
+    <h1>Welcome back, {{ username }} <span class="wave">👋</span></h1>
+    <p>Manage your quizzes, track results, and explore your platform.</p>
+  </div>
+  <div class="header-badge">🛡️ {{ userRole }}</div>
+</div>
+
+<!-- ── Stats Strip ────────────────────────────────────────────────── -->
+<div class="stats-strip" style="margin-bottom:1rem">
+  <div class="stat-block">
+    <div class="stat-val">{{ mockStats.totalQuizzes }}</div>
+    <div class="stat-lbl">My Quizzes</div>
+  </div>
+  <div class="stat-block">
+    <div class="stat-val">{{ mockStats.totalQuestions }}</div>
+    <div class="stat-lbl">Questions</div>
+  </div>
+  <div class="stat-block">
+    <div class="stat-val">{{ mockStats.participants }}</div>
+    <div class="stat-lbl">Participants</div>
+  </div>
+</div>
+
+<!-- ── Top Action Buttons ─────────────────────────────────────────── -->
+<div class="dashboard-actions">
+  <button class="glass-button" routerLink="/admin/participant/quiz">
+    🧪 Test a Quiz
+  </button>
+  <button class="glass-button" routerLink="/admin/global-leaderboard">
+    🏆 Leaderboards
+  </button>
+  <button class="glass-button" *ngIf="userRole !== 'PARTICIPANT'" routerLink="/admin/reports">
+    📊 Reports
+  </button>
+  <button class="glass-button" *ngIf="userRole === 'PARTICIPANT'" routerLink="/admin/participant/result">
+    📄 My Results
+  </button>
+</div>
+
+<!-- ── Dashboard Grid ─────────────────────────────────────────────── -->
+<div class="dashboard-grid">
+
+  <!-- Profile Card -->
+  <div class="glass-card profile-card">
+    <div class="profile-avatar-wrapper">
+      <img
+        [src]="profileImageUrl"
+        alt="Profile Photo"
+        class="profile-avatar"
+        (error)="onAvatarError($event)"
+      />
+      <div class="avatar-ring"></div>
+    </div>
+    <div class="profile-name">{{ username }}</div>
+    <div class="profile-role">{{ userRole }}</div>
+    <label class="upload-btn">
+      📷 Change Photo
+      <input type="file" accept="image/*" (change)="uploadProfilePhoto($event)" hidden />
+    </label>
+  </div>
+
+  <!-- Created Quizzes (ADMIN / CURATOR) -->
+  <div class="glass-card" *ngIf="userRole !== 'PARTICIPANT'">
+    <div class="card-title">
+      <div class="title-icon">📋</div>
+      Your Created Quizzes
+    </div>
+    <div class="quiz-list">
+      <div class="quiz-item" *ngFor="let quiz of createdQuizzes">
+        <div>
+          <h5>{{ quiz.title }}</h5>
+          <p>{{ quiz.category }} · {{ quiz.questionIds?.length ?? 0 }} Questions</p>
+        </div>
+        <button class="quick-link-btn" (click)="viewCreatedQuiz(quiz)">Open</button>
+      </div>
+      <div class="empty-msg" *ngIf="createdQuizzes.length === 0">
+        No quizzes created yet.
+      </div>
+    </div>
+  </div>
+
+  <!-- Taken Quizzes (PARTICIPANT only) -->
+  <div class="glass-card" *ngIf="userRole === 'PARTICIPANT'">
+    <div class="card-title">
+      <div class="title-icon">🎯</div>
+      Quizzes You've Taken
+    </div>
+    <ul class="taken-quiz-list">
+      <li *ngFor="let title of takenQuizTitles" class="taken-quiz-item">
+        <span>{{ title }}</span>
+        <button class="btn-sm" (click)="viewParticipantResult()">Results</button>
+      </li>
+      <li *ngIf="takenQuizTitles.length === 0" class="empty-msg">
+        No quizzes taken yet.
+      </li>
+    </ul>
+  </div>
+
+  <!-- Quick Actions — ADMIN / CURATOR -->
+  <div class="glass-card" *ngIf="userRole === 'ADMIN' || userRole === 'CURATOR'">
+    <div class="card-title">
+      <div class="title-icon">⚡</div>
+      Quick Actions
+    </div>
+    <div class="quick-links">
+      <a routerLink="/admin/create-quiz"          class="quick-link-btn">➕ New Quiz</a>
+      <a routerLink="/admin/create-question"       class="quick-link-btn">📝 New Question</a>
+      <a routerLink="/admin/ai-generate-question"  class="quick-link-btn">✨ AI Questions</a>
+      <a routerLink="/admin/all-questions"         class="quick-link-btn">❓ All Questions</a>
+      <a routerLink="/admin/all/quizzes"           class="quick-link-btn">📋 Browse Quizzes</a>
+      <a routerLink="/admin/participant/quiz"      class="quick-link-btn">🧪 Test Quiz</a>
+      <a routerLink="/admin/global-leaderboard"    class="quick-link-btn">🏆 Leaderboards</a>
+      <a routerLink="/admin/reports"               class="quick-link-btn">📊 Reports</a>
+      <a routerLink="/admin/manage-users" *ngIf="userRole === 'ADMIN'"
+                                                   class="quick-link-btn">👥 Manage Users</a>
+    </div>
+  </div>
+
+  <!-- Quick Actions — PARTICIPANT -->
+  <div class="glass-card" *ngIf="userRole === 'PARTICIPANT'">
+    <div class="card-title">
+      <div class="title-icon">⚡</div>
+      Quick Actions
+    </div>
+    <div class="quick-links">
+      <a routerLink="/admin/participant/quiz"   class="quick-link-btn">🎯 Take a Quiz</a>
+      <a routerLink="/admin/participant/result" class="quick-link-btn">📄 My Results</a>
+      <a routerLink="/admin/global-leaderboard" class="quick-link-btn">🏆 Leaderboards</a>
+    </div>
+  </div>
+
 </div>
 
 <router-outlet></router-outlet>

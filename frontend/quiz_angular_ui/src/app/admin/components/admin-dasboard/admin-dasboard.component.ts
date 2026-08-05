@@ -28,9 +28,9 @@ export class AdminDasboardComponent implements OnInit {
 
   // ── Mock stats for demo purposes (overridden by real data if available) ──
   mockStats = {
-    totalQuizzes:   12,
-    totalQuestions: 84,
-    participants:   37
+    totalQuizzes:   0,
+    totalQuestions: 0,
+    participants:   0
   };
 
   constructor(

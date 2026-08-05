@@ -1,8 +1,6 @@
-<!-- src/app/admin/components/admin-report-center/admin-report-center.component.html -->
-
+<!-- 
 <div class="page-wrap">
 
-  <!-- ── Page Header ──────────────────────────────── -->
   <div class="dashboard-header">
     <div class="header-greeting">
       <h1>📊 Report Center</h1>
@@ -15,7 +13,6 @@
     ⚠️ {{ errorMessage }}
   </div>
 
-  <!-- ── Quiz Selector ────────────────────────────── -->
   <div class="glass-card mt-2">
     <div class="card-title">
       <div class="title-icon">📋</div>
@@ -59,7 +56,6 @@ Select a Quiz
     </ng-container>
   </div>
 
-  <!-- ── Stats Strip ──────────────────────────────── -->
   <div class="glass-card mt-2" *ngIf="selectedQuizId != null">
     <div class="card-title">
       <div class="title-icon">📈</div>
@@ -93,7 +89,6 @@ Select a Quiz
     </ng-container>
   </div>
 
-  <!-- ── Results Table ────────────────────────────── -->
   <div class="glass-card mt-2" *ngIf="selectedQuizId != null">
     <div class="card-title">
       <div class="title-icon">👥</div>
@@ -139,6 +134,185 @@ Select a Quiz
 
     <div class="empty-msg mt-2" *ngIf="!loadingResults && !filteredResults.length">
       No results found.
+    </div>
+  </div>
+
+</div> -->
+
+<!-- src/app/admin/components/admin-report-center/admin-report-center.component.html -->
+<!-- FIX 1: Stats strip now shows averagePercentage, highestPercentage, lowestPercentage
+            in addition to pass/fail counts.
+     FIX 2: Results table now shows Taken At column.
+     FIX 3: Select shows "(select a quiz)" default option with no auto-dismiss.
+     FIX 4: Empty-results message is friendlier. -->
+
+<div class="page-wrap">
+
+  <!-- ── Page Header ─────────────────────────────────────────────── -->
+  <div class="dashboard-header">
+    <div class="header-greeting">
+      <h1>📊 Report Center</h1>
+      <p>Review quiz performance, stats, and participant results.</p>
+    </div>
+    <button class="btn-close-sm" (click)="back()">← Back to Dashboard</button>
+  </div>
+
+  <!-- Error banner -->
+  <div *ngIf="errorMessage" class="glass-card error-card">
+    ⚠️ {{ errorMessage }}
+  </div>
+
+  <!-- ── Quiz Selector ────────────────────────────────────────────── -->
+  <div class="glass-card mt-2">
+    <div class="card-title">
+      <div class="title-icon">📋</div>
+      Select a Quiz
+    </div>
+
+    <div class="loading-state" *ngIf="loadingQuizzes">
+      <div class="spinner"></div>
+      Loading quizzes…
+    </div>
+
+    <ng-container *ngIf="!loadingQuizzes">
+      <select
+        class="filter-select"
+        *ngIf="quizzes.length; else noQuizzes"
+        [(ngModel)]="selectedQuizId"
+        (ngModelChange)="onQuizChange($event)">
+        <option [ngValue]="null" disabled>— Select a Quiz —</option>
+        <option *ngFor="let q of quizzes" [ngValue]="q.id">
+          {{ q.title }}
+        </option>
+      </select>
+
+      <ng-template #noQuizzes>
+        <div class="empty-msg">No quizzes available yet.</div>
+      </ng-template>
+    </ng-container>
+  </div>
+
+  <!-- ── Stats Strip ──────────────────────────────────────────────── -->
+  <div class="glass-card mt-2" *ngIf="selectedQuizId != null">
+    <div class="card-title">
+      <div class="title-icon">📈</div>
+      Quiz Statistics
+      <button class="btn-sm ml-auto" (click)="refresh()">🔄 Refresh</button>
+    </div>
+
+    <div *ngIf="loadingStats" class="empty-msg">Loading stats…</div>
+
+    <ng-container *ngIf="!loadingStats && stats">
+      <div class="stats-strip">
+        <div class="stat-block">
+          <div class="stat-val">{{ stats.totalParticipants }}</div>
+          <div class="stat-lbl">Total</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-val">{{ stats.passCount }}</div>
+          <div class="stat-lbl">Passed</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-val">{{ stats.failCount }}</div>
+          <div class="stat-lbl">Failed</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-val">{{ getPassRate() | number:'1.0-1' }}%</div>
+          <div class="stat-lbl">Pass Rate</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-val">{{ stats.averagePercentage | number:'1.0-1' }}%</div>
+          <div class="stat-lbl">Avg Score</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-val">{{ stats.highestPercentage | number:'1.0-1' }}%</div>
+          <div class="stat-lbl">Highest</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-val">{{ stats.lowestPercentage | number:'1.0-1' }}%</div>
+          <div class="stat-lbl">Lowest</div>
+        </div>
+      </div>
+
+      <div class="progress-track mt-2">
+        <div class="progress-fill" [style.width.%]="getPassRate()"></div>
+      </div>
+
+      <button class="btn-sm mt-3" (click)="openPrintableReport()">
+        🖨️ Printable Report
+      </button>
+    </ng-container>
+
+    <div *ngIf="!loadingStats && !stats" class="empty-msg mt-2">
+      No stats available for this quiz yet.
+    </div>
+  </div>
+
+  <!-- ── Results Table ────────────────────────────────────────────── -->
+  <div class="glass-card mt-2" *ngIf="selectedQuizId != null">
+    <div class="card-title">
+      <div class="title-icon">👥</div>
+      Participant Results
+    </div>
+
+    <div class="search-bar mt-1">
+      <input
+        type="text"
+        placeholder="🔍 Search by name or email…"
+        [(ngModel)]="searchText"
+        (ngModelChange)="applySearch()" />
+    </div>
+
+    <div *ngIf="loadingResults" class="empty-msg mt-2">Loading results…</div>
+
+    <div class="table-wrap mt-2" *ngIf="!loadingResults && filteredResults.length">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Participant</th>
+            <th>Email</th>
+            <th>Score</th>
+            <th>%</th>
+            <th>Status</th>
+            <th>Taken At</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of filteredResults; let i = index; trackBy: trackResult">
+            <td class="text-center">{{ i + 1 }}</td>
+            <td class="fw-bold">{{ r.participantUsername }}</td>
+            <td>{{ r.participantEmail }}</td>
+            <td>{{ r.correctAnswers }} / {{ r.totalQuestions }}</td>
+            <td>
+              <span
+                class="badge-pct"
+                [class.badge-pass]="r.percentage >= 60"
+                [class.badge-fail]="r.percentage < 60">
+                {{ r.percentage | number:'1.0-1' }}%
+              </span>
+            </td>
+            <td>
+              <span
+                class="status-chip"
+                [class.chip-pass]="r.percentage >= 60"
+                [class.chip-fail]="r.percentage < 60">
+                {{ r.percentage >= 60 ? '✅ Pass' : '❌ Fail' }}
+              </span>
+            </td>
+            <td class="text-muted small">{{ r.takenAt | date:'dd MMM yy, hh:mm a' }}</td>
+            <td>
+              <button class="btn-sm" (click)="emailParticipant(r)">✉️ Email</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- FIX 4: friendlier empty state -->
+    <div class="empty-msg mt-2" *ngIf="!loadingResults && !filteredResults.length">
+      {{ searchText ? 'No results match your search.' : 'No participants have taken this quiz yet.' }}
     </div>
   </div>
 

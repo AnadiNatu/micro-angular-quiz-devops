@@ -14,10 +14,12 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = {"password" , "resetToken"})
 public class Users implements UserDetails {
 
     @Id
@@ -88,6 +90,13 @@ public class Users implements UserDetails {
                 .build();
     }
 
+    @PostPersist
+    protected void onPostPersist(){
+        if (this.authServiceId == null){
+            this.authServiceId = this.id;
+        }
+    }
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -101,6 +110,7 @@ public class Users implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(roles.name()));
+       if (roles == null) return List.of();
+       return List.of(new SimpleGrantedAuthority(roles.name()));
     }
 }

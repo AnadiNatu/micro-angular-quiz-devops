@@ -39,7 +39,7 @@ public class AuthController {
 
     // FEIGN ACCESS + OWNER CHECK
     @GetMapping("/{id}")
-    @PostAuthorize("returnObject.body.id == authentication.principal.id OR hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or isAuthenticated()")
     public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
         log.info("[AUTH] Get User Id = {}", id);
         return ResponseEntity.ok(authService.getUserById(id));
@@ -83,7 +83,7 @@ public class AuthController {
 
     // DISABLE USER (SOFT DELETE)
     @PutMapping("/disable/{id}")
-    @PostAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<UserDto> disableUser(@PathVariable Long id) {
         log.warn("[AUTH] Disable user request for userId={}", id);
         return ResponseEntity.ok(authService.disableUser(id));
@@ -91,7 +91,7 @@ public class AuthController {
 
     // NOTIFICATION FEIGN
     @GetMapping("/internal/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Long id){
+    public ResponseEntity<UserDto> getUserByIdInternal(@PathVariable Long id){
         log.warn("[AUTH - FEIGN] Notification Service");
         return ResponseEntity.ok(authService.getUserById(id));
     }

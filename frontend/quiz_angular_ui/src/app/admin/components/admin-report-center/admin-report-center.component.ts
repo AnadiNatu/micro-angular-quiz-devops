@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './admin-report-center.component.css',
 })
 export class AdminReportCenterComponent implements OnInit {
+  
   quizzes: QuizDTO[] = [];
   results: QuizResultDTO[] = [];
   filteredResults: QuizResultDTO[] = [];
@@ -24,136 +25,132 @@ export class AdminReportCenterComponent implements OnInit {
   loadingResults = false;
   loadingStats = false;
   errorMessage = '';
+ 
+  private userRole = '';
+ 
   constructor(
     private adminService: AdminServiceService,
     private storage: UserStorageService,
     private router: Router,
   ) {}
-  ngOnInit() {
+ 
+  ngOnInit(): void {
+    this.userRole = this.storage.getUser()?.role ?? '';
     this.loadCreatorQuizzes();
   }
-
-
- loadCreatorQuizzes(): void {
-
-  this.loadingQuizzes = true;
-  this.errorMessage = '';
-
-  this.adminService.getAllQuizzesByCreator().subscribe({
-
-    next: quizzes => {
-
-      this.quizzes = quizzes;
-
-      this.loadingQuizzes = false;
-
-      if (quizzes.length > 0) {
-        const incomingQuizId = (history.state as { quizId?: number })?.quizId;
-        const preselect = incomingQuizId != null && quizzes.some(q => q.id === incomingQuizId)
-          ? incomingQuizId
-          : quizzes[0].id;
-        this.onQuizChange(preselect);
+ 
+  loadCreatorQuizzes(): void {
+    this.loadingQuizzes = true;
+    this.errorMessage   = '';
+ 
+    // FIX 1: ADMIN/CURATOR load their own quizzes; PARTICIPANT loads all quizzes
+    const quizzes$ = (this.userRole === 'PARTICIPANT')
+      ? this.adminService.getAllQuiz()
+      : this.adminService.getAllQuizzesByCreator();
+ 
+    quizzes$.subscribe({
+      next: (quizzes) => {
+        this.quizzes       = quizzes;
+        this.loadingQuizzes = false;
+ 
+        if (quizzes.length > 0) {
+          const incomingQuizId = (history.state as { quizId?: number })?.quizId;
+          const preselect = (incomingQuizId != null && quizzes.some(q => q.id === incomingQuizId))
+            ? incomingQuizId
+            : quizzes[0].id;
+          this.onQuizChange(preselect);
+        }
+      },
+      error: (err) => {
+        this.loadingQuizzes = false;
+        this.errorMessage   = err?.error?.message ?? 'Unable to load quizzes.';
       }
-
-    },
-
-    error: err => {
-
-      this.loadingQuizzes = false;
-
-      this.errorMessage =
-        err?.error?.message ??
-        'Unable to load quizzes.';
-
-    }
-
-  });
-
-}
-
-
-  onQuizChange(id: number) {
+    });
+  }
+ 
+  onQuizChange(id: number): void {
     this.selectedQuizId = +id;
+    this.searchText     = '';
     this.loadQuizStats();
     this.loadQuizResults();
   }
-  loadQuizStats() {
+ 
+  loadQuizStats(): void {
     if (this.selectedQuizId == null) return;
     this.loadingStats = true;
     this.adminService.getQuizStats(this.selectedQuizId).subscribe({
-      next: (s) => {
-        this.stats = s;
-        this.loadingStats = false;
-      },
-      error: () => (this.loadingStats = false),
+      next:  (s) => { this.stats = s; this.loadingStats = false; },
+      error: ()  => { this.loadingStats = false; }
     });
   }
-  loadQuizResults() {
+ 
+  loadQuizResults(): void {
     if (this.selectedQuizId == null) return;
     this.loadingResults = true;
     this.adminService.getQuizResults(this.selectedQuizId).subscribe({
       next: (r) => {
-        this.results = r;
+        this.results        = r;
         this.filteredResults = [...r];
-        this.loadingResults = false;
+        this.loadingResults  = false;
       },
-      error: () => (this.loadingResults = false),
+      error: () => { this.loadingResults = false; }
     });
   }
-  applySearch() {
+ 
+  applySearch(): void {
     const t = this.searchText.trim().toLowerCase();
     this.filteredResults = !t
       ? [...this.results]
       : this.results.filter(
           (r) =>
             r.participantUsername.toLowerCase().includes(t) ||
-            r.participantEmail.toLowerCase().includes(t),
+            r.participantEmail.toLowerCase().includes(t)
         );
   }
-
- refresh(): void {
-
-  if (this.selectedQuizId == null) {
-    return;
+ 
+  refresh(): void {
+    if (this.selectedQuizId == null) return;
+    this.loadQuizStats();
+    this.loadQuizResults();
   }
-
-  this.loadQuizStats();
-  this.loadQuizResults();
-
-}
-
-  openPrintableReport() {
+ 
+  openPrintableReport(): void {
     if (this.selectedQuizId == null) return;
     this.adminService.getQuizResultDocument(this.selectedQuizId).subscribe({
       next: (html) => {
+        // FIX 2: guard against popup blocker
         const w = window.open('', '_blank');
-        if (!w) return;
+        if (!w) {
+          alert('Popup was blocked. Please allow popups for this site and try again.');
+          return;
+        }
+        w.document.open();
         w.document.write(html);
         w.document.close();
       },
-      error: () => alert('Unable to generate report.'),
+      error: () => alert('Unable to generate report. Please try again.'),
     });
   }
-
-  emailParticipant(r: QuizResultDTO) {
-    this.adminService
-      .sendQuizResultEmail(r.participantId, r.quizId)
-      .subscribe({
-        next: (m) => alert(m),
-        error: () => alert('Failed to send email.'),
-      });
+ 
+  emailParticipant(r: QuizResultDTO): void {
+    this.adminService.sendQuizResultEmail(r.participantId, r.quizId).subscribe({
+      // FIX 4: show server confirmation message
+      next:  (m) => alert(m || `✅ Email sent to ${r.participantEmail}`),
+      error: ()  => alert('❌ Failed to send email. Please try again.'),
+    });
   }
+ 
   getPassRate(): number {
     if (!this.stats) return 0;
     const total = this.stats.passCount + this.stats.failCount;
     return total ? (this.stats.passCount * 100) / total : 0;
   }
-
-back(): void {
-  this.router.navigate(['/admin']);
-}
-
-  trackResult(_: number, item: QuizResultDTO) {
+ 
+  back(): void {
+    this.router.navigate(['/admin']);
+  }
+ 
+  trackResult(_: number, item: QuizResultDTO): number {
     return item.id;
   }
 }

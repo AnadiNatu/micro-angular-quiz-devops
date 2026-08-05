@@ -22,6 +22,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -58,6 +59,7 @@ public class AuthService {
 //    }
 
     // ================= SIGNUP =================
+    @Transactional
     public SignUpResponseDTO signup(SignUpRequestDTO request) {
 
         if (userRepository.findByUsernameIgnoreCase(request.getUsername()).isPresent()) {
@@ -65,13 +67,15 @@ public class AuthService {
             throw new RuntimeException("Username already exists");
         }
 
+        if (request.getEmail() != null && userRepository.findByEmailIgnoreCase(request.getEmail()).isPresent()) {
+            log.warn("[AUTH] Signup failed — email already exists: {}", request.getEmail());
+            throw new RuntimeException("Email already registered");
+        }
+
         Users user = UserMapper.toEntity(request);
 
         // Encode password
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-
-        // Default role
-//        user.setRoles(UserRoles.PARTICIPANT);
 
 //        No more default role
         UserRoles role = UserRoles.PARTICIPANT;
@@ -86,9 +90,10 @@ public class AuthService {
 
         Users savedUser = userRepository.save(user);
 
-        savedUser.setAuthServiceId(savedUser.getId());
+        userRepository.flush();
+//        savedUser.setAuthServiceId(savedUser.getId());
         userSyncService.syncUser(savedUser);
-        savedUser = userRepository.save(savedUser);
+//        savedUser = userRepository.save(savedUser);
 
         log.info("[AUTH] User Created | username={} | authServiceId={}", savedUser.getUsername(), savedUser.getAuthServiceId());
         log.info("[AUTH-SERVICE] New user registered: username={}, role={}", savedUser.getUsername(), savedUser.getRoles());
@@ -104,10 +109,12 @@ public class AuthService {
                         request.getPassword()
                 )
         );
-
         Users user = userRepository.findByUsernameIgnoreCase(request.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
+        if (!user.isEnabled()){
+            throw new RuntimeException("Account Disabled");
+        }
         String token = jwtUtils.generateToken(user);
         log.info("[AUTH-SERVICE] Login successful: username={}, role={}", user.getUsername(), user.getRoles());
         return UserMapper.toLoginResponse(user, token);
@@ -144,13 +151,16 @@ public UserDto getUserByAuthServiceId(Long authServiceId) {
 
     // Stat sync - called by {quiz/question} service
 
-    public void incrementStat(UserStatSyncDTO dto){
-        Users user = userRepository.findByAuthServiceId(dto.getAuthServiceId()).orElseThrow(() -> new RuntimeException("User not found"));
+    @Transactional
+    public void incrementStat(UserStatSyncDTO dto) {
+        Users user = userRepository.findByAuthServiceId(dto.getAuthServiceId())
+                .orElseThrow(() -> new RuntimeException(
+                        "User not found for authServiceId=" + dto.getAuthServiceId()));
 
         switch (dto.getStatType()) {
             case "QUESTION_CREATED" -> user.setQuestionsCreatedCount(user.getQuestionsCreatedCount() + 1);
-            case "QUIZ_CREATED" -> user.setQuizzesCreatedCount(user.getQuizzesCreatedCount() + 1);
-            case "QUIZ_TAKEN" -> user.setQuizzesTakenCount(user.getQuizzesTakenCount() + 1);
+            case "QUIZ_CREATED"     -> user.setQuizzesCreatedCount(user.getQuizzesCreatedCount() + 1);
+            case "QUIZ_TAKEN"       -> user.setQuizzesTakenCount(user.getQuizzesTakenCount() + 1);
             default -> log.warn("[AUTH] Unknown statType={}", dto.getStatType());
         }
 

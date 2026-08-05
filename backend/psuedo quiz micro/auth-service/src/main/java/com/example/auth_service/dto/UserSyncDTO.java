@@ -16,7 +16,7 @@ public class UserSyncDTO {
 
     private String username;
 
-    private String password;
+//    private String password;
 
     private String email;
 
@@ -24,7 +24,7 @@ public class UserSyncDTO {
 
     private String profilePicture;
 
-    private String resetToken;
+//    private String resetToken;
 
     private UserRoles roles;
 

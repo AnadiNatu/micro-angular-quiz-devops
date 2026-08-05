@@ -21,47 +21,24 @@ public class UserSyncService {
                 .orElse(new Users());
 
         boolean created = user.getId() == null;
-
         user.setAuthServiceId(dto.getAuthServiceId());
-
         user.setUsername(dto.getUsername());
-
-        user.setPassword(dto.getPassword());
-
+//        user.setPassword(dto.getPassword());
         user.setEmail(dto.getEmail());
-
         user.setPhoneNumber(dto.getPhoneNumber());
-
         user.setProfilePicture(dto.getProfilePicture());
-
-        user.setResetToken(dto.getResetToken());
-
+//        user.setResetToken(dto.getResetToken());
         user.setRoles(dto.getRoles());
-
         user.setEnabled(dto.isEnabled());
-
         user.setAccountNonExpired(dto.isAccountNonExpired());
-
         user.setAccountNonLocked(dto.isAccountNonLocked());
-
         user.setCredentialsNonExpired(dto.isCredentialsNonExpired());
 
         repository.save(user);
-
         if(created){
-
-            log.info(
-                    "[QUESTION] User Created | authServiceId={} username={}",
-                    user.getAuthServiceId(),
-                    user.getUsername());
-
+            log.info("[QUESTION] User Created | authServiceId={} username={}", user.getAuthServiceId(), user.getUsername());
         }else{
-
-            log.info(
-                    "[QUESTION] User Updated | authServiceId={} username={}",
-                    user.getAuthServiceId(),
-                    user.getUsername());
-
+            log.info("[QUESTION] User Updated | authServiceId={} username={}", user.getAuthServiceId(), user.getUsername());
         }
 
     }

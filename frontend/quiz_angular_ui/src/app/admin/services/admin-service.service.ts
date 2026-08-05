@@ -24,15 +24,13 @@ import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AdminServiceService {
-
-  private readonly BASE = environment.apiBaseUrl;
+private readonly BASE = environment.apiBaseUrl;
 
   private AUTH     = `${this.BASE}/api/auth`;
   private QUESTION = `${this.BASE}/api/questions`;
   private QUIZ     = `${this.BASE}/api/quiz`;
   private NOTIFY   = `${this.BASE}/api/notify`;
   private LEADERSHIP = `${this.BASE}/api/leaderboard`;
-
   constructor(
     private http: HttpClient,
     private storage: UserStorageService
@@ -52,14 +50,11 @@ export class AdminServiceService {
   }
 
   // ── Auth / User ───────────────────────────────────────────
-
-  getUserDetails(): Observable<UsersDTO> {
-    const id =
-    this.storage.getCreatorAuthUserId() ?? this.storage.getAuthUserId();
-
-    return this.http.get<UsersDTO>(`${this.AUTH}/${id}`,
-  {headers: this.h()});  
-}
+ getUserDetails(): Observable<UsersDTO> {
+    const id = this.storage.getAuthUserId();
+    if (id == null) throw new Error('User not logged in.');
+    return this.http.get<UsersDTO>(`${this.AUTH}/${id}`, { headers: this.h() });
+  }
 
   getAllUsers(): Observable<UsersDTO[]> {
     return this.http.get<UsersDTO[]>(`${this.AUTH}/all`, { headers: this.h() });
@@ -298,7 +293,7 @@ getParticipantRanking(participantId : number , quizId : number) : Observable<Par
 
 singleResultDocument(quizId: number, userId: number): Observable<string> {
     return this.http.get(
-      `${this.NOTIFY}/document/user/${userId}/quiz/${quizId}/result`,
+      `${this.NOTIFY}/document/participant/${userId}/quiz/${quizId}/result`,
       { headers: this.h(), responseType: 'text' }
     );
   }

@@ -14,6 +14,7 @@ import { UserStorageService } from '../../../auth/services/user-storage/user-sto
   styleUrl: './user-report-center.component.css',
 })
 export class UserReportCenterComponent implements OnInit {
+ 
   userId!: number;
   results: QuizResultDTO[] = [];
   filteredResults: QuizResultDTO[] = [];
@@ -22,18 +23,26 @@ export class UserReportCenterComponent implements OnInit {
   sendingEmail = false;
   generatingReport = false;
   errorMessage = '';
-
+ 
   constructor(
     private adminService: AdminServiceService,
     private storage: UserStorageService,
     private router: Router,
   ) {}
-
-  ngOnInit() {
-    this.userId = this.storage.getAuthUserId() ?? 0;
+ 
+  ngOnInit(): void {
+    // FIX 1: always use authServiceId — fallback to 0 replaced with a guard
+    const id = this.storage.getAuthUserId();
+    if (id == null) {
+      this.errorMessage = 'Session expired. Please log in again.';
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.userId = id;
     this.loadResults();
   }
-  loadResults() {
+ 
+  loadResults(): void {
     this.loading = true;
     this.adminService.getResultsByUser().subscribe({
       next: (r) => {
@@ -43,12 +52,12 @@ export class UserReportCenterComponent implements OnInit {
       },
       error: (e) => {
         this.loading = false;
-        this.errorMessage =
-          e?.error?.message ?? 'Unable to load report history.';
+        this.errorMessage = e?.error?.message ?? 'Unable to load report history.';
       },
     });
   }
-  applySearch() {
+ 
+  applySearch(): void {
     const t = this.searchText.trim().toLowerCase();
     this.filteredResults = !t
       ? [...this.results]
@@ -58,54 +67,77 @@ export class UserReportCenterComponent implements OnInit {
             r.category.toLowerCase().includes(t),
         );
   }
-  clearSearch() {
+ 
+  clearSearch(): void {
     this.searchText = '';
     this.filteredResults = [...this.results];
   }
-  openReportCard() {
+ 
+  openReportCard(): void {
     this.generatingReport = true;
     this.adminService.getParticipantReportDocument(this.userId).subscribe({
       next: (html) => {
         this.generatingReport = false;
+        // FIX 2: guard against popup blocker
         const w = window.open('', '_blank');
-        if (!w) return;
+        if (!w) {
+          alert('Popup was blocked. Please allow popups for this site and try again.');
+          return;
+        }
+        w.document.open();
         w.document.write(html);
         w.document.close();
       },
       error: () => {
         this.generatingReport = false;
-        alert('Unable to generate report card.');
+        this.errorMessage = 'Unable to generate report card. Please try again.';
       },
     });
   }
-  emailReportCard() {
+ 
+  emailReportCard(): void {
     this.sendingEmail = true;
     this.adminService.sendReportCardEmail(this.userId).subscribe({
       next: (m) => {
         this.sendingEmail = false;
-        alert(m);
+        // FIX 4: show the server's message (e.g. "Report card sent to user@example.com")
+        alert(m || '✅ Report card sent to your email!');
       },
-      error: () => {
+      error: (e) => {
         this.sendingEmail = false;
-        alert('Failed to email report card.');
+        const msg = e?.error?.message ?? e?.message ?? 'Failed to send email.';
+        this.errorMessage = msg;
+        alert('❌ ' + msg);
       },
     });
   }
-  printQuizResult(r: QuizResultDTO) {
+ 
+  printQuizResult(r: QuizResultDTO): void {
+    // FIX 3: singleResultDocument(quizId, userId) — correct argument order
     this.adminService.singleResultDocument(r.quizId, this.userId).subscribe({
       next: (html) => {
+        // FIX 2: guard against popup blocker
         const w = window.open('', '_blank');
-        if (!w) return;
+        if (!w) {
+          alert('Popup was blocked. Please allow popups for this site and try again.');
+          return;
+        }
+        w.document.open();
         w.document.write(html);
         w.document.close();
       },
-      error: () => alert('Unable to open quiz report.'),
+      error: () => {
+        this.errorMessage = 'Unable to open quiz report. Please try again.';
+        alert('❌ Unable to open quiz report.');
+      },
     });
   }
-  back() {
+ 
+  back(): void {
     this.router.navigate(['/participant']);
   }
-  trackResult(_: number, item: QuizResultDTO) {
+ 
+  trackResult(_: number, item: QuizResultDTO): number {
     return item.id;
   }
 }

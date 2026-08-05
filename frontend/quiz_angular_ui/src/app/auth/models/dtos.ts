@@ -24,11 +24,15 @@ export interface SignUpResponse {
 export interface UsersDTO {
   id: number;
   username: string;
+  authServiceId:number;
   email: string;
   phoneNumber?: string;
   profilePicture?: string;
   role: string;
   enabled: boolean;
+  quizzesTakenCount : number;
+  quizzesCreatedCount : number;
+  questionsCreatedCount : number;
   accountNonExpired: boolean;
   accountNonLocked: boolean;
   credentialsNonExpired: boolean;

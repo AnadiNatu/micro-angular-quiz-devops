@@ -35,6 +35,9 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthFilter;
 
+    @Autowired
+    private GatewayHeaderAuthFilter gatewayHeaderAuthFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -57,6 +60,7 @@ public class SecurityConfig {
                         // fine-grained control handled by @PreAuthorize/@PostAuthorize
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(gatewayHeaderAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
