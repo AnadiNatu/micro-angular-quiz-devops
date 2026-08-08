@@ -20,7 +20,6 @@ import { environment } from '../../../../environments/environment';
 export class AuthService {
 
   private readonly BASE = environment.apiBaseUrl;
-
   private readonly BASE_URL = `${this.BASE}/api/auth`;
 
   constructor(
