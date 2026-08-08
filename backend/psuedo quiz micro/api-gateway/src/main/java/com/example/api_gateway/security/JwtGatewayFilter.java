@@ -34,7 +34,12 @@ public class JwtGatewayFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
 
-        // 2. Public: all auth endpoints
+        // 2. Actuator health checks — permit-all
+        if (path.startsWith("/actuator/")){
+            return chain.filter(exchange);
+        }
+
+        // 3. Public: all auth endpoints
         if (path.startsWith("/api/auth/")) {
             return chain.filter(exchange);
         }
@@ -43,7 +48,10 @@ public class JwtGatewayFilter implements GlobalFilter, Ordered {
         if (path.startsWith("/api/auth/internal/")
                 || path.startsWith("/api/notify/internal/")
                 || path.startsWith("/api/questions/generate")
-                || path.startsWith("/api/questions/fetch")) {
+                || path.startsWith("/api/questions/fetch")
+                || path.startsWith("/api/questions/internal")
+                || path.startsWith("/internal/users/sync/")
+                || path.startsWith("/api/notify/")) {
             return chain.filter(exchange);
         }
 
@@ -58,10 +66,12 @@ public class JwtGatewayFilter implements GlobalFilter, Ordered {
             String token = authHeader.substring(7);
             Claims claims = jwtUtil.validateToken(token);
             String role = jwtUtil.extractRole(claims);
+            String username = claims.getSubject();
 
             ServerHttpRequest mutatedRequest = exchange.getRequest()
                     .mutate()
                     .header("X-User-Role", role != null ? role : "")
+                    .header("X-User-Username" , username != null ? username : "")
                     .build();
 
             return chain.filter(exchange.mutate().request(mutatedRequest).build());
