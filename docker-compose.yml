@@ -60,6 +60,26 @@ services:
       retries: 5
       start_period: 10s
 
+  # ── RabbitMQ (async notification queue) ───────────────────────────────────
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: quiz-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - quiz-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
   # ── API Gateway ───────────────────────────────────────────────────────────────
   api-gateway:
     build:
@@ -195,6 +215,8 @@ services:
         condition: service_healthy
       service-registry:
         condition: service_healthy
+      rabbitmq:                       # ← add
+        condition: service_healthy 
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8084/actuator/health || exit 1"]
       interval: 30s
@@ -224,6 +246,8 @@ services:
         condition: service_healthy
       service-registry:
         condition: service_healthy
+      rabbitmq:                       # ← add
+        condition: service_healthy 
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8085/actuator/health || exit 1"]
       interval: 30s

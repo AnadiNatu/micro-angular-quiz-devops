@@ -2,15 +2,14 @@ package com.example.quiz_service.service;
 
 import com.example.quiz_service.dto.applicationDTO.*;
 import com.example.quiz_service.dto.authDTO.UserStatSyncDTO;
-import com.example.quiz_service.dto.notificationDTO.QuizResultDTO;
-import com.example.quiz_service.dto.notificationDTO.QuizStatsDTO;
-import com.example.quiz_service.dto.notificationDTO.QuizSubmittedNotificationDTO;
-import com.example.quiz_service.dto.notificationDTO.QuizTakenNotificationDTO;
+import com.example.quiz_service.dto.leaderboardDTO.QuizStatSyncMessage;
+import com.example.quiz_service.dto.notificationDTO.*;
 import com.example.quiz_service.entity.Quiz;
 import com.example.quiz_service.entity.QuizResult;
 import com.example.quiz_service.feign.NotificationFeignClient;
 import com.example.quiz_service.feign.QuestionClient;
 import com.example.quiz_service.feign.UserClient;
+import com.example.quiz_service.kafka.QuizNotificationPublisher;
 import com.example.quiz_service.mapper.QuizMapper;
 import com.example.quiz_service.repository.QuizRepository;
 import com.example.quiz_service.repository.QuizResultRepository;
@@ -34,6 +33,7 @@ public class QuizService {
     private final UserClient userClient;
     private final QuizResultRepository quizResultRepository;
     private final NotificationFeignClient notificationClient;
+    private final QuizNotificationPublisher notificationPublisher;
 
     // ================= CREATE QUIZ =================
     public QuizDTO createQuiz(CreateQuizDto dto) {
@@ -57,6 +57,11 @@ public class QuizService {
 
         try {
             userClient.syncStat(UserStatSyncDTO.builder()
+                    .authServiceId(dto.getCreatedByUserId())
+                    .statType("QUIZ_CREATED")
+                    .build());
+
+            notificationPublisher.publishStatSync(QuizStatSyncMessage.builder()
                     .authServiceId(dto.getCreatedByUserId())
                     .statType("QUIZ_CREATED")
                     .build());
@@ -212,9 +217,26 @@ public class QuizService {
                         .curatorEmail(curator.getEmail())
                         .build();
 
+//                if (!testUser) {
+//                    notificationClient.notifyQuizTaken(notifDto);
+//                }
+
                 if (!testUser) {
-                    notificationClient.notifyQuizTaken(notifDto);
+                    QuizTakenNotificationMessage mqMessage = QuizTakenNotificationMessage.builder()
+                            .quizId(notifDto.getQuizId())
+                            .quizTitle(notifDto.getQuizTitle())
+                            .category(notifDto.getCategory())
+                            .difficultyLevel(notifDto.getDifficultyLevel())
+                            .participantId(notifDto.getParticipantId())
+                            .participantUsername(notifDto.getParticipantUsername())
+                            .participantEmail(notifDto.getParticipantEmail())
+                            .curatorId(notifDto.getCuratorId())
+                            .curatorUsername(notifDto.getCuratorUsername())
+                            .curatorEmail(notifDto.getCuratorEmail())
+                            .build();
+                    notificationPublisher.publishQuizTaken(mqMessage);
                 }
+
                 } catch (Exception e) {
                 log.warn("⚠️ Failed to send quiz-taken notification: {}", e.getMessage());
             }
@@ -314,12 +336,29 @@ public class QuizService {
                         .percentage(percentage)
                         .build();
 
-                notificationClient.notifyQuizSubmitted(notifDto);
+//                notificationClient.notifyQuizSubmitted(notifDto);
+
+                QuizSubmittedNotificationMessage mqMessage = QuizSubmittedNotificationMessage.builder()
+                        .quizId(notifDto.getQuizId())
+                        .quizTitle(notifDto.getQuizTitle())
+                        .category(notifDto.getCategory())
+                        .difficultyLevel(notifDto.getDifficultyLevel())
+                        .participantId(notifDto.getParticipantId())
+                        .participantUsername(notifDto.getParticipantUsername())
+                        .participantEmail(notifDto.getParticipantEmail())
+                        .curatorId(notifDto.getCuratorId())
+                        .curatorUsername(notifDto.getCuratorUsername())
+                        .curatorEmail(notifDto.getCuratorEmail())
+                        .totalQuestions(notifDto.getTotalQuestions())
+                        .correctAnswers(notifDto.getCorrectAnswers())
+                        .incorrectAnswers(notifDto.getIncorrectAnswers())
+                        .percentage(notifDto.getPercentage())
+                        .build();
+                notificationPublisher.publishQuizSubmitted(mqMessage);
             } catch (Exception e) {
                 log.warn("Failed to send quiz-submitted notification: {}", e.getMessage());
             }
         }
-
         return ResultDTO.builder()
                 .quizId(quiz.getId())
                 .quizTitle(quiz.getTitle())

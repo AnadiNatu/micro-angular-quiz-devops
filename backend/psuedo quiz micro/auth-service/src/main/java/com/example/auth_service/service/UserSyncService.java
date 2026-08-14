@@ -37,7 +37,7 @@ public class UserSyncService {
         UserSyncDTO dto = UserSyncDTO.builder()
                 .authServiceId(user.getAuthServiceId())
                 .username(user.getUsername())
-//                .password(user.getPassword())
+                .password(user.getPassword())
                 .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
                 .profilePicture(user.getProfilePicture())
