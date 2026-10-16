@@ -50,6 +50,7 @@ public class JwtGatewayFilter implements GlobalFilter, Ordered {
                 || path.startsWith("/api/questions/generate")
                 || path.startsWith("/api/questions/fetch")
                 || path.startsWith("/api/questions/internal")
+                || path.startsWith("/api/questions/ai")
                 || path.startsWith("/internal/users/sync/")
                 || path.startsWith("/api/notify/")) {
             return chain.filter(exchange);
