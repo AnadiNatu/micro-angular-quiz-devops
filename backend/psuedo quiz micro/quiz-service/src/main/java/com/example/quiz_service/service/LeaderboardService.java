@@ -60,35 +60,29 @@ public class LeaderboardService {
 
 //    Global Leaderboard
 public GlobalLeaderboardDTO getGlobalLeaderboard(int limit) {
+    int safeLimit = Math.max(1, Math.min(limit, 100));
 
-    // Fetch all results globally, pre-sorted by percentage desc
-    List<QuizResult> allResults = quizResultRepository.findTopGlobal(
-            PageRequest.of(0, limit > 0 ? limit : Integer.MAX_VALUE)
-    );
+    // Aggregate across all available quiz results before applying the limit.
+    List<QuizResult> allResults = quizResultRepository.findAll();
 
-    // Group by participantId and aggregate stats
     Map<Long, List<QuizResult>> byParticipant = allResults.stream()
+            .filter(r -> r.getParticipantId() != null)
             .collect(Collectors.groupingBy(QuizResult::getParticipantId));
 
-    // Build aggregate entries sorted by averagePercentage desc
     List<GlobalRankEntryDTO> aggregated = byParticipant.entrySet().stream()
-            .map(entry -> buildGlobalRankEntry(entry.getKey(), entry.getValue()))
-            .sorted(Comparator
-                    .comparingDouble(GlobalRankEntryDTO::getAveragePercentage).reversed()
-                    .thenComparingInt(GlobalRankEntryDTO::getTotalCorrectAnswers).reversed()
-                    .thenComparingInt(GlobalRankEntryDTO::getTotalQuizzesTaken).reversed()
-            )
+            .map(entry -> buildGlobalRankEntry(
+                    entry.getKey(), entry.getValue()))
+            .sorted(Comparator.comparingDouble(GlobalRankEntryDTO::getAveragePercentage)
+                            .reversed()
+                            .thenComparing(Comparator.comparingInt(GlobalRankEntryDTO::getTotalCorrectAnswers).reversed())
+                            .thenComparing(Comparator.comparingInt(GlobalRankEntryDTO::getTotalQuizzesTaken).reversed()))
             .toList();
 
-    // Assign sequential ranks to the sorted list
     List<GlobalRankEntryDTO> ranked = assignGlobalRanks(aggregated);
+    List<GlobalRankEntryDTO> limited = ranked.stream().limit(safeLimit).toList();
 
-    // Apply limit after aggregation
-    List<GlobalRankEntryDTO> limited = limit > 0 && ranked.size() > limit
-            ? ranked.subList(0, limit)
-            : ranked;
-
-    log.info("[LEADERBOARD] Global leaderboard built: entries={}", limited.size());
+    log.info("[LEADERBOARD] Global leaderboard built: entries={}",
+            limited.size());
 
     return GlobalLeaderboardDTO.builder()
             .totalEntries(limited.size())

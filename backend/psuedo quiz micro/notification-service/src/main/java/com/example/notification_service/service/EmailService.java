@@ -6,6 +6,7 @@ import com.example.notification_service.dto.shared.QuizResultDTO;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -19,15 +20,25 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
+    @Value("${app.mail.from:${spring.mail.username}}")
+    private String mailFrom;
+
     private void send(String to, String subject, String htmlBody) {
+        if (to == null || to.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Cannot send email: recipient address is missing.");
+        }
+
         try {
             MimeMessage msg = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
+            helper.setFrom(mailFrom);
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(htmlBody, true);
+            log.info("[EMAIL] Sending email to {}", to);
             mailSender.send(msg);
-            log.info("📧 Email sent → {}", to);
+            log.info("[EMAIL] SMTP accepted email for {}", to);
         } catch (Exception e) {
             log.error("❌ Failed to send email to {}: {}", to, e.getMessage());
         }

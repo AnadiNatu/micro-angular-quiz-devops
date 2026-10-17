@@ -65,47 +65,141 @@ public class NotificationController {
     }
 
     // Done
+
     @PostMapping("/email/result/{userId}/quiz/{quizId}")
-    @PreAuthorize("hasAuthority('PARTICIPANT') or hasAuthority('ADMIN')")
-    public ResponseEntity<String> sendSingleResultEmail(@PathVariable Long userId ,@PathVariable Long quizId){
-        List<QuizResultDTO> results = quizFeignClient.getResultsByUser(userId);
+    @PreAuthorize("hasAnyAuthority('PARTICIPANT', 'ADMIN')")
+    public ResponseEntity<String> sendSingleResultEmail(
+            @PathVariable Long userId,
+            @PathVariable Long quizId) {
 
-        QuizResultDTO result = results.stream()
-                .filter(r -> r.getQuizId().equals(quizId))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Result not found for this quiz"));
+        log.info("[EMAIL-RESULT] Request received: userId={}, quizId={}",
+                userId, quizId);
 
-        UserDTO user = authFeignClient.getUserById(userId);
+        try {
+            List<QuizResultDTO> results =
+                    quizFeignClient.getResultsByUser(userId);
 
-        // Reuse the QuizSubmittedNotificationDTO format for email
-        QuizSubmittedNotificationDTO dto = QuizSubmittedNotificationDTO.builder()
-                .quizId(result.getQuizId())
-                .quizTitle(result.getQuizTitle())
-                .category(result.getCategory())
-                .difficultyLevel(result.getDifficultyLevel())
-                .participantId(result.getParticipantId())
-                .participantUsername(result.getParticipantUsername())
-                .participantEmail(user.getEmail())
-                .curatorUsername(result.getCuratorUsername())
-                .totalQuestions(result.getTotalQuestions())
-                .correctAnswers(result.getCorrectAnswers())
-                .incorrectAnswers(result.getIncorrectAnswers())
-                .percentage(result.getPercentage())
-                .build();
+            QuizResultDTO result = results.stream()
+                    .filter(r -> java.util.Objects.equals(
+                            r.getQuizId(), quizId))
+                    .findFirst()
+                    .orElseThrow(() -> new
+                            org.springframework.web.server.ResponseStatusException(
+                            org.springframework.http.HttpStatus.NOT_FOUND,
+                            "No result found for this user and quiz."));
 
-        emailService.sendParticipantResultEmail(dto);
-        return ResponseEntity.ok("📧 Result email re-sent to " + user.getEmail());
+            UserDTO user = authFeignClient.getUserById(userId);
+
+            if (user == null || user.getEmail() == null
+                    || user.getEmail().isBlank()) {
+                throw new org.springframework.web.server.ResponseStatusException(
+                        org.springframework.http.HttpStatus.NOT_FOUND,
+                        "No email address found for this user.");
+            }
+
+            QuizSubmittedNotificationDTO dto =
+                    QuizSubmittedNotificationDTO.builder()
+                            .quizId(result.getQuizId())
+                            .quizTitle(result.getQuizTitle())
+                            .category(result.getCategory())
+                            .difficultyLevel(result.getDifficultyLevel())
+                            .participantId(result.getParticipantId())
+                            .participantUsername(result.getParticipantUsername())
+                            .participantEmail(user.getEmail())
+                            .curatorId(result.getCuratorId())
+                            .curatorUsername(result.getCuratorUsername())
+                            .curatorEmail(result.getCuratorEmail())
+                            .totalQuestions(result.getTotalQuestions())
+                            .correctAnswers(result.getCorrectAnswers())
+                            .incorrectAnswers(result.getIncorrectAnswers())
+                            .percentage(result.getPercentage())
+                            .build();
+
+            emailService.sendParticipantResultEmail(dto);
+
+            log.info("[EMAIL-RESULT] Email accepted by SMTP for userId={}, quizId={}",
+                    userId, quizId);
+
+            return ResponseEntity.ok(
+                    "Result email submitted successfully for " + user.getEmail());
+
+        } catch (org.springframework.web.server.ResponseStatusException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            log.error("[EMAIL-RESULT] Failed for userId={}, quizId={}",
+                    userId, quizId, ex);
+
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_GATEWAY,
+                    "Could not send the result email. Check Notification Service logs.",
+                    ex);
+        }
     }
+
 
 //    Document endpoints
 
     // Done
 //    ADMIN / CURATOR: Printable result table for ONE quiz
-    @GetMapping(value = "/document/quiz/{quizId}/results" , produces = MediaType.TEXT_HTML_VALUE)
-    @PreAuthorize("hasAnyAuthority('ADMIN' , 'CURATOR')")
-    public ResponseEntity<String> quizResultDocument(@PathVariable Long quizId){
-        QuizStatsDTO stats = quizFeignClient.getQuizStats(quizId);
-        return ResponseEntity.ok(documentService.generateQuizResultTable(stats));
+    @GetMapping(
+            value = "/document/quiz/{quizId}/results",
+            produces = MediaType.TEXT_HTML_VALUE
+    )
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'CURATOR')")
+    public ResponseEntity<String> quizResultDocument(
+            @PathVariable Long quizId) {
+
+        log.info("[NOTIFY] Generating quiz result document: quizId={}", quizId);
+
+        try {
+            QuizStatsDTO stats = quizFeignClient.getQuizStats(quizId);
+
+            if (stats == null) {
+                log.error("[NOTIFY] Quiz service returned null stats: quizId={}",
+                        quizId);
+
+                return ResponseEntity.notFound().build();
+            }
+
+            String html = documentService.generateQuizResultTable(stats);
+
+            if (html == null || html.isBlank()) {
+                throw new IllegalStateException(
+                        "DocumentService generated an empty result document.");
+            }
+
+            log.info("[NOTIFY] Quiz result document generated: quizId={}",
+                    quizId);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.TEXT_HTML)
+                    .body(html);
+
+        }catch (feign.FeignException ex) {
+            log.error(
+                    "[NOTIFY] Quiz Service call failed: quizId={}, status={}, response={}",
+                    quizId,
+                    ex.status(),
+                    ex.contentUTF8(),
+                    ex
+            );
+
+            throw new org.springframework.web.server.ResponseStatusException(
+                    ex.status() == 401 || ex.status() == 403
+                            ? org.springframework.http.HttpStatus.BAD_GATEWAY
+                            : org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Quiz Service request failed with status " + ex.status(),
+                    ex
+            );
+        } catch (Exception ex) {
+            log.error("[NOTIFY] Document generation failed: quizId={}", quizId, ex);
+
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Document generation failed. Check Notification Service logs.",
+                    ex
+            );
+        }
     }
 
     // Done

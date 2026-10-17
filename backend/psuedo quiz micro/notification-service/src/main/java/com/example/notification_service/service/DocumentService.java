@@ -92,7 +92,10 @@ public class DocumentService {
         List<QuizResultDTO> results = stats.getParticipantResults();
 
         if (results == null || results.isEmpty()) {
-            rows.append("<tr><td colspan='7' class='text-center text-muted py-4'>No participants have taken this quiz yet.</td></tr>");
+            rows.append(
+                    "<tr><td colspan='8' class='text-center text-muted py-4'>" +
+                            "No participants have taken this quiz yet.</td></tr>"
+            );
         } else {
             for (QuizResultDTO r : results) {
                 String badge = r.getPercentage() >= 60
