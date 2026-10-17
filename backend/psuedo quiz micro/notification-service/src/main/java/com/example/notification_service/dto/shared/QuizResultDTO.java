@@ -21,6 +21,7 @@ public class QuizResultDTO {
 
     private Long curatorId;
     private String curatorUsername;
+    private String curatorEmail;
 
     private int totalQuestions;
     private int correctAnswers;

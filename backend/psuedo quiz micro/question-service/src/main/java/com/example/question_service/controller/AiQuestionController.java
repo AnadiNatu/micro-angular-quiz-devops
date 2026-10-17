@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/questions/ai")
 @RequiredArgsConstructor
-@CrossOrigin("*")
+//@CrossOrigin("*")
 @Slf4j
 public class AiQuestionController {
 
