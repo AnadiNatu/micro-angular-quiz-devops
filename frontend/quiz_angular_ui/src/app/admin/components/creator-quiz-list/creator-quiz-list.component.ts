@@ -14,97 +14,134 @@ import { UserStorageService } from '../../../auth/services/user-storage/user-sto
   styleUrl: './creator-quiz-list.component.css'
 })
 export class CreatorQuizListComponent implements OnInit {
+ quizzes: QuizDTO[] = [];
+  allQuizzes: QuizDTO[] = [];
 
-  
-  quizzes:       QuizDTO[] = [];
-  allQuizzes:    QuizDTO[] = [];   // master copy for client-side category filter
-  errorMessage   = '';
-  hoveredId      = 0;
-  searchText     = '';
+  categories: string[] = [];
+  selectedCategory = '';
+  searchText = '';
+
+  errorMessage = '';
+  hoveredId: number | string | null = null;
   showAllQuizzes = false;
-  isTester : boolean;
- 
-  // Category filter
-  categories:       string[] = [];
-  selectedCategory  = '';
- 
-  @Output() viewQuiz       = new EventEmitter<QuizDTO>();
+  isTester = false;
+  isLoading = false;
+
+  @Output() viewQuiz = new EventEmitter<QuizDTO>();
   @Output() viewAllResults = new EventEmitter<QuizDTO>();
- 
+
   constructor(
     private adminService: AdminServiceService,
-    private storage:      UserStorageService,
+    private storage: UserStorageService,
     private router: Router
   ) {}
- 
+
   ngOnInit(): void {
     this.showAllQuizzes = this.router.url.includes('all/quizzes');
+    this.isTester = this.storage.isQuizTester();
+
     this.loadQuizzes();
     this.loadCategories();
-    this.isTester = this.storage.isQuizTester();
   }
- 
+
   loadQuizzes(): void {
-    const src$ = this.showAllQuizzes
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    const source$ = this.showAllQuizzes
       ? this.adminService.getAllQuiz()
       : this.adminService.getAllQuizzesByCreator();
- 
-    src$.subscribe({
-      next:  res => { this.allQuizzes = res; this.applyFilters(); },
-      error: err => this.errorMessage = err?.error?.message || 'Could not load quizzes'
+
+    source$.subscribe({
+      next: (response) => {
+        this.allQuizzes = response ?? [];
+        this.applyFilters();
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.allQuizzes = [];
+        this.quizzes = [];
+        this.errorMessage =
+          err?.error?.message ?? 'Could not load quizzes.';
+        this.isLoading = false;
+      }
     });
   }
- 
+
   loadCategories(): void {
     this.adminService.getCategories().subscribe({
-        next: cats => this.categories = cats,
-        error: () => this.categories = []
+      next: (categories) => {
+        this.categories = [...new Set(categories ?? [])]
+          .filter((category): category is string =>
+            typeof category === 'string' && category.trim().length > 0
+          )
+          .sort((a, b) => a.localeCompare(b));
+      },
+      error: () => {
+        // Title search and filtering by categories on loaded quizzes
+        // remain available even if the categories endpoint fails.
+        this.categories = [
+          ...new Set(
+            this.allQuizzes
+              .map(quiz => quiz.category)
+              .filter((category): category is string =>
+                typeof category === 'string' && category.trim().length > 0
+              )
+          )
+        ].sort((a, b) => a.localeCompare(b));
+      }
     });
-}
- 
-  // ── Filtering ───────────────────────────────────────────────────────────────
- 
-  applyFilters(): void {
-    let result = [...this.allQuizzes];
- 
-    if (this.selectedCategory) {
-      result = result.filter(q =>
-        q.category?.toLowerCase() === this.selectedCategory.toLowerCase()
-      );
-    }
- 
-    if (this.searchText.trim()) {
-      const term = this.searchText.trim().toLowerCase();
-      result = result.filter(q => q.title?.toLowerCase().includes(term));
-    }
- 
-    this.quizzes = result;
-    this.errorMessage = result.length === 0 && this.allQuizzes.length > 0
-      ? 'No quizzes match the selected filters.'
-      : '';
   }
- 
+
+  applyFilters(): void {
+    const term = this.searchText.trim().toLocaleLowerCase();
+    const category = this.selectedCategory.trim().toLocaleLowerCase();
+
+    this.quizzes = this.allQuizzes.filter((quiz) => {
+      const matchesTitle =
+        !term || (quiz.title ?? '').toLocaleLowerCase().includes(term);
+
+      const matchesCategory =
+        !category ||
+        (quiz.category ?? '').toLocaleLowerCase() === category;
+
+      return matchesTitle && matchesCategory;
+    });
+
+    this.errorMessage = '';
+  }
+
+  onSearch(): void {
+    this.applyFilters();
+  }
+
   onCategoryChange(): void {
     this.applyFilters();
   }
- 
-  onSearch(): void {
-    if (!this.searchText.trim()) {
-      this.loadQuizzes();
-      return;
-    }
-    this.applyFilters();
-  }
- 
+
   clearFilters(): void {
-    this.searchText      = '';
+    this.searchText = '';
     this.selectedCategory = '';
     this.applyFilters();
   }
- 
-  // ── Navigation ───────────────────────────────────────────────────────────────
- 
-  viewQuizDetails(quiz: QuizDTO): void { this.router.navigate(['/admin/creator/quiz-detail', quiz.title]); }
-  takeQuiz(quiz: QuizDTO):        void { this.router.navigate(['/admin/participant/quiz', quiz.id]); }
-  onViewResults(quiz: QuizDTO):   void { this.viewAllResults.emit(quiz); }
+
+  viewQuizDetails(quiz: QuizDTO): void {
+    this.router.navigate([
+      '/admin/creator/quiz-detail',
+      quiz.title
+    ]);
+  }
+
+  takeQuiz(quiz: QuizDTO): void {
+    this.router.navigate([
+      '/admin/participant/quiz',
+      quiz.id
+    ]);
+  }
+
+  onViewResults(quiz: QuizDTO): void {
+    // The parent must handle this event and navigate to
+    // the correct quiz-results page.
+    this.viewAllResults.emit(quiz);
+  }
 }

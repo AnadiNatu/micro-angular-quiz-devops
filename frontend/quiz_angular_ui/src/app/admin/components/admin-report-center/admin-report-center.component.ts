@@ -14,7 +14,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './admin-report-center.component.css',
 })
 export class AdminReportCenterComponent implements OnInit {
-  
+  loadingReport = false;
   quizzes: QuizDTO[] = [];
   results: QuizResultDTO[] = [];
   filteredResults: QuizResultDTO[] = [];
@@ -115,22 +115,59 @@ export class AdminReportCenterComponent implements OnInit {
   }
  
   openPrintableReport(): void {
-    if (this.selectedQuizId == null) return;
-    this.adminService.getQuizResultDocument(this.selectedQuizId).subscribe({
-      next: (html) => {
-        // FIX 2: guard against popup blocker
-        const w = window.open('', '_blank');
-        if (!w) {
-          alert('Popup was blocked. Please allow popups for this site and try again.');
-          return;
-        }
-        w.document.open();
-        w.document.write(html);
-        w.document.close();
-      },
-      error: () => alert('Unable to generate report. Please try again.'),
-    });
+  if (this.selectedQuizId == null || this.loadingReport) {
+    return;
   }
+
+  this.loadingReport = true;
+  this.errorMessage = '';
+
+  this.adminService.getQuizResultDocument(this.selectedQuizId).subscribe({
+    next: (html: string) => {
+      this.loadingReport = false;
+
+      if (!html || !html.trim()) {
+        this.errorMessage = 'The server returned an empty report.';
+        return;
+      }
+
+      const reportWindow = window.open('', '_blank');
+
+      if (!reportWindow) {
+        this.errorMessage =
+          'The report could not open because the browser blocked the popup. Allow popups and try again.';
+        return;
+      }
+
+      reportWindow.document.open();
+      reportWindow.document.write(html);
+      reportWindow.document.close();
+      reportWindow.focus();
+    },
+
+    error: (err) => {
+      this.loadingReport = false;
+
+      if (err.status === 401) {
+        this.errorMessage =
+          'Your session is not authorized. Please sign in again if your session has expired.';
+      } else if (err.status === 403) {
+        this.errorMessage =
+          'Access denied. This report requires an ADMIN or CURATOR authority. Verify your account role and backend security configuration.';
+      } else {
+        this.errorMessage =
+          err?.error?.message ||
+          `Unable to generate the report (HTTP ${err.status || 'unknown'}). Check the Notification Service logs.`;
+      }
+
+      console.error('Quiz report generation failed:', {
+        status: err.status,
+        message: err.message,
+        error: err.error
+      });
+    }
+  });
+}
  
   emailParticipant(r: QuizResultDTO): void {
     this.adminService.sendQuizResultEmail(r.participantId, r.quizId).subscribe({

@@ -42,7 +42,7 @@ export class AuthService {
 
           // Save JWT
           this.storage.saveToken(response.token);
-
+          console.log('Saved token:', this.storage.getToken());
           // Save complete authenticated user
           this.storage.saveUser({
 

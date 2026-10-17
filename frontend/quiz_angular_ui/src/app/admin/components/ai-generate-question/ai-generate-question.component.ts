@@ -122,9 +122,18 @@ export class AiGenerateQuestionComponent implements OnInit {
         this.state            = 'preview';
       },
       error: (err) => {
-        this.generateError = '❌ ' + (err?.error?.message || 'AI generation failed. Check your API key and try again.');
-        this.isGenerating  = false;
-      }
+  const backendMessage =
+    err?.error?.message ||
+    err?.error?.error ||
+    err?.message;
+
+  this.generateError =
+    '❌ ' +
+    (backendMessage ||
+      'AI question generation failed. Please check that the Question Service and Ollama are running, and that the Qwen3 model is available.');
+
+  this.isGenerating = false;
+}
     });
   }
  

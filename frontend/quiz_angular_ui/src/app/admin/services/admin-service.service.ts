@@ -274,11 +274,22 @@ getCategoryLeaderboard(category : string) : Observable<CategoryLeaderboardDTO> {
 return this.http.get<CategoryLeaderboardDTO>(`${this.LEADERSHIP}/category/${category}`, { headers: this.h() });
 }
 
-getParticipantRanking(participantId : number , quizId : number) : Observable<ParticipantRankDTO> {
-  return this.http.get<ParticipantRankDTO>(`${this.LEADERSHIP}/participant/${participantId}`, { 
-    params : {quizId : quizId},
-    headers: this.h() 
-  });
+getParticipantRanking(
+  participantId: number,
+  quizId?: number
+): Observable<ParticipantRankDTO> {
+  const url = `${this.LEADERSHIP}/participant/${participantId}`;
+
+  const options = quizId != null
+    ? {
+        headers: this.h(),
+        params: { quizId: quizId.toString() }
+      }
+    : {
+        headers: this.h()
+      };
+
+  return this.http.get<ParticipantRankDTO>(url, options);
 }
 
   // ── Notification documents ────────────────────────────────
@@ -362,8 +373,17 @@ sendQuizResultEmail(
 }
 
   // POST Generate Question Using AI
-   generateAiQuestions(req: AiQuestionGenerateRequest): Observable<AiGeneratedQuestionDTO[]> {
-    return this.http.post<AiGeneratedQuestionDTO[]>(
-      `${this.QUESTION}/ai/generate`,req,{ headers: this.jh() });
-  }
+  //  generateAiQuestions(req: AiQuestionGenerateRequest): Observable<AiGeneratedQuestionDTO[]> {
+  //   return this.http.post<AiGeneratedQuestionDTO[]>(
+  //     `${this.QUESTION}/ai/generate`,req,{ headers: this.jh() });
+  // }
+  generateAiQuestions(
+  req: AiQuestionGenerateRequest
+): Observable<AiGeneratedQuestionDTO[]> {
+  return this.http.post<AiGeneratedQuestionDTO[]>(
+    `${this.QUESTION}/ai/generate`,
+    req,
+    { headers: this.jh() }
+  );
+}
 }

@@ -238,9 +238,13 @@ Select a Quiz
         <div class="progress-fill" [style.width.%]="getPassRate()"></div>
       </div>
 
-      <button class="btn-sm mt-3" (click)="openPrintableReport()">
-        🖨️ Printable Report
-      </button>
+      <button
+  class="btn-sm mt-3"
+  type="button"
+  [disabled]="loadingReport || selectedQuizId == null"
+  (click)="openPrintableReport()">
+  {{ loadingReport ? '⏳ Generating Report…' : '🖨️ Printable Report' }}
+</button>
     </ng-container>
 
     <div *ngIf="!loadingStats && !stats" class="empty-msg mt-2">

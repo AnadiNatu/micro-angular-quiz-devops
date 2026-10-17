@@ -9,6 +9,9 @@ import {
   LeaderboardEntryDTO,
 } from '../../models/admin-dtos';
 
+// On clicking the "view" button i'm getting logged out. 
+// The ranking endpoints are not working . 
+// "notification-service" endpoints are not working properly. 
 @Component({
   selector: 'app-global-leaderboard',
   standalone: true,

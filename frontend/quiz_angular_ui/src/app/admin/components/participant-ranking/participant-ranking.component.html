@@ -1,0 +1,49 @@
+
+<div class="page-wrap">
+  <div class="dashboard-header">
+    <div>
+      <h1>Participant Ranking</h1>
+      <p>Participant ID: {{ participantId }}</p>
+    </div>
+
+    <button (click)="back()">← Back to Leaderboard</button>
+    <button (click)="refresh()">Refresh</button>
+  </div>
+
+  <div *ngIf="isLoading">Loading participant results...</div>
+
+  <div *ngIf="hasError" class="error-card">
+    {{ errorMessage }}
+  </div>
+
+  <section *ngIf="!isLoading && ranking">
+    <h2>{{ ranking.participantUsername }}</h2>
+
+    <p>Email: {{ ranking.participantUsername }}</p>
+    <p>Average score: {{ ranking.averagePercentage | number:'1.0-1' }}%</p>
+    <p>Overall rank: {{ ranking.quizRank }}</p>
+
+    <h3>Quiz History</h3>
+
+    <p *ngIf="!history.length">No quiz history available.</p>
+
+    <div class="table-wrap" *ngIf="history.length">
+      <table>
+        <thead>
+          <tr>
+            <th>Quiz</th>
+            <th>Score</th>
+            <th>Rank</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of history">
+            <td>{{ item.quizTitle }}</td>
+            <td>{{ item.percentage | number:'1.0-1' }}%</td>
+            <td>{{ item.rank }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

@@ -1,88 +1,186 @@
-<!-- src/app/admin/components/creator-quiz-list/creator-quiz-list.component.html -->
 
 <div class="quiz-list-wrap">
 
-  <!-- ── Filter row ────────────────────────────────────────────────────────── -->
-  <div class="filter-row">
+  <div class="filter-panel">
+    <div class="filter-heading">
+      <div>
+        <h2>Your quizzes</h2>
+        <p>Find a quiz, review its details, or view its results.</p>
+      </div>
 
-    <!-- Title search (always visible) -->
-    <div class="search-row">
-      <input type="text"
-             class="search-input"
-             [(ngModel)]="searchText"
-             placeholder="Search quizzes by title..."
-             (ngModelChange)="onSearch()" />
-      <button class="search-btn" (click)="onSearch()">🔍</button>
+      <span class="quiz-count">
+        {{ quizzes.length }} {{ quizzes.length === 1 ? 'quiz' : 'quizzes' }}
+      </span>
     </div>
 
-    <!-- Category dropdown -->
-    <select class="category-select"
-            [(ngModel)]="selectedCategory"
-            (change)="onCategoryChange()">
-      <option value="">All Categories</option>
-      <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
-    </select>
+    <div class="filter-row">
+      <form class="search-row" (ngSubmit)="onSearch()">
+        <label class="sr-only" for="quizSearch">Search quizzes by title</label>
 
-    <!-- Clear filters (shown when any filter is active) -->
-    <button class="clear-btn"
-            *ngIf="selectedCategory || searchText"
-            (click)="clearFilters()">✕ Clear</button>
+        <input
+          id="quizSearch"
+          type="search"
+          class="search-input"
+          name="searchText"
+          [(ngModel)]="searchText"
+          (ngModelChange)="onSearch()"
+          placeholder="Search quizzes by title..."
+          autocomplete="off"
+        />
+
+        <button class="search-btn" type="submit" aria-label="Search quizzes">
+          <span aria-hidden="true">⌕</span>
+          <span class="search-btn-label">Search</span>
+        </button>
+      </form>
+
+      <label class="sr-only" for="quizCategory">Filter by category</label>
+      <select
+        id="quizCategory"
+        class="category-select"
+        name="selectedCategory"
+        [(ngModel)]="selectedCategory"
+        (ngModelChange)="onCategoryChange()"
+      >
+        <option value="">All categories</option>
+        <option *ngFor="let cat of categories" [value]="cat">
+          {{ cat }}
+        </option>
+      </select>
+
+      <button
+        *ngIf="selectedCategory || searchText"
+        type="button"
+        class="clear-btn"
+        (click)="clearFilters()"
+      >
+        Clear filters
+      </button>
+    </div>
   </div>
 
-  <!-- Active filter pills -->
-  <div class="filter-pills" *ngIf="selectedCategory">
-    <span class="filter-pill">
-      📚 {{ selectedCategory }}
-      <button class="pill-remove" (click)="selectedCategory = ''; onCategoryChange()">✕</button>
+  <div class="filter-pills" *ngIf="selectedCategory || searchText">
+    <span class="filter-pill" *ngIf="selectedCategory">
+      Category: {{ selectedCategory }}
+      <button
+        type="button"
+        class="pill-remove"
+        aria-label="Remove category filter"
+        (click)="selectedCategory = ''; onCategoryChange()"
+      >×</button>
+    </span>
+
+    <span class="filter-pill" *ngIf="searchText">
+      Search: {{ searchText }}
+      <button
+        type="button"
+        class="pill-remove"
+        aria-label="Clear search"
+        (click)="searchText = ''; onSearch()"
+      >×</button>
     </span>
   </div>
 
-  <div *ngIf="errorMessage" class="error-banner">⚠️ {{ errorMessage }}</div>
+  <div *ngIf="errorMessage" class="error-banner" role="alert">
+    {{ errorMessage }}
+  </div>
 
-  <ng-container *ngIf="quizzes.length > 0; else emptyState">
-    <div class="quiz-card"
-         *ngFor="let quiz of quizzes"
-         (mouseenter)="hoveredId = quiz.id"
-         (mouseleave)="hoveredId = 0"
-         [class.expanded]="hoveredId === quiz.id">
+  <div *ngIf="isLoading" class="loading-state" role="status">
+    <span class="loading-spinner"></span>
+    Loading quizzes...
+  </div>
 
-      <div class="quiz-card-header">
-        <span class="quiz-card-title">{{ quiz.title }}</span>
-        <span class="quiz-chevron">▼</span>
-      </div>
+  <ng-container *ngIf="!isLoading">
+    <div *ngIf="quizzes.length > 0; else emptyState" class="quiz-grid">
+      <article
+        class="quiz-card"
+        *ngFor="let quiz of quizzes"
+        [class.expanded]="hoveredId === quiz.id"
+      >
+        <button
+          type="button"
+          class="quiz-card-header"
+          [attr.aria-expanded]="hoveredId === quiz.id"
+          (click)="hoveredId = hoveredId === quiz.id ? null : quiz.id"
+        >
+          <span class="quiz-icon" aria-hidden="true">📝</span>
 
-      <div class="quiz-details">
-        <div style="margin-bottom: 0.5rem;">
-          <span class="detail-pill">📚 {{ quiz.category }}</span>
-          <span class="detail-pill">⚡ {{ quiz.difficultyLevel }}</span>
-          <span class="detail-pill">❓ {{ quiz.questionIds?.length ?? 0 }} Qs</span>
-          <span class="detail-pill">👥 {{ quiz.participantIds?.length ?? 0 }}</span>
+          <span class="quiz-card-title">{{ quiz.title }}</span>
+
+          <span class="quiz-chevron" aria-hidden="true">
+            {{ hoveredId === quiz.id ? '−' : '+' }}
+          </span>
+        </button>
+
+        <div class="quiz-summary">
+          <span class="detail-pill">{{ quiz.category || 'Uncategorized' }}</span>
+          <span class="detail-pill">{{ quiz.difficultyLevel || 'Not specified' }}</span>
+          <span class="detail-pill">
+            {{ quiz.questionIds?.length ?? 0 }} questions
+          </span>
         </div>
-        <div class="detail-text"><strong>By:</strong> {{ quiz.creatorUsername }}</div>
+
+        <div class="quiz-details" *ngIf="hoveredId === quiz.id">
+          <p class="detail-text">
+            <strong>Created by:</strong>
+            {{ quiz.creatorUsername || 'Unknown' }}
+          </p>
+
+          <p class="detail-text">
+            <strong>Participants:</strong>
+            {{ quiz.participantIds?.length ?? 0 }}
+          </p>
+        </div>
 
         <div class="card-actions">
-          <button class="action-btn primary-btn"
-                  (click)="viewQuizDetails(quiz); $event.stopPropagation()">
-            📋 Details
+          <button
+            type="button"
+            class="action-btn"
+            (click)="viewQuizDetails(quiz)"
+          >
+            Details
           </button>
-          <button class="action-btn"
-                  (click)="takeQuiz(quiz); $event.stopPropagation()">
-                {{ isTester ? '🧪 Test Quiz' : '🎯 Take Quiz' }}
+
+          <button
+            type="button"
+            class="action-btn primary-btn"
+            (click)="takeQuiz(quiz)"
+          >
+            {{ isTester ? 'Test quiz' : 'Take quiz' }}
           </button>
-          <button class="action-btn"
-                  (click)="onViewResults(quiz); $event.stopPropagation()">
-            📊 Results
+
+          <button
+            type="button"
+            class="action-btn results-btn"
+            (click)="onViewResults(quiz)"
+          >
+            View results
           </button>
         </div>
+      </article>
+    </div>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <span class="empty-icon" aria-hidden="true">📂</span>
+        <h3>No quizzes found</h3>
+        <p>
+          {{
+            searchText || selectedCategory
+              ? 'Try a different search term or clear your filters.'
+              : 'There are no quizzes available here yet.'
+          }}
+        </p>
+        <button
+          *ngIf="searchText || selectedCategory"
+          type="button"
+          class="clear-btn"
+          (click)="clearFilters()"
+        >
+          Clear filters
+        </button>
       </div>
-
-    </div>
+    </ng-template>
   </ng-container>
-
-  <ng-template #emptyState>
-    <div *ngIf="!errorMessage" class="empty-state">
-      📂 No quizzes found.
-    </div>
-  </ng-template>
 
 </div>

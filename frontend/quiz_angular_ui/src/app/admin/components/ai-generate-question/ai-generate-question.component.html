@@ -10,15 +10,15 @@
     ======================================================= -->
     <div *ngIf="state === 'form'">
 
-      <div class="ai-badge">✨ AI-Powered</div>
+      <div class="ai-badge">✨ Powered by Ollama · Qwen3</div>
 
       <h2 class="page-title">
         Generate <span>Questions with AI</span>
       </h2>
 
       <p class="page-subtitle">
-        Describe a topic and let the AI create a full set of
-        multiple-choice questions for your review.
+        Generate multiple-choice questions using your local AI model,
+  review the results, and select which questions to save.
       </p>
 
       <form [formGroup]="generateForm" (ngSubmit)="generate()">

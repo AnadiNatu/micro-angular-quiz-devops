@@ -53,16 +53,32 @@ export class AllUserResultComponent implements OnInit {
     });
   }
 
-  openDocument(): void {
-    this.adminService.getQuizResultDocument(this.quizId).subscribe({
-      next: html => {
-        const w = window.open('', '_blank');
-        w?.document.write(html);
-        w?.document.close();
-      },
-      error: () => alert('Could not open document.')
-    });
+openDocument(): void {
+  const printWindow = window.open('', '_blank');
+
+  if (!printWindow) {
+    alert('Please allow pop-ups for this application.');
+    return;
   }
+
+  this.adminService.getQuizResultDocument(this.quizId).subscribe({
+    next: html => {
+      printWindow.document.open();
+      printWindow.document.write(html);
+      printWindow.document.close();
+
+      printWindow.onload = () => {
+        printWindow.focus();
+        printWindow.print();
+      };
+    },
+    error: err => {
+      printWindow.close();
+      console.error('Failed to load quiz result document:', err);
+      alert('Could not load the document. Please check authorization and try again.');
+    }
+  });
+}
 
   goBack(): void { this.router.navigate(['/admin/creator/quizzes']); }
 }

@@ -119,6 +119,12 @@ export const adminRoutes: Routes = [
   loadComponent: () =>
     import('./components/admin-report-center/admin-report-center.component')
       .then(m => m.AdminReportCenterComponent)
-}
+},
+{
+  path: 'participant-ranking/:participantId',
+  loadComponent: () =>
+    import('./components/participant-ranking/participant-ranking.component')
+      .then(m => m.ParticipantRankingComponent)
+},
 
 ];
