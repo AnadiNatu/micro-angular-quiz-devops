@@ -7,9 +7,11 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -25,22 +27,25 @@ public class EmailService {
 
     private void send(String to, String subject, String htmlBody) {
         if (to == null || to.isBlank()) {
-            throw new IllegalArgumentException(
-                    "Cannot send email: recipient address is missing.");
+            throw new IllegalArgumentException("Cannot send email: recipient address is missing.");
         }
 
         try {
             MimeMessage msg = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
+
             helper.setFrom(mailFrom);
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(htmlBody, true);
+
             log.info("[EMAIL] Sending email to {}", to);
             mailSender.send(msg);
             log.info("[EMAIL] SMTP accepted email for {}", to);
-        } catch (Exception e) {
-            log.error("❌ Failed to send email to {}: {}", to, e.getMessage());
+
+        } catch (Exception ex) {
+            log.error("[EMAIL] Failed to send email to {}", to, ex);
+            throw new IllegalStateException("Email delivery failed. Check SMTP configuration and Notification Service logs.", ex);
         }
     }
 
@@ -220,8 +225,7 @@ public class EmailService {
 
     public void sendParticipantReportCardEmail(String toEmail, String username, List<QuizResultDTO> results) {
         if (results == null || results.isEmpty()) {
-            log.warn("No results found for participant {} — skipping report card email", username);
-            return;
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No quiz results are available for this participant.");
         }
 
         double avgPct = results.stream().mapToDouble(QuizResultDTO::getPercentage).average().orElse(0);
