@@ -1,49 +1,255 @@
 
-<div class="page-wrap">
-  <div class="dashboard-header">
-    <div>
-      <h1>Participant Ranking</h1>
-      <p>Participant ID: {{ participantId }}</p>
-    </div>
+<div class="ranking-page">
+  <div class="ranking-container">
 
-    <button (click)="back()">← Back to Leaderboard</button>
-    <button (click)="refresh()">Refresh</button>
+    <!-- Page Header -->
+    <header class="page-header">
+      <div class="header-copy">
+        <span class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          PERFORMANCE ANALYTICS
+        </span>
+
+        <h1>Participant <span>Ranking</span></h1>
+        <p class="header-subtitle">
+          Track quiz performance, achievements and overall progress.
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <button type="button" class="btn btn-outline" (click)="back()">
+          <span aria-hidden="true">←</span>
+          <span>Leaderboard</span>
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="refresh()"
+          [disabled]="isLoading">
+          <span aria-hidden="true">↻</span>
+          {{ isLoading ? 'Refreshing...' : 'Refresh' }}
+        </button>
+      </div>
+    </header>
+
+    <!-- Participant Profile -->
+    <section class="participant-banner" *ngIf="ranking as participant">
+      <div class="avatar">
+        {{ (participant.participantUsername || 'P').charAt(0).toUpperCase() }}
+      </div>
+
+      <div class="participant-info">
+        <span class="section-label">PARTICIPANT PROFILE</span>
+        <h2>{{ participant.participantUsername }}</h2>
+        <p>Participant ID: {{ participantId }}</p>
+      </div>
+
+      <div class="rank-badge">
+        <span class="rank-icon">🏆</span>
+        <div>
+          <span class="rank-caption">OVERALL RANK</span>
+          <strong>#{{ participant.quizRank }}</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loading State -->
+    <section class="state-card" *ngIf="isLoading">
+      <div class="loading-spinner"></div>
+      <h3>Loading participant analytics</h3>
+      <p>Please wait while we retrieve the latest quiz results.</p>
+    </section>
+
+    <!-- Error State -->
+    <section class="state-card error-state" *ngIf="!isLoading && hasError">
+      <div class="state-icon">!</div>
+      <h3>Unable to load ranking</h3>
+      <p>{{ errorMessage }}</p>
+      <button type="button" class="btn btn-primary" (click)="refresh()">
+        Try again
+      </button>
+    </section>
+
+    <!-- Dashboard -->
+    <ng-container *ngIf="!isLoading && !hasError && ranking as participant">
+
+      <!-- Summary Cards -->
+      <section class="stats-grid">
+        <article class="stat-card average-card">
+          <div class="stat-top">
+            <span class="stat-label">AVERAGE SCORE</span>
+            <span class="stat-icon blue-icon">%</span>
+          </div>
+          <div class="stat-value">
+            {{ participant.averagePercentage | number:'1.0-1' }}<span>%</span>
+          </div>
+          <p class="stat-description">Average across completed quizzes</p>
+          <div class="progress-track">
+            <div
+              class="progress-fill"
+              [style.width.%]="getOverallProgress()">
+            </div>
+          </div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-top">
+            <span class="stat-label">OVERALL RANK</span>
+            <span class="stat-icon gold-icon">♛</span>
+          </div>
+          <div class="stat-value">#{{ participant.quizRank }}</div>
+          <p class="stat-description">Current leaderboard position</p>
+          <span class="stat-footnote">Participant ranking</span>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-top">
+            <span class="stat-label">BEST SCORE</span>
+            <span class="stat-icon green-icon">↗</span>
+          </div>
+          <div class="stat-value">
+            {{ getBestScore() | number:'1.0-1' }}<span>%</span>
+          </div>
+          <p class="stat-description">Highest recorded quiz score</p>
+          <span class="stat-footnote">Personal best</span>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-top">
+            <span class="stat-label">PASS RATE</span>
+            <span class="stat-icon purple-icon">✓</span>
+          </div>
+          <div class="stat-value">
+            {{ getPassRate() | number:'1.0-1' }}<span>%</span>
+          </div>
+          <p class="stat-description">Quizzes scoring 60% or above</p>
+          <span class="stat-footnote">{{ history.length }} quiz result(s)</span>
+        </article>
+      </section>
+
+      <!-- Performance Overview -->
+      <section class="overview-card">
+        <div class="section-heading">
+          <div>
+            <span class="section-label">YOUR PROGRESS</span>
+            <h2>Performance overview</h2>
+            <p>A quick view of your overall quiz performance.</p>
+          </div>
+          <div class="performance-chip" [ngClass]="getTrendClass(participant.averagePercentage)">
+            <span class="status-dot"></span>
+            {{
+              participant.averagePercentage >= 80 ? 'Excellent' :
+              participant.averagePercentage >= 60 ? 'Good progress' :
+              participant.averagePercentage >= 40 ? 'Room to improve' :
+              'Needs improvement'
+            }}
+          </div>
+        </div>
+
+        <div class="overview-score">
+          <strong>{{ participant.averagePercentage | number:'1.0-1' }}%</strong>
+          <span>Average performance</span>
+        </div>
+
+        <div class="large-progress-track">
+          <div
+            class="large-progress-fill"
+            [ngClass]="getTrendClass(participant.averagePercentage)"
+            [style.width.%]="getOverallProgress()">
+          </div>
+        </div>
+
+        <div class="progress-labels">
+          <span>0%</span>
+          <span>60% passing benchmark</span>
+          <span>100%</span>
+        </div>
+      </section>
+
+      <!-- Quiz History -->
+      <section class="history-card">
+        <div class="section-heading history-heading">
+          <div>
+            <span class="section-label">RESULTS &amp; ACHIEVEMENTS</span>
+            <h2>Quiz history</h2>
+            <p>Review scores and ranking for each quiz.</p>
+          </div>
+          <span class="result-count">{{ history.length }} results</span>
+        </div>
+
+        <div class="empty-state" *ngIf="!history.length">
+          <div class="empty-icon">📚</div>
+          <h3>No quiz history yet</h3>
+          <p>Completed quiz results will appear here when available.</p>
+        </div>
+
+        <div class="table-wrap" *ngIf="history.length">
+          <table>
+            <thead>
+              <tr>
+                <th class="quiz-column">QUIZ</th>
+                <th>SCORE</th>
+                <th>PERFORMANCE</th>
+                <th>RANK</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let item of history; trackBy: trackHistory">
+                <td class="quiz-cell">
+                  <div class="quiz-title">
+                    <span class="quiz-icon">Q</span>
+                    <span>{{ item.quizTitle }}</span>
+                  </div>
+                </td>
+
+                <td class="score-cell">
+                  {{ item.percentage | number:'1.0-1' }}%
+                </td>
+
+                <td class="performance-cell">
+                  <div class="table-progress-track">
+                    <div
+                      class="table-progress-fill"
+                      [ngClass]="getTrendClass(item.percentage)"
+                      [style.width.%]="
+                        item.percentage < 0 ? 0 :
+                        item.percentage > 100 ? 100 : item.percentage
+                      ">
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <span class="table-rank">#{{ item.rank }}</span>
+                </td>
+
+                <td>
+                  <span
+                    class="result-status"
+                    [ngClass]="item.percentage >= 60 ? 'passed' : 'needs-work'">
+                    <span class="status-dot"></span>
+                    {{ item.percentage >= 60 ? 'Passed' : 'Below target' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <footer class="history-footer" *ngIf="history.length">
+          <span>Showing {{ history.length }} quiz result(s)</span>
+          <span>Passing benchmark: 60%</span>
+        </footer>
+      </section>
+
+      <footer class="page-footer">
+        <span>Participant Analytics</span>
+        <span>Ranking and scores are based on the data returned by the server.</span>
+      </footer>
+    </ng-container>
+
   </div>
-
-  <div *ngIf="isLoading">Loading participant results...</div>
-
-  <div *ngIf="hasError" class="error-card">
-    {{ errorMessage }}
-  </div>
-
-  <section *ngIf="!isLoading && ranking">
-    <h2>{{ ranking.participantUsername }}</h2>
-
-    <p>Email: {{ ranking.participantUsername }}</p>
-    <p>Average score: {{ ranking.averagePercentage | number:'1.0-1' }}%</p>
-    <p>Overall rank: {{ ranking.quizRank }}</p>
-
-    <h3>Quiz History</h3>
-
-    <p *ngIf="!history.length">No quiz history available.</p>
-
-    <div class="table-wrap" *ngIf="history.length">
-      <table>
-        <thead>
-          <tr>
-            <th>Quiz</th>
-            <th>Score</th>
-            <th>Rank</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of history">
-            <td>{{ item.quizTitle }}</td>
-            <td>{{ item.percentage | number:'1.0-1' }}%</td>
-            <td>{{ item.rank }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
 </div>

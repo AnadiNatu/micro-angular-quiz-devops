@@ -2,13 +2,31 @@
 
 <div class="page-wrap">
 
-  <div class="dashboard-header">
+   <div class="dashboard-header">
     <div class="header-greeting">
       <h1>🌍 Global Leaderboard</h1>
       <p>Top performers across all quizzes on the platform.</p>
     </div>
-    <button class="btn-sm" (click)="refresh()">🔄 Refresh</button>
+
+    <div class="header-actions">
+      <button
+        type="button"
+        class="btn-dashboard"
+        (click)="backToDashboard()">
+        <span aria-hidden="true">←</span>
+        Back to Dashboard
+      </button>
+
+      <button
+        type="button"
+        class="btn-sm"
+        (click)="refresh()"
+        [disabled]="isLoading">
+        ↻ Refresh
+      </button>
+    </div>
   </div>
+
 
   <div *ngIf="hasError" class="glass-card error-card">
     ⚠️ {{ errorMessage }}

@@ -98,4 +98,8 @@ export class GlobalLeaderboardComponent implements OnInit {
   trackRank(_: number, i: GlobalRankEntryDTO) {
     return i.participantId;
   }
+
+  backToDashboard(): void {
+  this.router.navigate(['/admin']);
+}
 }

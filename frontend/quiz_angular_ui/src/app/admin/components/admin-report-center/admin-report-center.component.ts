@@ -169,13 +169,33 @@ export class AdminReportCenterComponent implements OnInit {
   });
 }
  
-  emailParticipant(r: QuizResultDTO): void {
-    this.adminService.sendQuizResultEmail(r.participantId, r.quizId).subscribe({
-      // FIX 4: show server confirmation message
-      next:  (m) => alert(m || `✅ Email sent to ${r.participantEmail}`),
-      error: ()  => alert('❌ Failed to send email. Please try again.'),
+ emailParticipant(r: QuizResultDTO): void {
+  this.adminService
+    .sendQuizResultEmail(r.participantId, r.quizId)
+    .subscribe({
+      next: (message: string) => {
+        alert(message || `Email request accepted for ${r.participantEmail}`);
+      },
+      error: (err) => {
+        console.error('Result email request failed:', err);
+
+        const message =
+          typeof err?.error === 'string'
+            ? err.error
+            : err?.error?.message;
+
+        if (err.status === 401) {
+          alert('Authentication failed. Please sign in again.');
+        } else if (err.status === 403) {
+          alert('Access denied. Check your account role and backend security configuration.');
+        } else if (err.status === 404) {
+          alert(message || 'No result or recipient was found.');
+        } else {
+          alert(message || `Email request failed (HTTP ${err.status || 'unknown'}). Check Notification Service logs.`);
+        }
+      }
     });
-  }
+}
  
   getPassRate(): number {
     if (!this.stats) return 0;

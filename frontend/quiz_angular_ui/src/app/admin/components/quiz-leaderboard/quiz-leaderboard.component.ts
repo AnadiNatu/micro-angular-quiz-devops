@@ -95,27 +95,26 @@ loadLeaderboard(): void {
 
 
 loadTopLeaderboard(): void {
+  this.isLoading = true;
+  this.hasError = false;
+  this.errorMessage = '';
 
   this.adminService
-      .getTopForQuiz(this.quizId, this.limit)
-      .subscribe({
-
-    next: rankings => {
-
-      this.rankings = rankings;
-
-      this.filteredRankings = [...rankings];
-
-    },
-
-    error: err => {
-
-      console.error(err);
-
-    }
-
-  });
-
+    .getTopForQuiz(this.quizId, this.limit)
+    .subscribe({
+      next: rankings => {
+        this.rankings = rankings ?? [];
+        this.onSearch();
+        this.isLoading = false;
+      },
+      error: err => {
+        console.error('Top leaderboard API error:', err);
+        this.hasError = true;
+        this.errorMessage =
+          err?.error?.message ?? 'Unable to load leaderboard.';
+        this.isLoading = false;
+      }
+    });
 }
 
  onSearch(): void {
@@ -191,9 +190,14 @@ viewParticipant(
     }
   }
 
-  getProgressValue(item:LeaderboardEntryDTO):number{
-    return Math.min(item.percentage,100);
+getProgressValue(item: LeaderboardEntryDTO): number {
+  const percentage = Number(item.percentage);
+  if (!Number.isFinite(percentage)) {
+    return 0;
   }
+
+  return Math.max(0, Math.min(percentage, 100));
+}
 
   trackRank(_:number,item:LeaderboardEntryDTO):number{
     return item.participantId;
