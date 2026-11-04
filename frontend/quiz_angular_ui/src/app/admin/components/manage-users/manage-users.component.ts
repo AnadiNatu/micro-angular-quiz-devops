@@ -4,6 +4,7 @@ import { UsersDTO } from '../../../auth/models/dtos';
 import { AdminServiceService } from '../../services/admin-service.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../../auth/services/auth/auth.service';
 
 @Component({
   selector: 'app-manage-users',
@@ -27,6 +28,7 @@ export class ManageUsersComponent implements OnInit {
 
   constructor(
     private adminService: AdminServiceService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
@@ -93,35 +95,71 @@ export class ManageUsersComponent implements OnInit {
 
   viewUser(user: UsersDTO): void {
     const id = (user as any).authServiceId ?? user.id;
-    this.router.navigate(['/admin/users', id]);
-  }
-
-  disableUser(user: UsersDTO): void {
-
-    const id = (user as any).authServiceId ?? user.id;
-
-    if (id == null) {
+    
+    if(id == null){
       alert('User id not found.');
       return;
     }
 
-    if (!confirm(`Disable ${user.username}?`)) {
-      return;
-    }
-
-    alert("Disable User functionality has not yet been implemented.");
-    // this.adminService.disableUser(id).subscribe({
-    //   next: () => {
-    //     user.enabled = false;
-    //     this.applyFilters();
-    //     alert('User disabled successfully.');
-    //   },
-    //   error: err => {
-    //     console.error(err);
-    //     alert(err?.error?.message ?? 'Failed to disable user.');
-    //   }
-    // });
+    this.router.navigate(['/admin/user-details', id]);
   }
+
+  disableUser(user: UsersDTO): void {
+  const id = (user as any).authServiceId ?? user.id;
+
+  if (id == null) {
+    alert('User ID not found.');
+    return;
+  }
+
+  if (!user.enabled) {
+    return;
+  }
+
+  if (!confirm(`Are you sure you want to disable ${user.username}?`)) {
+    return;
+  }
+
+  this.authService.disableUser(id).subscribe({
+    next: () => {
+      user.enabled = false;
+      this.applyFilters();
+      alert(`${user.username} has been disabled successfully.`);
+    },
+    error: (err) => {
+      console.error('Disable user error:', err);
+      alert(
+        err?.error?.message ??
+        'Failed to disable user. Please try again.'
+      );
+    }
+  });
+}
+
+enableUser(user : UsersDTO) : void{
+  const id = (user as any).authServiceId ?? user.id;
+
+  if(id == null){
+    alert('User ID not found');
+    return;
+  }
+
+  if(!confirm(`Enable ${user.username}?`)){
+    return;
+  }
+
+  this.authService.enableUser(id).subscribe({
+    next : () => {
+      user.enabled = true;
+      this.applyFilters();
+      alert(`${user.username} has been enabled successfully.`);
+    },
+    error : err => {
+      console.error('Enable user error:', err);
+      alert(err?.error?.message ?? 'Failed to enable user');
+    }
+  })
+}
 
   getRoleClass(role: string): string {
     switch ((role ?? '').toUpperCase()) {
@@ -135,5 +173,9 @@ export class ManageUsersComponent implements OnInit {
   trackUser(_: number, user: UsersDTO): number {
     return ((user as any).authServiceId ?? user.id) as number;
   }
+
+  goToDashboard(): void {
+  this.router.navigate(['/admin']);
+}
 }
 

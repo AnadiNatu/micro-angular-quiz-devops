@@ -12,7 +12,11 @@
         {{ quizzes.length }} {{ quizzes.length === 1 ? 'quiz' : 'quizzes' }}
       </span>
     </div>
-
+    <div>
+    <button class="btn-sm" (click)="goToDashboard()">
+      🏠 Back to Dashboard
+    </button>
+  </div>
     <div class="filter-row">
       <form class="search-row" (ngSubmit)="onSearch()">
         <label class="sr-only" for="quizSearch">Search quizzes by title</label>

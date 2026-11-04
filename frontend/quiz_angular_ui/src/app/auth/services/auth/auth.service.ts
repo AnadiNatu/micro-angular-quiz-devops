@@ -102,6 +102,10 @@ export class AuthService {
     return this.http.put(`${this.BASE_URL}/disable/${id}`, null ,{headers: {Authorization: `Bearer ${this.storage.getToken()}`}});
   }
 
+ enableUser(id: number): Observable<any> {
+    return this.http.put(`${this.BASE_URL}/enable/${id}`, null ,{headers: {Authorization: `Bearer ${this.storage.getToken()}`}});
+  }
+  
   // PROFILE
   uploadProfilePhoto(username: string, file: File): Observable<string> {
     const formData = new FormData();

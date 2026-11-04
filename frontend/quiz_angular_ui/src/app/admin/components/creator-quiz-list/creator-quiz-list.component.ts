@@ -125,12 +125,18 @@ export class CreatorQuizListComponent implements OnInit {
     this.applyFilters();
   }
 
-  viewQuizDetails(quiz: QuizDTO): void {
-    this.router.navigate([
-      '/admin/creator/quiz-detail',
-      quiz.title
-    ]);
+  onViewResults(quiz: QuizDTO): void {
+  if (!quiz.id) {
+    console.error('Quiz ID not found:', quiz);
+    alert('Unable to open quiz results. Quiz ID is missing.');
+    return;
   }
+
+  this.router.navigate([
+    '/admin/results/all',
+    quiz.id
+  ]);
+}
 
   takeQuiz(quiz: QuizDTO): void {
     this.router.navigate([
@@ -139,9 +145,20 @@ export class CreatorQuizListComponent implements OnInit {
     ]);
   }
 
-  onViewResults(quiz: QuizDTO): void {
-    // The parent must handle this event and navigate to
-    // the correct quiz-results page.
-    this.viewAllResults.emit(quiz);
+  viewQuizDetails(quiz: QuizDTO): void {
+  if (!quiz?.title) {
+    console.error('Quiz title is missing:', quiz);
+    this.errorMessage = 'Unable to open quiz details. Quiz title is missing.';
+    return;
   }
+
+  this.router.navigate([
+    '/admin/creator/quiz-detail/',
+    quiz.title
+  ]);
+}
+
+goToDashboard(): void {
+  this.router.navigate(['/admin']); 
+}
 }

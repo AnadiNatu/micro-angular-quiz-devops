@@ -27,6 +27,8 @@
       <div class="action-row mt-3">
         <button class="btn-sm" (click)="refresh()">🔄 Refresh</button>
         <button class="btn-danger-sm" (click)="disableUser()" [disabled]="!user.enabled">🚫 Disable User</button>
+        <button class="btn-success-sm" (click)="enableUser()" [disabled]="user.enabled">✅ Enable User</button>
+
       </div>
     </div>
 

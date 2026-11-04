@@ -126,5 +126,11 @@ export const adminRoutes: Routes = [
     import('./components/participant-ranking/participant-ranking.component')
       .then(m => m.ParticipantRankingComponent)
 },
+{
+  path: 'user-details/:id',
+  loadComponent: () =>
+    import('./components/user-details/user-details.component')
+  .then(m => m.UserDetailsComponent)
+}
 
 ];

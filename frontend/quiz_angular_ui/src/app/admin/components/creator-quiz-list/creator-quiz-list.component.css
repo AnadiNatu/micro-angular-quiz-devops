@@ -440,6 +440,23 @@
     padding-inline: 0.8rem;
   }
 
+  
+.btn-sm {
+  background: transparent;
+  border: 1.5px solid rgba(37, 99, 235, 0.25);
+  color: #2563eb;
+  padding: 0.32rem 0.75rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: var(--transition, all 0.22s ease);
+  white-space: nowrap;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+
+.btn-sm:hover { background: #dbeafe; border-color: rgba(37, 99, 235, 0.4); }
+
   .category-select,
   .clear-btn {
     width: 100%;

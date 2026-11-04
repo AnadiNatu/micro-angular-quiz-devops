@@ -152,5 +152,7 @@ printReport(): void {
 
 }
 
-
+goToDashboard() : void {
+  this.router.navigate(['/admin']);
+}
 }

@@ -165,6 +165,20 @@
   font-family: var(--font-body, 'DM Sans', sans-serif);
 }
 
+.btn-success-sm {
+  background: transparent;
+  border: 1.5px solid rgba(220, 38, 38, 0.25);
+  color: #09c259;
+  padding: 0.42rem 0.9rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: var(--transition, all 0.22s ease);
+  white-space: nowrap;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+
 .btn-danger-sm:hover:not(:disabled) { background: #fee2e2; border-color: rgba(220, 38, 38, 0.4); }
 .btn-danger-sm:disabled { opacity: 0.4; cursor: not-allowed; }
 

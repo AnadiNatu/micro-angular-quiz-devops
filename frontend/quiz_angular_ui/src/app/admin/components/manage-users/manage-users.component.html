@@ -3,12 +3,21 @@
 <div class="page-wrap">
 
   <div class="dashboard-header">
-    <div class="header-greeting">
-      <h1>👥 Manage Users</h1>
-      <p>View, filter, and manage platform users.</p>
-    </div>
-    <button class="btn-sm" (click)="refresh()">🔄 Refresh</button>
+  <div class="header-greeting">
+    <h1>👥 Manage Users</h1>
+    <p>View, filter, and manage platform users.</p>
   </div>
+
+  <div class="header-actions">
+    <button class="btn-sm" (click)="goToDashboard()">
+      🏠 Back to Dashboard
+    </button>
+
+    <button class="btn-sm" (click)="refresh()">
+      🔄 Refresh
+    </button>
+  </div>
+</div>
 
   <div *ngIf="hasError" class="glass-card error-card">
     ⚠️ {{ errorMessage }}
@@ -73,7 +82,10 @@
             </td>
             <td class="action-cell">
               <button class="btn-sm" (click)="viewUser(u)">View</button>
-              <button class="btn-danger-sm" (click)="disableUser(u)" [disabled]="!u.enabled">Disable</button>
+              <!-- <button class="btn-danger-sm" (click)="disableUser(u)" [disabled]="!u.enabled">Disable</button> -->
+              <button class="btn-danger-sm" *ngIf="u.enabled" (click)="disableUser(u)">Disable</button>
+              <button class="btn-success-sm" *ngIf="!u.enabled" (click)="enableUser(u)">Enable</button>
+
             </td>
           </tr>
         </tbody>

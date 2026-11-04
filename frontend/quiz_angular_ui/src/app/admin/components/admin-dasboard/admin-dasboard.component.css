@@ -708,3 +708,358 @@ align-items:start;
     font-size:14px;
 
 }
+
+
+
+/* =========================================================
+   RESPONSIVE DASHBOARD OVERRIDES
+   Keep this section at the very end of the stylesheet.
+   It resolves the older fixed 3-column grid and navbar
+   rules while preserving the existing QuizHub visual theme.
+   ========================================================= */
+
+:host {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+  color: #1e293b;
+}
+
+.glass-navbar,
+.dashboard-header,
+.stats-strip,
+.dashboard-actions,
+.dashboard-grid,
+.user-info-dropdown {
+  width: 100%;
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.glass-navbar {
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+}
+
+.nav-brand {
+  flex: 0 0 auto;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: clamp(0.25rem, 0.8vw, 0.75rem);
+  margin-left: auto;
+  min-width: 0;
+}
+
+.nav-user {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-left: 0.25rem;
+  flex: 0 0 auto;
+}
+
+.nav-link,
+.nav-logout {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-header {
+  align-items: center;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.82fr) minmax(0, 1.45fr) minmax(240px, 0.95fr);
+  gap: clamp(0.75rem, 1.6vw, 1.25rem);
+  align-items: start;
+}
+
+.dashboard-grid > * {
+  min-width: 0;
+}
+
+.glass-card {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.quiz-list {
+  max-height: min(460px, 55vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.quiz-item {
+  min-width: 0;
+  gap: 0.75rem;
+}
+
+.quiz-item > div:first-child {
+  min-width: 0;
+}
+
+.quiz-item h5,
+.quiz-item p {
+  overflow-wrap: anywhere;
+}
+
+.quick-links {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.quick-link-btn,
+.glass-button {
+  min-width: 0;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.35;
+}
+
+.dashboard-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 1100px) {
+  .dashboard-grid {
+    grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.5fr);
+  }
+
+  .dashboard-grid > .glass-card:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .dashboard-grid > .glass-card:last-child .quick-links {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .nav-right {
+    gap: 0.2rem;
+  }
+
+  .nav-link {
+    padding: 0.4rem 0.55rem;
+  }
+}
+
+@media (max-width: 768px) {
+  :host {
+    padding: 0.75rem;
+  }
+
+  .glass-navbar {
+    position: sticky;
+    top: 0.35rem;
+    padding: 0.7rem 0.85rem;
+    border-radius: 0.85rem;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    min-height: 42px;
+    margin-left: auto;
+  }
+
+  /* Important: the mobile menu is collapsed until the toggle is pressed. */
+  .nav-right {
+    display: none;
+    width: 100%;
+    flex: 1 0 100%;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0.35rem;
+    margin: 0;
+    padding-top: 0.55rem;
+    border-top: 1px solid rgba(148, 180, 255, 0.22);
+  }
+
+  .nav-right.open {
+    display: flex;
+  }
+
+  .nav-link,
+  .nav-logout {
+    width: 100%;
+    justify-content: flex-start;
+    min-height: 42px;
+    padding: 0.65rem 0.8rem;
+    text-align: left;
+  }
+
+  .nav-user {
+    width: 100%;
+    justify-content: space-between;
+    margin: 0.25rem 0 0;
+    padding-top: 0.55rem;
+    border-top: 1px solid rgba(148, 180, 255, 0.22);
+  }
+
+  .dashboard-header {
+    align-items: flex-start;
+    padding-top: 1.2rem;
+  }
+
+  .header-badge {
+    align-self: flex-start;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.85rem;
+  }
+
+  .dashboard-grid > .glass-card:last-child {
+    grid-column: auto;
+  }
+
+  .dashboard-grid > .glass-card:last-child .quick-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .profile-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .quiz-list {
+    max-height: 360px;
+  }
+
+  .dashboard-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .glass-button {
+    justify-content: center;
+    padding: 0.7rem 0.6rem;
+  }
+
+  .user-info-dropdown {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  :host {
+    padding: 0.55rem;
+  }
+
+  .nav-brand-text {
+    font-size: 0.95rem;
+  }
+
+  .dashboard-header {
+    gap: 0.55rem;
+  }
+
+  .header-greeting h1 {
+    font-size: clamp(1.25rem, 7vw, 1.65rem);
+    overflow-wrap: anywhere;
+  }
+
+  .header-greeting p {
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+
+  .header-badge {
+    font-size: 0.7rem;
+    padding: 0.35rem 0.65rem;
+  }
+
+  .stats-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.4rem;
+  }
+
+  .stat-block {
+    padding: 0.65rem 0.3rem;
+  }
+
+  .stat-val {
+    font-size: 1.15rem;
+  }
+
+  .stat-lbl {
+    font-size: 0.58rem;
+    letter-spacing: 0.02em;
+  }
+
+  .dashboard-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dashboard-grid > .glass-card:last-child .quick-links,
+  .quick-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .glass-card {
+    padding: 1rem;
+    border-radius: 0.85rem;
+  }
+
+  .quiz-item {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 0.8rem;
+  }
+
+  .quiz-item .quick-link-btn {
+    width: 100%;
+  }
+
+  .taken-quiz-item {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 340px) {
+  .stats-strip {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .quick-links,
+  .dashboard-grid > .glass-card:last-child .quick-links {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .user-chip {
+    padding: 0.45rem 0.7rem;
+    font-size: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
