@@ -214,4 +214,16 @@ public UserDto getUserByAuthServiceId(Long authServiceId) {
         log.warn("[AUTH] User disabled: userId={}, username={}", id, saved.getUsername());
         return UserMapper.toDTO(saved);
     }
+
+    public UserDto enableUser(Long id) {
+
+        Users user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setEnabled(true);
+
+        Users saved = userRepository.save(user);
+        log.warn("[AUTH] User disabled: userId={}, username={}", id, saved.getUsername());
+        return UserMapper.toDTO(saved);
+    }
 }

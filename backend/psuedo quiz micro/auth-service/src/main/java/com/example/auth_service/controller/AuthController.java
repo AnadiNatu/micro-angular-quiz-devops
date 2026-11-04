@@ -89,6 +89,13 @@ public class AuthController {
         return ResponseEntity.ok(authService.disableUser(id));
     }
 
+    @PutMapping("/enable/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<UserDto> enableUser(@PathVariable Long id) {
+        log.warn("[AUTH] Disable user request for userId={}", id);
+        return ResponseEntity.ok(authService.enableUser(id));
+    }
+
     // NOTIFICATION FEIGN
     @GetMapping("/internal/{id}")
     public ResponseEntity<UserDto> getUserByIdInternal(@PathVariable Long id){
